@@ -1,0 +1,68 @@
+<script setup lang="ts">
+import {
+  IconBoxSeam,
+  IconLayoutDashboard,
+  IconSearch,
+  IconTags,
+} from "@tabler/icons-vue";
+
+import NavMain from "@/components/global/sidebar/NavMain.vue";
+import NavUser from "@/components/global/sidebar/NavUser.vue";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+} from "@/components/ui/sidebar";
+
+const data = {
+  user: {
+    name: "Jason Fang",
+    email: "jason@pnxl.dev",
+    avatar: "/avatars/shadcn.jpg",
+  },
+  navMain: [
+    {
+      title: "Dashboard",
+      url: "/dashboard",
+      icon: IconLayoutDashboard,
+    },
+    {
+      title: "Items",
+      url: "/items",
+      icon: IconBoxSeam,
+    },
+    {
+      title: "Search",
+      url: "/search",
+      icon: IconSearch,
+    },
+    {
+      title: "Tags",
+      url: "/tags",
+      icon: IconTags,
+    },
+  ],
+};
+</script>
+
+<template>
+  <Sidebar collapsible="offcanvas" class="ease-in-out">
+    <SidebarHeader>
+      <a href="#" class="flex flex-row">
+        <img
+          src="@/assets/icon.png"
+          alt="Logo"
+          class="mr-2 h-7 w-7 rounded-sm"
+        />
+        <span class="text-base font-semibold">things.pnxl.dev</span>
+      </a>
+    </SidebarHeader>
+    <SidebarContent>
+      <NavMain :items="data.navMain" />
+    </SidebarContent>
+    <SidebarFooter>
+      <NavUser :user="data.user" />
+    </SidebarFooter>
+  </Sidebar>
+</template>
