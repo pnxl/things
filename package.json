@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.103.0",
     "@tabler/icons-vue": "^3.41.1",
     "@tanstack/vue-table": "^8.21.3",
     "@unovis/ts": "^1.6.4",
