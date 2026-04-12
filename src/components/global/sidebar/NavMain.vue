@@ -37,7 +37,7 @@ defineProps<{
       </SidebarMenu>
       <SidebarMenu>
         <SidebarMenuItem v-for="item in items" :key="item.title">
-          <a :href="item.url">
+          <router-link :to="item.url">
             <SidebarMenuButton
               :tooltip="item.title"
               :class="
@@ -49,7 +49,7 @@ defineProps<{
               <component :is="item.icon" v-if="item.icon" />
               <span>{{ item.title }}</span>
             </SidebarMenuButton>
-          </a>
+          </router-link>
         </SidebarMenuItem>
       </SidebarMenu>
     </SidebarGroupContent>
