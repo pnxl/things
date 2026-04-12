@@ -20,7 +20,9 @@ if (data.session !== null) {
   cookies.set("sb-refresh-token", data.session.refresh_token);
   cookies.set("sb-expires-at", data.session.expires_at);
 
-  localStorage.setItem("sb-user-data", JSON.stringify(data.session.user));
+  const userData = (await supabase.auth.getUser()).data.user;
+
+  localStorage.setItem("sb-user-data", JSON.stringify(userData));
 
   setInterval(
     async () => {
