@@ -16,6 +16,12 @@ const cookies = useCookies([
 ]);
 
 if (data.session !== null) {
+  cookies.set("sb-access-token", data.session.access_token);
+  cookies.set("sb-refresh-token", data.session.refresh_token);
+  cookies.set("sb-expires-at", data.session.expires_at);
+
+  localStorage.setItem("sb-user-data", JSON.stringify(data.session.user));
+
   setInterval(
     async () => {
       const { data, error } = await supabase.auth.refreshSession();
