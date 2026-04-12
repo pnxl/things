@@ -27,6 +27,17 @@ if (data.session !== null) {
 
         console.log("Session refreshed.");
       }
+
+      if (error) {
+        console.error("Error refreshing session!", error);
+
+        await supabase.auth.signOut();
+        cookies.remove("sb-access-token");
+        cookies.remove("sb-refresh-token");
+        cookies.remove("sb-expires-at");
+        localStorage.removeItem("sb-user-data");
+        location.reload();
+      }
     },
     (data.session?.expires_in ?? 0) * 1000,
   );
