@@ -131,8 +131,8 @@ onMounted(async () => {
           <div class="line-clamp-1 flex gap-2 font-medium">
             {{
               categoriesAdded > 0
-                ? $t("dashboard.new_changes")
-                : $t("dashboard.no_changes")
+                ? $t("dashboard.new_categories")
+                : $t("dashboard.no_categories")
             }}
           </div>
           <div class="text-muted-foreground">
