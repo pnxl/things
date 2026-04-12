@@ -27,11 +27,13 @@ import {
 import { supabase } from "@/lib/supabase";
 
 import { useCookies } from "@vueuse/integrations/useCookies";
+import { ref, onMounted } from "vue";
 
 const { isMobile } = useSidebar();
 
 const cookies = useCookies(["sb-access-token"]);
 const userdata = JSON.parse(localStorage.getItem("sb-user-data") || "{}");
+const profilePictureUrl = ref("");
 
 async function logout() {
   await supabase.auth.signOut();
@@ -41,6 +43,18 @@ async function logout() {
   localStorage.removeItem("sb-user-data");
   location.reload();
 }
+
+async function getProfilePicture() {
+  const { data } = supabase.storage
+    .from("profile_pictures")
+    .getPublicUrl(userdata.id);
+
+  return data.publicUrl;
+}
+
+onMounted(async () => {
+  profilePictureUrl.value = await getProfilePicture();
+});
 </script>
 
 <template>
@@ -65,11 +79,8 @@ async function logout() {
             size="lg"
             class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground cursor-pointer"
           >
-            <Avatar class="h-8 w-8 rounded-lg grayscale">
-              <AvatarImage
-                :src="userdata.user_metadata.avatar"
-                alt="User Avatar"
-              />
+            <Avatar class="h-8 w-8 rounded-lg">
+              <AvatarImage :src="profilePictureUrl" alt="User Avatar" />
               <AvatarFallback class="rounded-lg"> 👤 </AvatarFallback>
             </Avatar>
             <div class="grid flex-1 text-left text-sm leading-tight">
@@ -92,10 +103,7 @@ async function logout() {
           <DropdownMenuLabel class="p-0 font-normal">
             <div class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
               <Avatar class="h-8 w-8 rounded-lg">
-                <AvatarImage
-                  :src="userdata.user_metadata.avatar"
-                  alt="User Avatar"
-                />
+                <AvatarImage :src="profilePictureUrl" alt="User Avatar" />
                 <AvatarFallback class="rounded-lg"> 👤 </AvatarFallback>
               </Avatar>
               <div class="grid flex-1 text-left text-sm leading-tight">
