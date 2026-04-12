@@ -147,7 +147,10 @@ onMounted(async () => {
           <FieldGroup>
             <div class="flex flex-row gap-4">
               <Avatar class="h-24 w-24 max-w-24 rounded-lg bg-secondary">
-                <AvatarImage :src="profilePictureUrl" alt="User Avatar" />
+                <AvatarImage
+                  :src="profilePictureUrl"
+                  :alt="$t('account.profile_picture_alt')"
+                />
                 <AvatarFallback class="rounded-lg my-auto"> 👤 </AvatarFallback>
               </Avatar>
 

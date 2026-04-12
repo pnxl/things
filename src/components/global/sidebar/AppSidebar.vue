@@ -55,7 +55,7 @@ const cookies = useCookies(["sb-access-token"]);
       <a href="#" class="flex flex-row">
         <img
           src="@/assets/icon.png"
-          alt="Logo"
+          :alt="$t('sidebar.logo_alt')"
           class="mr-2 h-7 w-7 rounded-sm"
         />
         <span class="text-base font-semibold">things.pnxl.dev</span>
