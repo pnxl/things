@@ -3,6 +3,36 @@ import AppSidebar from "@/components/global/sidebar/AppSidebar.vue";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 </script>
 
+<script lang="ts">
+import { supabase } from "@/lib/supabase";
+import { useCookies } from "@vueuse/integrations/useCookies";
+
+const { data, error } = await supabase.auth.getSession();
+
+const cookies = useCookies([
+  "sb-access-token",
+  "sb-refresh-token",
+  "sb-expires-at",
+]);
+
+if (data.session !== null) {
+  setInterval(
+    async () => {
+      const { data, error } = await supabase.auth.refreshSession();
+
+      if (data.session !== null) {
+        cookies.set("sb-access-token", data.session.access_token);
+        cookies.set("sb-refresh-token", data.session.refresh_token);
+        cookies.set("sb-expires-at", data.session.expires_at);
+
+        console.log("Session refreshed.");
+      }
+    },
+    (data.session?.expires_in ?? 0) * 1000,
+  );
+}
+</script>
+
 <template>
   <SidebarProvider
     :style="{
