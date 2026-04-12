@@ -66,7 +66,7 @@ onMounted(async () => {
           :class="
             $route.path === '/login'
               ? 'bg-sidebar-accent text-sidebar-accent-foreground cursor-normal'
-              : 'cursor-pointer'
+              : ''
           "
           ><IconLogin />
           <span>Log In</span>
@@ -77,7 +77,7 @@ onMounted(async () => {
         <DropdownMenuTrigger as-child>
           <SidebarMenuButton
             size="lg"
-            class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground cursor-pointer"
+            class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
           >
             <Avatar class="h-8 w-8 rounded-lg">
               <AvatarImage :src="profilePictureUrl" alt="User Avatar" />

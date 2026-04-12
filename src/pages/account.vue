@@ -161,17 +161,12 @@ onMounted(async () => {
                 </FieldDescription>
 
                 <Field orientation="horizontal" class="mt-2">
-                  <Button
-                    type="submit"
-                    @click.prevent="uploadProfilePicture()"
-                    class="cursor-pointer"
-                  >
+                  <Button type="submit" @click.prevent="uploadProfilePicture()">
                     Upload
                   </Button>
                   <Button
                     variant="outline"
                     type="button"
-                    class="cursor-pointer"
                     @click.prevent="deleteProfilePicture()"
                   >
                     Clear
@@ -212,13 +207,10 @@ onMounted(async () => {
           </FieldGroup>
 
           <Field orientation="horizontal">
-            <Button type="submit" @click="saveChanges()" class="cursor-pointer">
-              Save
-            </Button>
+            <Button type="submit" @click="saveChanges()"> Save </Button>
             <Button
               variant="outline"
               type="button"
-              class="cursor-pointer"
               @click="
                 displayname = '';
                 email = '';

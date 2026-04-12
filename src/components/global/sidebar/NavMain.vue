@@ -28,7 +28,7 @@ defineProps<{
         <SidebarMenuItem class="flex items-center gap-2">
           <SidebarMenuButton
             tooltip="Quick Create"
-            class="bg-accent cursor-pointer text-accent-foreground hover:bg-accent/90 hover:text-accent-foreground active:bg-accent/90 active:text-accent-foreground min-w-8 transition-colors duration-200 ease-linear"
+            class="bg-accent text-accent-foreground hover:bg-accent/90 hover:text-accent-foreground active:bg-accent/90 active:text-accent-foreground min-w-8 transition-colors duration-200 ease-linear"
           >
             <IconCirclePlusFilled />
             <span>Add New Item</span>
@@ -43,7 +43,7 @@ defineProps<{
               :class="
                 $route.path === item.url
                   ? 'bg-sidebar-accent text-sidebar-accent-foreground cursor-normal'
-                  : 'cursor-pointer'
+                  : ''
               "
             >
               <component :is="item.icon" v-if="item.icon" />
