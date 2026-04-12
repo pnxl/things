@@ -237,7 +237,7 @@ onMounted(async () => {
   </section>
   <section class="flex flex-col gap-4 p-4 md:gap-6 md:p-6">
     <h1 class="font-semibold text-3xl">
-      {{ $t("dashboard.recently_deployed_items") }}
+      {{ $t("dashboard.deployed_items") }}
     </h1>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <Card
