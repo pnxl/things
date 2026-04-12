@@ -15,12 +15,9 @@ import {
   SidebarHeader,
 } from "@/components/ui/sidebar";
 
+import { useCookies } from "@vueuse/integrations/useCookies";
+
 const data = {
-  user: {
-    name: "Jason Fang",
-    email: "jason@pnxl.dev",
-    avatar: "/avatars/shadcn.jpg",
-  },
   navMain: [
     {
       title: "Dashboard",
@@ -44,6 +41,8 @@ const data = {
     },
   ],
 };
+
+const cookies = useCookies(["sb-access-token"]);
 </script>
 
 <template>
@@ -58,11 +57,11 @@ const data = {
         <span class="text-base font-semibold">things.pnxl.dev</span>
       </a>
     </SidebarHeader>
-    <SidebarContent>
+    <SidebarContent v-if="cookies.get('sb-access-token')">
       <NavMain :items="data.navMain" />
     </SidebarContent>
-    <SidebarFooter>
-      <NavUser :user="data.user" />
+    <SidebarFooter :class="cookies.get('sb-access-token') ? '' : 'mt-auto'">
+      <NavUser />
     </SidebarFooter>
   </Sidebar>
 </template>

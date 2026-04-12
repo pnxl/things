@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {
   IconDotsVertical,
+  IconLogin,
   IconLogout,
   IconSettings,
   IconUserCircle,
@@ -23,36 +24,60 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 
-interface User {
-  name: string;
-  email: string;
-  avatar: string;
-}
+import { supabase } from "@/lib/supabase";
 
-defineProps<{
-  user: User;
-}>();
+import { useCookies } from "@vueuse/integrations/useCookies";
 
 const { isMobile } = useSidebar();
+
+const cookies = useCookies(["sb-access-token"]);
+const userdata = JSON.parse(localStorage.getItem("sb-user-data") || "{}");
+
+async function logout() {
+  await supabase.auth.signOut();
+  cookies.remove("sb-access-token");
+  cookies.remove("sb-refresh-token");
+  cookies.remove("sb-expires-at");
+  localStorage.removeItem("sb-user-data");
+  location.reload();
+}
 </script>
 
 <template>
   <SidebarMenu>
     <SidebarMenuItem>
-      <DropdownMenu>
+      <router-link to="/login" v-if="!cookies.get('sb-access-token')">
+        <SidebarMenuButton
+          tooltip="Log In"
+          :class="
+            $route.path === '/login'
+              ? 'bg-sidebar-accent text-sidebar-accent-foreground cursor-normal'
+              : 'cursor-pointer'
+          "
+          ><IconLogin />
+          <span>Log In</span>
+        </SidebarMenuButton>
+      </router-link>
+
+      <DropdownMenu v-else>
         <DropdownMenuTrigger as-child>
           <SidebarMenuButton
             size="lg"
-            class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+            class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground cursor-pointer"
           >
             <Avatar class="h-8 w-8 rounded-lg grayscale">
-              <AvatarImage :src="user.avatar" :alt="user.name" />
+              <AvatarImage
+                :src="userdata.user_metadata.avatar || '/avatars/shadcn.jpg'"
+                :alt="userdata.user_metadata.name || 'User Avatar'"
+              />
               <AvatarFallback class="rounded-lg"> CN </AvatarFallback>
             </Avatar>
             <div class="grid flex-1 text-left text-sm leading-tight">
-              <span class="truncate font-medium">{{ user.name }}</span>
+              <span class="truncate font-medium">{{
+                userdata.user_metadata.name || "Unknown User"
+              }}</span>
               <span class="text-muted-foreground truncate text-xs">
-                {{ user.email }}
+                {{ userdata.email }}
               </span>
             </div>
             <IconDotsVertical class="ml-auto size-4" />
@@ -67,13 +92,18 @@ const { isMobile } = useSidebar();
           <DropdownMenuLabel class="p-0 font-normal">
             <div class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
               <Avatar class="h-8 w-8 rounded-lg">
-                <AvatarImage :src="user.avatar" :alt="user.name" />
+                <AvatarImage
+                  :src="userdata.user_metadata.avatar || '/avatars/shadcn.jpg'"
+                  :alt="userdata.user_metadata.name || 'User Avatar'"
+                />
                 <AvatarFallback class="rounded-lg"> CN </AvatarFallback>
               </Avatar>
               <div class="grid flex-1 text-left text-sm leading-tight">
-                <span class="truncate font-medium">{{ user.name }}</span>
+                <span class="truncate font-medium">{{
+                  userdata.user_metadata.name || "Unknown User"
+                }}</span>
                 <span class="text-muted-foreground truncate text-xs">
-                  {{ user.email }}
+                  {{ userdata.email }}
                 </span>
               </div>
             </div>
@@ -90,7 +120,7 @@ const { isMobile } = useSidebar();
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuItem variant="destructive">
+          <DropdownMenuItem variant="destructive" @click="logout()">
             <IconLogout />
             Log out
           </DropdownMenuItem>
