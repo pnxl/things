@@ -95,9 +95,6 @@ async function deleteProfilePicture() {
     .from("profile_pictures")
     .remove([userdata.id]);
 
-  console.log(data);
-  console.log(error);
-
   if (error) {
     errorUpdating.value = error.message;
   } else {
@@ -114,15 +111,15 @@ onMounted(async () => {
 </script>
 
 <template>
-  <SiteHeader title="Account" />
+  <SiteHeader :title="$t('account.title')" />
 
   <div class="w-full max-w-md gap-4 p-4 md:gap-6 md:p-6">
     <form>
       <FieldGroup>
         <FieldSet>
-          <FieldLegend>Account Settings</FieldLegend>
+          <FieldLegend>{{ $t("account.account_settings") }}</FieldLegend>
           <FieldDescription>
-            Manage your account settings and set e-mail preferences.
+            {{ $t("account.account_settings_description") }}
           </FieldDescription>
 
           <div
@@ -155,27 +152,31 @@ onMounted(async () => {
               </Avatar>
 
               <div class="flex flex-col my-auto gap-1">
-                <FieldLabel for="user-id"> Profile Picture </FieldLabel>
+                <FieldLabel for="user-id">
+                  {{ $t("account.profile_picture") }}
+                </FieldLabel>
                 <FieldDescription>
-                  PNG, JPEG, or WEBP; under 2MB.
+                  {{ $t("account.profile_picture_description") }}
                 </FieldDescription>
 
                 <Field orientation="horizontal" class="mt-2">
                   <Button type="submit" @click.prevent="uploadProfilePicture()">
-                    Upload
+                    {{ $t("account.upload_button") }}
                   </Button>
                   <Button
                     variant="outline"
                     type="button"
                     @click.prevent="deleteProfilePicture()"
                   >
-                    Clear
+                    {{ $t("account.clear_button") }}
                   </Button>
                 </Field>
               </div>
             </div>
             <Field>
-              <FieldLabel for="display-name"> Display Name </FieldLabel>
+              <FieldLabel for="display-name">
+                {{ $t("account.display_name") }}
+              </FieldLabel>
               <Input
                 id="display-name"
                 v-model="displayname"
@@ -185,7 +186,9 @@ onMounted(async () => {
               />
             </Field>
             <Field>
-              <FieldLabel for="email-address"> Email Address </FieldLabel>
+              <FieldLabel for="email-address">
+                {{ $t("account.email_address") }}
+              </FieldLabel>
               <Input
                 id="email-address"
                 v-model="email"
@@ -193,9 +196,11 @@ onMounted(async () => {
               />
             </Field>
             <Field>
-              <FieldLabel for="user-id"> User ID </FieldLabel>
+              <FieldLabel for="user-id">
+                {{ $t("account.user_id") }}
+              </FieldLabel>
               <FieldDescription>
-                Your unique user ID. This cannot be changed.
+                {{ $t("account.user_id_description") }}
               </FieldDescription>
               <Input
                 id="user-id"
@@ -207,28 +212,32 @@ onMounted(async () => {
           </FieldGroup>
 
           <Field orientation="horizontal">
-            <Button type="submit" @click="saveChanges()"> Save </Button>
+            <Button type="submit" @click="saveChanges()">
+              {{ $t("account.save_button") }}
+            </Button>
             <Button
               variant="outline"
               type="button"
               @click="
-                displayname = '';
-                email = '';
+                displayname = userdata.user_metadata.display_name;
+                email = userdata.email;
               "
             >
-              Clear
+              {{ $t("account.discard_button") }}
             </Button>
           </Field>
         </FieldSet>
         <FieldSeparator />
         <FieldSet>
-          <FieldLegend>Password and Authentication</FieldLegend>
+          <FieldLegend>{{
+            $t("account.password_and_authentication")
+          }}</FieldLegend>
           <FieldDescription>
-            Manage your password and authentication settings
+            {{ $t("account.password_and_authentication_description") }}
           </FieldDescription>
           <FieldGroup>
             <Field>
-              <Button> Change Password </Button>
+              <Button> {{ $t("account.change_password") }} </Button>
             </Field>
           </FieldGroup>
         </FieldSet>

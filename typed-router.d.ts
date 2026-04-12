@@ -34,6 +34,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/account': RouteRecordInfo<
+      '/account',
+      '/account',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/dashboard': RouteRecordInfo<
       '/dashboard',
       '/dashboard',
@@ -41,23 +48,16 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
-    '/items/': RouteRecordInfo<
-      '/items/',
-      '/items',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/items/test': RouteRecordInfo<
-      '/items/test',
-      '/items/test',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
     '/login': RouteRecordInfo<
       '/login',
       '/login',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/settings': RouteRecordInfo<
+      '/settings',
+      '/settings',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -81,27 +81,27 @@ declare module 'vue-router/auto-routes' {
       views:
         | never
     }
+    'src/pages/account.vue': {
+      routes:
+        | '/account'
+      views:
+        | never
+    }
     'src/pages/dashboard.vue': {
       routes:
         | '/dashboard'
       views:
         | never
     }
-    'src/pages/items/index.vue': {
-      routes:
-        | '/items/'
-      views:
-        | never
-    }
-    'src/pages/items/test.vue': {
-      routes:
-        | '/items/test'
-      views:
-        | never
-    }
     'src/pages/login.vue': {
       routes:
         | '/login'
+      views:
+        | never
+    }
+    'src/pages/settings.vue': {
+      routes:
+        | '/settings'
       views:
         | never
     }

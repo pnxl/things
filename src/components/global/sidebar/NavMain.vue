@@ -31,7 +31,7 @@ defineProps<{
             class="bg-accent text-accent-foreground hover:bg-accent/90 hover:text-accent-foreground active:bg-accent/90 active:text-accent-foreground min-w-8 transition-colors duration-200 ease-linear"
           >
             <IconCirclePlusFilled />
-            <span>Add New Item</span>
+            <span>{{ $t("sidebar.add_new_item") }}</span>
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>

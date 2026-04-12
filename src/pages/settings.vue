@@ -8,7 +8,6 @@ import {
   FieldGroup,
   FieldLabel,
   FieldLegend,
-  FieldSeparator,
   FieldSet,
 } from "@/components/ui/field";
 import {
@@ -18,7 +17,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
 
 import { IconX } from "@tabler/icons-vue";
 
@@ -31,7 +29,7 @@ const cookies = useCookies(["sb-access-token"]);
 const router = useRouter();
 
 if (!cookies.get("sb-access-token")) {
-  router.replace({ path: "/login" });
+  router.push({ path: "/login" });
 }
 
 const userdata = JSON.parse(localStorage.getItem("sb-user-data") || "{}");
@@ -40,10 +38,12 @@ const errorUpdating = ref("");
 const successUpdating = ref("");
 
 const appearance = ref(userdata.user_metadata.settings?.appearance || "system");
+const language = ref(userdata.user_metadata.settings?.language || "id");
 
 async function saveChanges() {
   const settings = {
     appearance: appearance.value,
+    language: language.value,
   };
 
   const { data, error } = await supabase.auth.updateUser({
@@ -61,15 +61,15 @@ async function saveChanges() {
 </script>
 
 <template>
-  <SiteHeader title="Settings" />
+  <SiteHeader :title="$t('settings.title')" />
 
   <div class="w-full max-w-md gap-4 p-4 md:gap-6 md:p-6">
     <form>
       <FieldGroup>
         <FieldSet>
-          <FieldLegend>General</FieldLegend>
+          <FieldLegend>{{ $t("settings.general") }}</FieldLegend>
           <FieldDescription>
-            Manage your user settings and preferences
+            {{ $t("settings.general_description") }}
           </FieldDescription>
 
           <div
@@ -96,24 +96,49 @@ async function saveChanges() {
           </div>
           <FieldGroup
             ><Field>
-              <FieldLabel for="appearance"> Appearance </FieldLabel>
+              <FieldLabel for="appearance">
+                {{ $t("settings.appearance") }}
+              </FieldLabel>
               <Select v-model="appearance" :default-value="appearance">
                 <SelectTrigger id="appearance">
-                  <SelectValue placeholder="Follow System Setting" />
+                  <SelectValue
+                    placeholder="{{ $t('settings.appearance_system') }}"
+                  />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="light"> Light </SelectItem>
-                  <SelectItem value="dark"> Dark </SelectItem>
-                  <SelectItem value="system">
-                    Follow System Setting
+                  <SelectItem value="light">
+                    {{ $t("settings.appearance_light") }}
                   </SelectItem>
+                  <SelectItem value="dark">
+                    {{ $t("settings.appearance_dark") }}
+                  </SelectItem>
+                  <SelectItem value="system">
+                    {{ $t("settings.appearance_system") }}
+                  </SelectItem>
+                </SelectContent>
+              </Select> </Field
+            ><Field>
+              <FieldLabel for="appearance">
+                {{ $t("settings.language") }}
+              </FieldLabel>
+              <Select v-model="language" :default-value="language">
+                <SelectTrigger id="language">
+                  <SelectValue
+                    :placeholder="$t('settings.language_placeholder')"
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="id"> Bahasa Indonesia </SelectItem>
+                  <SelectItem value="en"> English </SelectItem>
                 </SelectContent>
               </Select>
             </Field>
           </FieldGroup>
 
           <Field orientation="horizontal">
-            <Button type="submit" @click="saveChanges()"> Save </Button>
+            <Button type="submit" @click="saveChanges()">
+              {{ $t("settings.save_button") }}
+            </Button>
             <Button
               variant="outline"
               type="button"
@@ -122,7 +147,7 @@ async function saveChanges() {
                   userdata.user_metadata.settings?.appearance || 'system'
               "
             >
-              Reset
+              {{ $t("settings.discard_button") }}
             </Button>
           </Field>
         </FieldSet>

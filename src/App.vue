@@ -6,6 +6,8 @@ import { onMounted } from "vue";
 
 // restore user settings on page load
 onMounted(() => {
+  if (!localStorage.getItem("sb-user-data")) return;
+
   const theme = localStorage.getItem("sb-user-data")
     ? JSON.parse(localStorage.getItem("sb-user-data") || "{}").user_metadata
         .settings?.appearance

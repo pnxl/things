@@ -17,25 +17,29 @@ import {
 
 import { useCookies } from "@vueuse/integrations/useCookies";
 
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
+
 const data = {
   navMain: [
     {
-      title: "Dashboard",
+      title: t("sidebar.dashboard"),
       url: "/dashboard",
       icon: IconLayoutDashboard,
     },
     {
-      title: "Items",
+      title: t("sidebar.items"),
       url: "/items",
       icon: IconBoxSeam,
     },
     {
-      title: "Search",
+      title: t("sidebar.search"),
       url: "/search",
       icon: IconSearch,
     },
     {
-      title: "Tags",
+      title: t("sidebar.tags"),
       url: "/tags",
       icon: IconTags,
     },

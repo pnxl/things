@@ -62,7 +62,7 @@ if (cookies.get("sb-access-token")) {
 </script>
 
 <template>
-  <SiteHeader title="Log In" />
+  <SiteHeader :title="$t('login.title')" />
   <div
     class="bg-background flex min-h-[92svh] md:min-h-[80svh] flex-col items-center justify-center gap-6 p-6 md:p-10"
   >
@@ -73,9 +73,9 @@ if (cookies.get("sb-access-token")) {
             <div
               class="flex flex-col items-center gap-2 text-center transition-all ease-in-out"
             >
-              <h1 class="text-xl font-bold">Log in to your account</h1>
+              <h1 class="text-xl font-bold">{{ $t("login.form_title") }}</h1>
               <FieldDescription>
-                Enter your email below to log in to your account
+                {{ $t("login.form_description") }}
               </FieldDescription>
             </div>
             <div
@@ -92,7 +92,9 @@ if (cookies.get("sb-access-token")) {
               </Button>
             </div>
             <Field class="transition-all ease-in-out">
-              <FieldLabel for="email"> Email Address </FieldLabel>
+              <FieldLabel for="email">
+                {{ $t("login.email_label") }}
+              </FieldLabel>
               <Input
                 id="email"
                 type="email"
@@ -103,12 +105,14 @@ if (cookies.get("sb-access-token")) {
             </Field>
             <Field>
               <div class="flex items-center">
-                <FieldLabel for="password"> Password </FieldLabel>
+                <FieldLabel for="password">
+                  {{ $t("login.password_label") }}
+                </FieldLabel>
                 <a
                   href="#"
                   class="ml-auto inline-block text-sm underline-offset-4 hover:underline opacity-50 hover:opacity-70 transition-all duration-200"
                 >
-                  Forgot your password?
+                  {{ $t("login.forgot_password") }}
                 </a>
               </div>
               <Input
@@ -130,15 +134,11 @@ if (cookies.get("sb-access-token")) {
                 "
               >
                 <IconLoader2 v-if="loggingIn" class="size-5 animate-spin" />
-                <span v-else>Log In</span>
+                <span v-else>{{ $t("login.login_button") }}</span>
               </Button>
             </Field>
           </FieldGroup>
         </form>
-        <FieldDescription class="px-6 text-center">
-          By clicking continue, you agree to our
-          <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
-        </FieldDescription>
       </div>
     </div>
   </div>

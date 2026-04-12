@@ -69,7 +69,7 @@ onMounted(async () => {
               : ''
           "
           ><IconLogin />
-          <span>Log In</span>
+          <span>{{ $t("sidebar.login") }}</span>
         </SidebarMenuButton>
       </router-link>
 
@@ -85,7 +85,8 @@ onMounted(async () => {
             </Avatar>
             <div class="grid flex-1 text-left text-sm leading-tight">
               <span class="truncate font-medium">{{
-                userdata.user_metadata.display_name || "Unknown User"
+                userdata.user_metadata.display_name ||
+                $t("sidebar.unknown_user")
               }}</span>
               <span class="text-muted-foreground truncate text-xs">
                 {{ userdata.email }}
@@ -108,7 +109,8 @@ onMounted(async () => {
               </Avatar>
               <div class="grid flex-1 text-left text-sm leading-tight">
                 <span class="truncate font-medium">{{
-                  userdata.user_metadata.display_name || "Unknown User"
+                  userdata.user_metadata.display_name ||
+                  $t("sidebar.unknown_user")
                 }}</span>
                 <span class="text-muted-foreground truncate text-xs">
                   {{ userdata.email }}
@@ -120,17 +122,17 @@ onMounted(async () => {
           <DropdownMenuGroup>
             <DropdownMenuItem @click="$router.push('/account')">
               <IconUserCircle />
-              Account
+              {{ $t("sidebar.account") }}
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem @click="$router.push('/settings')">
               <IconSettings />
-              Settings
+              {{ $t("sidebar.settings") }}
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuItem variant="destructive" @click="logout()">
             <IconLogout />
-            Log out
+            {{ $t("sidebar.logout") }}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
