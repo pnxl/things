@@ -67,14 +67,14 @@ async function logout() {
           >
             <Avatar class="h-8 w-8 rounded-lg grayscale">
               <AvatarImage
-                :src="userdata.user_metadata.avatar || '/avatars/shadcn.jpg'"
-                :alt="userdata.user_metadata.name || 'User Avatar'"
+                :src="userdata.user_metadata.avatar"
+                alt="User Avatar"
               />
-              <AvatarFallback class="rounded-lg"> CN </AvatarFallback>
+              <AvatarFallback class="rounded-lg"> 👤 </AvatarFallback>
             </Avatar>
             <div class="grid flex-1 text-left text-sm leading-tight">
               <span class="truncate font-medium">{{
-                userdata.user_metadata.name || "Unknown User"
+                userdata.user_metadata.display_name || "Unknown User"
               }}</span>
               <span class="text-muted-foreground truncate text-xs">
                 {{ userdata.email }}
@@ -93,14 +93,14 @@ async function logout() {
             <div class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
               <Avatar class="h-8 w-8 rounded-lg">
                 <AvatarImage
-                  :src="userdata.user_metadata.avatar || '/avatars/shadcn.jpg'"
-                  :alt="userdata.user_metadata.name || 'User Avatar'"
+                  :src="userdata.user_metadata.avatar"
+                  alt="User Avatar"
                 />
-                <AvatarFallback class="rounded-lg"> CN </AvatarFallback>
+                <AvatarFallback class="rounded-lg"> 👤 </AvatarFallback>
               </Avatar>
               <div class="grid flex-1 text-left text-sm leading-tight">
                 <span class="truncate font-medium">{{
-                  userdata.user_metadata.name || "Unknown User"
+                  userdata.user_metadata.display_name || "Unknown User"
                 }}</span>
                 <span class="text-muted-foreground truncate text-xs">
                   {{ userdata.email }}
@@ -110,7 +110,7 @@ async function logout() {
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem>
+            <DropdownMenuItem @click="$router.push('/account')">
               <IconUserCircle />
               Account
             </DropdownMenuItem>
