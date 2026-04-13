@@ -13,6 +13,7 @@ const i18n = createI18n({
   messages: {
     id: {
       global: {
+        locale: "id-ID",
         currency: "Rp",
         thousandAbbreviation: "rb",
         millionAbbreviation: "jt",
@@ -104,6 +105,7 @@ const i18n = createI18n({
     },
     en: {
       global: {
+        locale: "en-UK",
         currency: "IDR",
         thousandAbbreviation: "K",
         millionAbbreviation: "M",

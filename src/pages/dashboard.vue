@@ -109,7 +109,7 @@ onMounted(async () => {
       class="*:data-[slot=card]:from-accent/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 *:data-[slot=card]:bg-linear-to-t *:data-[slot=card]:shadow-xs"
     >
       <Card class="@container/card">
-        <CardHeader>
+        <CardHeader class="relative flex flex-col gap-2">
           <CardDescription>{{
             $t("dashboard.total_categories")
           }}</CardDescription>
@@ -118,7 +118,7 @@ onMounted(async () => {
           >
             {{ categoriesCount }}
           </CardTitle>
-          <CardAction v-if="categoriesAdded !== 0">
+          <CardAction v-if="categoriesAdded !== 0" class="absolute right-4">
             <Badge variant="outline">
               <IconArrowUp v-if="categoriesAdded > 0" />
               <IconArrowDown v-if="categoriesAdded < 0" />
@@ -140,14 +140,14 @@ onMounted(async () => {
         </CardFooter>
       </Card>
       <Card class="@container/card">
-        <CardHeader>
+        <CardHeader class="relative flex flex-col gap-2">
           <CardDescription>{{ $t("dashboard.total_items") }}</CardDescription>
           <CardTitle
             class="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl"
           >
             {{ itemsCount }}
           </CardTitle>
-          <CardAction v-if="itemsAdded !== 0">
+          <CardAction v-if="itemsAdded !== 0" class="absolute right-4">
             <Badge variant="outline">
               <IconArrowUp v-if="itemsAdded > 0" />
               <IconArrowDown v-if="itemsAdded < 0" />
@@ -169,7 +169,7 @@ onMounted(async () => {
         </CardFooter>
       </Card>
       <Card class="@container/card">
-        <CardHeader>
+        <CardHeader class="relative flex flex-col gap-2">
           <CardDescription>{{
             $t("dashboard.items_deployed")
           }}</CardDescription>
@@ -178,7 +178,7 @@ onMounted(async () => {
           >
             {{ deployedItemsCount }}
           </CardTitle>
-          <CardAction v-if="deployedItemsAdded > 0">
+          <CardAction v-if="deployedItemsAdded > 0" class="absolute right-4">
             <Badge variant="outline">
               <IconArrowUp />
               {{ deployedItemsAdded }}
@@ -199,22 +199,25 @@ onMounted(async () => {
         </CardFooter>
       </Card>
       <Card class="@container/card">
-        <CardHeader>
+        <CardHeader class="relative flex flex-col gap-2">
           <CardDescription>{{ $t("dashboard.total_value") }}</CardDescription>
           <CardTitle
-            class="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl"
+            class="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl line-clamp-1"
           >
-            {{ $t("global.currency") }}{{ totalValue.toLocaleString() }}
+            {{ $t("global.currency") }}
+            {{ totalValue.toLocaleString($t("global.locale")) }}
           </CardTitle>
-          <CardAction v-if="totalValueAdded > 0">
+          <CardAction v-if="totalValueAdded > 0" class="absolute right-4">
             <Badge variant="outline">
               <IconArrowUp />
               {{
-                totalValueAdded.toLocaleString().length > 8
-                  ? totalValueAdded.toLocaleString().slice(0, -8) +
-                    $t("global.millionAbbreviation")
-                  : totalValueAdded.toLocaleString().slice(0, -4) +
-                    $t("global.thousandAbbreviation")
+                totalValueAdded.toLocaleString($t("global.locale")).length > 8
+                  ? totalValueAdded
+                      .toLocaleString($t("global.locale"))
+                      .slice(0, -8) + $t("global.millionAbbreviation")
+                  : totalValueAdded
+                      .toLocaleString($t("global.locale"))
+                      .slice(0, -4) + $t("global.thousandAbbreviation")
               }}
             </Badge>
           </CardAction>
@@ -252,8 +255,10 @@ onMounted(async () => {
             {{ item.name }}
           </CardTitle>
           <CardDescription
-            >1 unit &bull; {{ $t("global.currency")
-            }}{{ item.price.toLocaleString() }}</CardDescription
+            >1 unit &bull; {{ $t("global.currency") }}{{ " " }}
+            {{
+              item.price.toLocaleString($t("global.locale"))
+            }}</CardDescription
           >
         </CardHeader>
         <CardContent class="sm:block hidden">
@@ -266,11 +271,14 @@ onMounted(async () => {
         <CardFooter>
           <CardDescription>{{
             $t("dashboard.deployed_on", {
-              date: new Date(item.deployed).toLocaleDateString(undefined, {
-                year: "numeric",
-                month: "numeric",
-                day: "numeric",
-              }),
+              date: new Date(item.deployed).toLocaleDateString(
+                $t("global.locale"),
+                {
+                  year: "numeric",
+                  month: "numeric",
+                  day: "numeric",
+                },
+              ),
             })
           }}</CardDescription>
         </CardFooter>
