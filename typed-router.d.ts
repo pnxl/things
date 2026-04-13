@@ -48,6 +48,20 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/items/': RouteRecordInfo<
+      '/items/',
+      '/items',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/items/[id]': RouteRecordInfo<
+      '/items/[id]',
+      '/items/:id',
+      { id: ParamValue<true> },
+      { id: ParamValue<false> },
+      | never
+    >,
     '/login': RouteRecordInfo<
       '/login',
       '/login',
@@ -90,6 +104,18 @@ declare module 'vue-router/auto-routes' {
     'src/pages/dashboard.vue': {
       routes:
         | '/dashboard'
+      views:
+        | never
+    }
+    'src/pages/items/index.vue': {
+      routes:
+        | '/items/'
+      views:
+        | never
+    }
+    'src/pages/items/[id].vue': {
+      routes:
+        | '/items/[id]'
       views:
         | never
     }

@@ -61,6 +61,12 @@ const i18n = createI18n({
         deployed_on: "Dikeluarkan pada {date}",
         item_image_alt: "Gambar Barang",
       },
+      items: {
+        title: "Barang",
+        categories: "Kategori",
+        all_items: "Semua Barang",
+        items_in_category: "Barang dalam {category}",
+      },
       account: {
         title: "Akun",
         account_settings: "Setelan Akun",
@@ -145,6 +151,12 @@ const i18n = createI18n({
         deployed_items: "Deployed Items",
         deployed_on: "Deployed on {date}",
         item_image_alt: "Item Image",
+      },
+      items: {
+        title: "Items",
+        categories: "Categories",
+        all_items: "All Items",
+        items_in_category: "Items in {category}",
       },
       account: {
         title: "Account",
