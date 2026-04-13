@@ -113,7 +113,7 @@ onMounted(async () => {
       <IconX />
     </Button>
   </div>
-  <section class="flex flex-col gap-4 p-4 md:gap-6 md:p-6">
+  <section class="flex flex-col gap-4 p-4 lg:gap-6 lg:p-6">
     <h1 class="font-semibold text-3xl">
       {{ $t("dashboard.inventory_summary") }}
     </h1>
@@ -303,7 +303,7 @@ onMounted(async () => {
     </div>
   </section>
   <section
-    class="flex flex-col gap-4 p-4 md:gap-6 md:p-6"
+    class="flex flex-col gap-4 p-4 lg:gap-6 lg:p-6"
     v-if="supabaseLoaded"
   >
     <h1 class="font-semibold text-3xl">
