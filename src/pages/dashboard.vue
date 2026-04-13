@@ -26,7 +26,6 @@ if (!cookies.get("sb-access-token")) {
 
 import { supabase } from "@/lib/supabase";
 import { ref, onMounted } from "vue";
-import { de } from "zod/locales";
 
 const categoriesCount = ref(0);
 const categoriesAdded = ref(0);
