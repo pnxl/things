@@ -90,7 +90,7 @@ onMounted(async () => {
 
     // fetch image URLs from supabase buckets and add them to each item in deployedItems
     for (const item of deployedItems.value) {
-      const { data } = supabase.storage.from("items").getPublicUrl(item.uuid);
+      const { data } = supabase.storage.from("items").getPublicUrl(item.id);
       item.image_url = data?.publicUrl;
     }
 
@@ -276,9 +276,13 @@ onMounted(async () => {
                   ? totalValueAdded
                       .toLocaleString($t("global.locale"))
                       .slice(0, -8) + $t("global.millionAbbreviation")
-                  : totalValueAdded
-                      .toLocaleString($t("global.locale"))
-                      .slice(0, -4) + $t("global.thousandAbbreviation")
+                  : totalValueAdded.toLocaleString($t("global.locale")).length >
+                      4
+                    ? totalValueAdded
+                        .toLocaleString($t("global.locale"))
+                        .slice(0, -4) + $t("global.millionAbbreviation")
+                    : totalValueAdded.toLocaleString($t("global.locale")) +
+                      $t("global.thousandAbbreviation")
               }}
             </Badge>
           </CardAction>
@@ -312,8 +316,8 @@ onMounted(async () => {
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <Card
         v-for="item in deployedItems"
-        :key="item.uuid"
-        @click="$router.push(`/items/${item.uuid}`)"
+        :key="item.id"
+        @click="$router.push(`/items/${item.id}`)"
         class="@container/card hover:bg-secondary transition-colors duration-200 cursor-pointer"
       >
         <CardHeader>

@@ -5,6 +5,7 @@ import { createI18n } from "vue-i18n";
 
 import "./assets/index.css";
 import { unknown } from "zod";
+import { unique } from "@unovis/ts";
 
 const i18n = createI18n({
   locale:
@@ -18,7 +19,7 @@ const i18n = createI18n({
         currency: "Rp",
         thousandAbbreviation: "rb",
         millionAbbreviation: "jt",
-        weight: "kg",
+        mass: "kg",
       },
       404: {
         title: "Halaman Tidak Ditemukan",
@@ -54,7 +55,7 @@ const i18n = createI18n({
         inventory_summary: "Ringkasan Inventaris",
         total_categories: "Total Kategori",
         total_items: "Total Barang",
-        items_deployed: "Barang Diluar Gudang",
+        items_deployed: "Barang yg. Ditempatkan",
         total_value: "Nilai Total",
         no_categories: "Tidak ada perubahan akhir ini.",
         new_categories: "Ada kategori baru nih!",
@@ -66,7 +67,7 @@ const i18n = createI18n({
         new_value_increase: "Dompet gimana bos; aman?",
         data_from_30d: "Data dari 30 hari terakhir",
         data_compared_yesterday: "Dibanding kemarin",
-        deployed_items: "Barang yg. diluar gudang",
+        deployed_items: "Barang yg. Ditempatkan",
         deployed_on: "Dikeluarkan pada {date}",
         item_image_alt: "Gambar Barang",
       },
@@ -82,8 +83,12 @@ const i18n = createI18n({
         edit_item: "Edit Barang",
         unknown_category: "Kategori Tidak Dikenal",
         unknown_tag: "Tag Tidak Dikenal",
+        mass: "Massa",
         price: "Harga",
-        weight: "Berat",
+        deployment_status: "Status Penempatan",
+        not_deployed: "Aman dan nyaman di rumah.",
+        created_at: "Dibuat pada",
+        unique_id: "ID Unik",
       },
       account: {
         title: "Akun",
@@ -126,7 +131,7 @@ const i18n = createI18n({
         currency: "IDR",
         thousandAbbreviation: "K",
         millionAbbreviation: "M",
-        weight: "kg",
+        mass: "kg",
       },
       404: {
         title: "Page Not Found",
@@ -189,6 +194,13 @@ const i18n = createI18n({
         name_placeholder: "Unnamed Item",
         edit_item: "Edit Item",
         unknown_category: "Unknown Category",
+        unknown_tag: "Unknown Tag",
+        mass: "Mass",
+        price: "Price",
+        deployment_status: "Deployment Status",
+        not_deployed: "Safe and sound at home.",
+        created_at: "Created At",
+        unique_id: "Unique Identifier",
       },
       account: {
         title: "Account",
