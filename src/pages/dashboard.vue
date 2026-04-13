@@ -255,7 +255,13 @@ onMounted(async () => {
             {{ item.name }}
           </CardTitle>
           <CardDescription
-            >1 unit &bull; {{ $t("global.currency") }}{{ " " }}
+            >{{
+              item.weight.toLocaleString($t("global.locale"), {
+                minimumFractionDigits: 1,
+                maximumFractionDigits: 1,
+              })
+            }}
+            {{ $t("global.weight") }} &bull; {{ $t("global.currency") }}
             {{
               item.price.toLocaleString($t("global.locale"))
             }}</CardDescription

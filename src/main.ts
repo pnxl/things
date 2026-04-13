@@ -17,6 +17,7 @@ const i18n = createI18n({
         currency: "Rp",
         thousandAbbreviation: "rb",
         millionAbbreviation: "jt",
+        weight: "kg",
       },
       login: {
         title: "Masuk",
@@ -109,6 +110,7 @@ const i18n = createI18n({
         currency: "IDR",
         thousandAbbreviation: "K",
         millionAbbreviation: "M",
+        weight: "kg",
       },
       login: {
         title: "Login",
