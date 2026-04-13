@@ -27,6 +27,9 @@ if (!cookies.get("sb-access-token")) {
 import { supabase } from "@/lib/supabase";
 import { ref, onMounted } from "vue";
 
+const supabaseLoaded = ref(false);
+const errorUpdating = ref("");
+
 const categoriesCount = ref(0);
 const categoriesAdded = ref(0);
 const itemsCount = ref(0);
@@ -41,11 +44,14 @@ onMounted(async () => {
   const categoriesData = await supabase.from("categories").select();
   const itemsData = await supabase.from("items").select();
 
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+
   if (!categoriesData.error) {
     categoriesCount.value = categoriesData.data.length;
-
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
     categoriesAdded.value = categoriesData.data.filter(
       (category) => new Date(category.created_at) >= thirtyDaysAgo,
@@ -63,12 +69,6 @@ onMounted(async () => {
       (sum, item) => sum + item.price,
       0,
     );
-
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
 
     itemsAdded.value = itemsData.data.filter(
       (item) => new Date(item.created_at) >= thirtyDaysAgo,
@@ -93,18 +93,31 @@ onMounted(async () => {
       const { data } = supabase.storage.from("items").getPublicUrl(item.uuid);
       item.image_url = data?.publicUrl;
     }
+
+    supabaseLoaded.value = true;
   } else {
     console.error("Error fetching items:", itemsData.error);
+    errorUpdating.value = itemsData.error.message;
   }
 });
 </script>
 
 <template>
   <SiteHeader :title="$t('dashboard.title')" />
+  <div
+    class="flex flex-row justify-between gap-2 text-center text-destructive bg-destructive/10 rounded-md p-4 m-4 mb-0 md:m-6 md:mb-0 border border-destructive"
+    v-if="errorUpdating !== ''"
+  >
+    <span class="my-auto">{{ errorUpdating }}</span>
+    <Button variant="ghost" size="icon-sm" @click="errorUpdating = ''">
+      <IconX />
+    </Button>
+  </div>
   <section class="flex flex-col gap-4 p-4 md:gap-6 md:p-6">
     <h1 class="font-semibold text-3xl">
       {{ $t("dashboard.inventory_summary") }}
     </h1>
+
     <div
       class="*:data-[slot=card]:from-accent/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 *:data-[slot=card]:bg-linear-to-t *:data-[slot=card]:shadow-xs"
     >
@@ -116,9 +129,16 @@ onMounted(async () => {
           <CardTitle
             class="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl"
           >
-            {{ categoriesCount }}
+            <span v-if="supabaseLoaded">{{ categoriesCount }}</span>
+            <div
+              v-else
+              class="bg-primary/25 animate-pulse h-8 w-32 rounded-md"
+            ></div>
           </CardTitle>
-          <CardAction v-if="categoriesAdded !== 0" class="absolute right-4">
+          <CardAction
+            v-if="categoriesAdded !== 0 && supabaseLoaded"
+            class="absolute right-4"
+          >
             <Badge variant="outline">
               <IconArrowUp v-if="categoriesAdded > 0" />
               <IconArrowDown v-if="categoriesAdded < 0" />
@@ -128,11 +148,17 @@ onMounted(async () => {
         </CardHeader>
         <CardFooter class="flex-col items-start gap-1.5 text-sm">
           <div class="line-clamp-1 flex gap-2 font-medium">
-            {{
-              categoriesAdded > 0
-                ? $t("dashboard.new_categories")
-                : $t("dashboard.no_categories")
-            }}
+            <span v-if="supabaseLoaded">
+              {{
+                categoriesAdded > 0
+                  ? $t("dashboard.new_categories")
+                  : $t("dashboard.no_categories")
+              }}</span
+            >
+            <div
+              v-else
+              class="bg-primary/25 animate-pulse h-5 mt-1 w-40 rounded-md"
+            ></div>
           </div>
           <div class="text-muted-foreground">
             {{ $t("dashboard.data_from_30d") }}
@@ -145,9 +171,16 @@ onMounted(async () => {
           <CardTitle
             class="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl"
           >
-            {{ itemsCount }}
+            <span v-if="supabaseLoaded">{{ itemsCount }}</span>
+            <div
+              v-else
+              class="bg-primary/25 animate-pulse h-8 w-32 rounded-md"
+            ></div>
           </CardTitle>
-          <CardAction v-if="itemsAdded !== 0" class="absolute right-4">
+          <CardAction
+            v-if="itemsAdded !== 0 && supabaseLoaded"
+            class="absolute right-4"
+          >
             <Badge variant="outline">
               <IconArrowUp v-if="itemsAdded > 0" />
               <IconArrowDown v-if="itemsAdded < 0" />
@@ -157,11 +190,17 @@ onMounted(async () => {
         </CardHeader>
         <CardFooter class="flex-col items-start gap-1.5 text-sm">
           <div class="line-clamp-1 flex gap-2 font-medium">
-            {{
-              itemsAdded > 0
-                ? $t("dashboard.new_items")
-                : $t("dashboard.no_new_items")
-            }}
+            <span v-if="supabaseLoaded">
+              {{
+                itemsAdded > 0
+                  ? $t("dashboard.new_items")
+                  : $t("dashboard.no_new_items")
+              }}</span
+            >
+            <div
+              v-else
+              class="bg-primary/25 animate-pulse h-5 mt-1 w-40 rounded-md"
+            ></div>
           </div>
           <div class="text-muted-foreground">
             {{ $t("dashboard.data_from_30d") }}
@@ -176,9 +215,16 @@ onMounted(async () => {
           <CardTitle
             class="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl"
           >
-            {{ deployedItemsCount }}
+            <span v-if="supabaseLoaded">{{ deployedItemsCount }}</span>
+            <div
+              v-else
+              class="bg-primary/25 animate-pulse h-8 w-32 rounded-md"
+            ></div>
           </CardTitle>
-          <CardAction v-if="deployedItemsAdded > 0" class="absolute right-4">
+          <CardAction
+            v-if="deployedItemsAdded > 0 && supabaseLoaded"
+            class="absolute right-4"
+          >
             <Badge variant="outline">
               <IconArrowUp />
               {{ deployedItemsAdded }}
@@ -187,11 +233,17 @@ onMounted(async () => {
         </CardHeader>
         <CardFooter class="flex-col items-start gap-1.5 text-sm">
           <div class="line-clamp-1 flex gap-2 font-medium">
-            {{
-              deployedItemsCount > 0
-                ? $t("dashboard.new_deployments")
-                : $t("dashboard.no_new_deployments")
-            }}
+            <span v-if="supabaseLoaded">
+              {{
+                deployedItemsCount > 0
+                  ? $t("dashboard.new_deployments")
+                  : $t("dashboard.no_new_deployments")
+              }}</span
+            >
+            <div
+              v-else
+              class="bg-primary/25 animate-pulse h-5 mt-1 w-40 rounded-md"
+            ></div>
           </div>
           <div class="text-muted-foreground">
             {{ $t("dashboard.data_compared_yesterday") }}
@@ -204,10 +256,19 @@ onMounted(async () => {
           <CardTitle
             class="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl line-clamp-1"
           >
-            {{ $t("global.currency") }}
-            {{ totalValue.toLocaleString($t("global.locale")) }}
+            <span v-if="supabaseLoaded"
+              >{{ $t("global.currency") }}
+              {{ totalValue.toLocaleString($t("global.locale")) }}</span
+            >
+            <div
+              v-else
+              class="bg-primary/25 animate-pulse h-8 w-40 rounded-md"
+            ></div>
           </CardTitle>
-          <CardAction v-if="totalValueAdded > 0" class="absolute right-4">
+          <CardAction
+            v-if="totalValueAdded > 0 && supabaseLoaded"
+            class="absolute right-4"
+          >
             <Badge variant="outline">
               <IconArrowUp />
               {{
@@ -224,11 +285,15 @@ onMounted(async () => {
         </CardHeader>
         <CardFooter class="flex-col items-start gap-1.5 text-sm">
           <div class="line-clamp-1 flex gap-2 font-medium">
-            {{
+            <span v-if="supabaseLoaded">{{
               totalValueAdded > 0
                 ? $t("dashboard.new_value_increase")
                 : $t("dashboard.no_value_increase")
-            }}
+            }}</span>
+            <div
+              v-else
+              class="bg-primary/25 animate-pulse h-5 mt-1 w-40 rounded-md"
+            ></div>
           </div>
           <div class="text-muted-foreground">
             {{ $t("dashboard.data_from_30d") }}
@@ -237,7 +302,10 @@ onMounted(async () => {
       </Card>
     </div>
   </section>
-  <section class="flex flex-col gap-4 p-4 md:gap-6 md:p-6">
+  <section
+    class="flex flex-col gap-4 p-4 md:gap-6 md:p-6"
+    v-if="supabaseLoaded"
+  >
     <h1 class="font-semibold text-3xl">
       {{ $t("dashboard.deployed_items") }}
     </h1>
