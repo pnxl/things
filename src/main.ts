@@ -4,6 +4,7 @@ import { router } from "./router";
 import { createI18n } from "vue-i18n";
 
 import "./assets/index.css";
+import { unknown } from "zod";
 
 const i18n = createI18n({
   locale:
@@ -74,6 +75,15 @@ const i18n = createI18n({
         categories: "Kategori",
         all_items: "Semua Barang",
         items_in_category: "Barang dalam {category}",
+      },
+      item: {
+        go_back: "Kembali ke Barang",
+        name_placeholder: "Barang Tanpa Nama",
+        edit_item: "Edit Barang",
+        unknown_category: "Kategori Tidak Dikenal",
+        unknown_tag: "Tag Tidak Dikenal",
+        price: "Harga",
+        weight: "Berat",
       },
       account: {
         title: "Akun",
@@ -173,6 +183,12 @@ const i18n = createI18n({
         categories: "Categories",
         all_items: "All Items",
         items_in_category: "Items in {category}",
+      },
+      item: {
+        go_back: "Go Back to Items",
+        name_placeholder: "Unnamed Item",
+        edit_item: "Edit Item",
+        unknown_category: "Unknown Category",
       },
       account: {
         title: "Account",

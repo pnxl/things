@@ -329,7 +329,7 @@ onMounted(async () => {
                 maximumFractionDigits: 1,
               })
             }}
-            {{ $t("global.weight") }} &bull; {{ $t("global.currency") }}
+            {{ $t("global.mass") }} &bull; {{ $t("global.currency") }}
             {{
               item.price.toLocaleString($t("global.locale"))
             }}</CardDescription
