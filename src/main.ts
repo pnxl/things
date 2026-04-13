@@ -4,8 +4,6 @@ import { router } from "./router";
 import { createI18n } from "vue-i18n";
 
 import "./assets/index.css";
-import { unknown } from "zod";
-import { unique } from "@unovis/ts";
 
 const i18n = createI18n({
   locale:
@@ -87,6 +85,11 @@ const i18n = createI18n({
         price: "Harga",
         deployment_status: "Status Penempatan",
         not_deployed: "Aman dan nyaman di rumah.",
+        deployed_on: "Dikeluarkan pada",
+        deployed_at: "Ditempatkan di",
+        person_responsible: "Penanggung Jawab",
+        remarks: "Catatan",
+        remarks_placeholder: "Catatan tambahan ditambahkan di sini, ya!",
         created_at: "Dibuat pada",
         unique_id: "ID Unik",
       },
@@ -199,6 +202,11 @@ const i18n = createI18n({
         price: "Price",
         deployment_status: "Deployment Status",
         not_deployed: "Safe and sound at home.",
+        deployed_on: "Deployed on",
+        deployed_at: "Deployed at",
+        person_responsible: "Person Responsible",
+        remarks: "Remarks",
+        remarks_placeholder: "Any additional notes can be added here!",
         created_at: "Created At",
         unique_id: "Unique Identifier",
       },
