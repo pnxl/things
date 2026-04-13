@@ -1,6 +1,14 @@
 <script setup lang="ts">
 import SiteHeader from "@/components/SiteHeader.vue";
-import { IconArrowLeft, IconPencil, IconTag, IconX } from "@tabler/icons-vue";
+
+import {
+  IconArrowLeft,
+  IconPencil,
+  IconTag,
+  IconTrash,
+  IconX,
+} from "@tabler/icons-vue";
+
 import Button from "@/components/ui/button/Button.vue";
 import {
   Card,
@@ -8,6 +16,16 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import Field from "@/components/ui/field/Field.vue";
 import FieldLabel from "@/components/ui/field/FieldLabel.vue";
 import Textarea from "@/components/ui/textarea/Textarea.vue";
@@ -16,7 +34,6 @@ import { supabase } from "@/lib/supabase";
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { custom } from "zod";
 
 const { t } = useI18n();
 
@@ -74,6 +91,11 @@ const tags = ref<any[]>([]);
 
 const supabaseLoaded = ref(false);
 const errorUpdating = ref("");
+
+async function deleteItem() {
+  await supabase.from("items").delete().eq("id", item.value.id);
+  router.push("/items");
+}
 
 onMounted(async () => {
   let id = "00000000-0000-0000-0000-000000000000";
@@ -143,19 +165,59 @@ onMounted(async () => {
     <Button
       @click="$router.push('/items')"
       variant="ghost"
-      class="flex flex-row gap-1 cursor-pointer -ml-3 hover:bg-transparent! *:hover:text-primary/80 hover:underline duration-200 transition-colors"
+      class="flex flex-row gap-1 cursor-pointer -ml-3 hover:bg-transparent! hover:text-primary/80 hover:underline duration-200 transition-colors"
     >
       <IconArrowLeft class="size-4 my-auto" />
       {{ t("item.go_back") }}
     </Button>
-    <Button
-      @click="$router.push('/items')"
-      variant="ghost"
-      class="flex flex-row gap-1 cursor-pointer -mr-3 hover:bg-transparent! *:hover:text-primary/80 hover:underline duration-200 transition-colors"
-    >
-      <IconPencil class="size-4 my-auto" />
-      {{ t("item.edit_item") }}
-    </Button>
+    <div class="flex flex-row gap-1">
+      <Button
+        @click="$router.push('/items')"
+        variant="ghost"
+        class="flex flex-row gap-1 cursor-pointer -mr-3 hover:bg-transparent! hover:text-primary/80 hover:underline duration-200 transition-colors"
+      >
+        <IconPencil class="size-4 my-auto" />
+        {{ t("item.edit_item") }}
+      </Button>
+
+      <Dialog>
+        <DialogTrigger as-child>
+          <Button
+            variant="ghost"
+            class="flex text-destructive flex-row gap-1 cursor-pointer -mr-3 hover:bg-transparent! hover:text-destructive/80 hover:underline duration-200 transition-colors"
+          >
+            <IconTrash class="size-4 my-auto" />
+            {{ t("item.delete_item") }}
+          </Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Are you absolutely sure?</DialogTitle>
+            <DialogDescription>
+              This action cannot be undone. This will permanently delete the
+              item and remove it from your inventory.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter class="sm:justify-end flex sm:flex-row flex-col gap-2">
+            <DialogClose as-child>
+              <Button type="button" variant="secondary" class="cursor-pointer">
+                Nevermind!
+              </Button>
+            </DialogClose>
+            <DialogClose as-child>
+              <Button
+                type="button"
+                variant="destructive"
+                class="cursor-pointer"
+                @click="deleteItem()"
+              >
+                I'm sure, delete it!
+              </Button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
   </div>
 
   <div class="p-4 lg:p-6 grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
