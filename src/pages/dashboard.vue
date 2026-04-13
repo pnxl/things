@@ -241,8 +241,9 @@ onMounted(async () => {
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <Card
         v-for="item in deployedItems"
-        :key="item.id"
-        class="@container/card hover:bg-secondary transition-colors duration-200"
+        :key="item.uuid"
+        @click="$router.push(`/items/${item.uuid}`)"
+        class="@container/card hover:bg-secondary transition-colors duration-200 cursor-pointer"
       >
         <CardHeader>
           <CardTitle
