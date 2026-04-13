@@ -19,6 +19,12 @@ const i18n = createI18n({
         millionAbbreviation: "jt",
         weight: "kg",
       },
+      404: {
+        title: "Halaman Tidak Ditemukan",
+        description: "Halaman yang Anda cari tidak ditemukan.",
+        suggestion:
+          "Halaman tersebut mungkin telah dihapus atau Anda memasukkan URL yang salah.",
+      },
       login: {
         title: "Masuk",
         form_title: "Masuk ke akun Anda",
@@ -111,6 +117,12 @@ const i18n = createI18n({
         thousandAbbreviation: "K",
         millionAbbreviation: "M",
         weight: "kg",
+      },
+      404: {
+        title: "Page Not Found",
+        description: "The page you are looking for does not exist.",
+        suggestion:
+          "It might have been removed or you may have entered the wrong URL.",
       },
       login: {
         title: "Login",
