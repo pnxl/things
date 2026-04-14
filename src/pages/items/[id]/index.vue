@@ -273,7 +273,7 @@ onMounted(async () => {
           <CardHeader>
             <CardDescription>{{ $t("item.mass") }}</CardDescription>
             <CardTitle
-              class="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl"
+              class="text-xl font-semibold tabular-nums @[250px]/card:text-2xl"
             >
               <span v-if="supabaseLoaded"
                 >{{
@@ -296,7 +296,7 @@ onMounted(async () => {
           <CardHeader>
             <CardDescription>{{ $t("item.price") }}</CardDescription>
             <CardTitle
-              class="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl"
+              class="text-xl font-semibold tabular-nums @[250px]/card:text-xl"
             >
               <span v-if="supabaseLoaded"
                 >{{ $t("global.currency") }}
@@ -322,7 +322,7 @@ onMounted(async () => {
               $t("item.deployment_status")
             }}</CardDescription>
             <CardTitle
-              class="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl"
+              class="text-lg font-semibold tabular-nums @[250px]/card:text-xl"
             >
               <span v-if="supabaseLoaded">{{ $t("item.not_deployed") }}</span>
               <div
