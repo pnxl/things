@@ -305,7 +305,7 @@ onMounted(async () => {
                     maximumFractionDigits: 1,
                   })
                 }}
-                {{ $t("language.mass") }}</span
+                {{ $t("language.units.mass") }}</span
               >
               <div
                 v-else
@@ -324,7 +324,7 @@ onMounted(async () => {
               class="text-xl font-semibold tabular-nums @[250px]/card:text-xl"
             >
               <span v-if="supabaseLoaded"
-                >{{ $t("language.currency") }}
+                >{{ $t("language.units.currency") }}
                 {{
                   item.price.toLocaleString($t("language.locale"), {
                     maximumFractionDigits: 2,

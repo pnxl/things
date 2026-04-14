@@ -14,12 +14,20 @@ const i18n = createI18n({
     id: {
       language: {
         locale: "id-ID",
-        currency: "Rp",
-        thousandAbbreviation: "rb",
-        millionAbbreviation: "jt",
-        mass: "kg",
+        units: {
+          currency: "Rp",
+          mass: "kg",
+        },
+        numberAbbreviations: {
+          thousand: "rb",
+          million: "jt",
+          billion: "M",
+        },
       },
       components: {
+        error: {
+          title: "Ups, ada yang salah nih!",
+        },
         sidebar: {
           logo_alt: "Lambang",
           add_new_item: "Tambah Barang Baru",
@@ -164,12 +172,20 @@ const i18n = createI18n({
     en: {
       language: {
         locale: "en-UK",
-        currency: "IDR",
-        thousandAbbreviation: "K",
-        millionAbbreviation: "M",
-        mass: "kg",
+        units: {
+          currency: "IDR",
+          mass: "kg",
+        },
+        numberAbbreviations: {
+          thousand: "K",
+          million: "M",
+          billion: "B",
+        },
       },
       components: {
+        error: {
+          title: "Uh-oh, something went wrong.",
+        },
         sidebar: {
           logo_alt: "Logo",
           add_new_item: "Add New Item",
