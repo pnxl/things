@@ -103,7 +103,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <SiteHeader :title="$t('dashboard.title')" />
+  <SiteHeader :title="$t('pages.dashboard.title')" />
   <div
     class="flex flex-row justify-between gap-2 text-center text-destructive bg-destructive/10 rounded-md p-4 m-4 mb-0 md:m-6 md:mb-0 border border-destructive"
     v-if="errorUpdating !== ''"
@@ -115,7 +115,7 @@ onMounted(async () => {
   </div>
   <section class="flex flex-col gap-4 p-4 lg:gap-6 lg:p-6">
     <h1 class="font-semibold text-3xl">
-      {{ $t("dashboard.inventory_summary") }}
+      {{ $t("pages.dashboard.inventory_summary") }}
     </h1>
 
     <div
@@ -124,7 +124,7 @@ onMounted(async () => {
       <Card class="@container/card">
         <CardHeader class="relative flex flex-col gap-2">
           <CardDescription>{{
-            $t("dashboard.total_categories")
+            $t("pages.dashboard.total_categories")
           }}</CardDescription>
           <CardTitle
             class="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl"
@@ -151,8 +151,8 @@ onMounted(async () => {
             <span v-if="supabaseLoaded">
               {{
                 categoriesAdded > 0
-                  ? $t("dashboard.new_categories")
-                  : $t("dashboard.no_categories")
+                  ? $t("pages.dashboard.new_categories")
+                  : $t("pages.dashboard.no_categories")
               }}</span
             >
             <div
@@ -161,13 +161,15 @@ onMounted(async () => {
             ></div>
           </div>
           <div class="text-muted-foreground">
-            {{ $t("dashboard.data_from_30d") }}
+            {{ $t("pages.dashboard.data_from_30d") }}
           </div>
         </CardFooter>
       </Card>
       <Card class="@container/card">
         <CardHeader class="relative flex flex-col gap-2">
-          <CardDescription>{{ $t("dashboard.total_items") }}</CardDescription>
+          <CardDescription>{{
+            $t("pages.dashboard.total_items")
+          }}</CardDescription>
           <CardTitle
             class="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl"
           >
@@ -193,8 +195,8 @@ onMounted(async () => {
             <span v-if="supabaseLoaded">
               {{
                 itemsAdded > 0
-                  ? $t("dashboard.new_items")
-                  : $t("dashboard.no_new_items")
+                  ? $t("pages.dashboard.new_items")
+                  : $t("pages.dashboard.no_new_items")
               }}</span
             >
             <div
@@ -203,14 +205,14 @@ onMounted(async () => {
             ></div>
           </div>
           <div class="text-muted-foreground">
-            {{ $t("dashboard.data_from_30d") }}
+            {{ $t("pages.dashboard.data_from_30d") }}
           </div>
         </CardFooter>
       </Card>
       <Card class="@container/card">
         <CardHeader class="relative flex flex-col gap-2">
           <CardDescription>{{
-            $t("dashboard.items_deployed")
+            $t("pages.dashboard.items_deployed")
           }}</CardDescription>
           <CardTitle
             class="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl"
@@ -236,8 +238,8 @@ onMounted(async () => {
             <span v-if="supabaseLoaded">
               {{
                 deployedItemsCount > 0
-                  ? $t("dashboard.new_deployments")
-                  : $t("dashboard.no_new_deployments")
+                  ? $t("pages.dashboard.new_deployments")
+                  : $t("pages.dashboard.no_new_deployments")
               }}</span
             >
             <div
@@ -246,19 +248,21 @@ onMounted(async () => {
             ></div>
           </div>
           <div class="text-muted-foreground">
-            {{ $t("dashboard.data_compared_yesterday") }}
+            {{ $t("pages.dashboard.data_compared_yesterday") }}
           </div>
         </CardFooter>
       </Card>
       <Card class="@container/card">
         <CardHeader class="relative flex flex-col gap-2">
-          <CardDescription>{{ $t("dashboard.total_value") }}</CardDescription>
+          <CardDescription>{{
+            $t("pages.dashboard.total_value")
+          }}</CardDescription>
           <CardTitle
             class="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl line-clamp-1"
           >
             <span v-if="supabaseLoaded"
-              >{{ $t("global.currency") }}
-              {{ totalValue.toLocaleString($t("global.locale")) }}</span
+              >{{ $t("language.currency") }}
+              {{ totalValue.toLocaleString($t("language.locale")) }}</span
             >
             <div
               v-else
@@ -272,17 +276,17 @@ onMounted(async () => {
             <Badge variant="outline">
               <IconArrowUp />
               {{
-                totalValueAdded.toLocaleString($t("global.locale")).length > 8
+                totalValueAdded.toLocaleString($t("language.locale")).length > 8
                   ? totalValueAdded
-                      .toLocaleString($t("global.locale"))
-                      .slice(0, -8) + $t("global.millionAbbreviation")
-                  : totalValueAdded.toLocaleString($t("global.locale")).length >
-                      4
+                      .toLocaleString($t("language.locale"))
+                      .slice(0, -8) + $t("language.millionAbbreviation")
+                  : totalValueAdded.toLocaleString($t("language.locale"))
+                        .length > 4
                     ? totalValueAdded
-                        .toLocaleString($t("global.locale"))
-                        .slice(0, -4) + $t("global.millionAbbreviation")
-                    : totalValueAdded.toLocaleString($t("global.locale")) +
-                      $t("global.thousandAbbreviation")
+                        .toLocaleString($t("language.locale"))
+                        .slice(0, -4) + $t("language.millionAbbreviation")
+                    : totalValueAdded.toLocaleString($t("language.locale")) +
+                      $t("language.thousandAbbreviation")
               }}
             </Badge>
           </CardAction>
@@ -291,8 +295,8 @@ onMounted(async () => {
           <div class="line-clamp-1 flex gap-2 font-medium">
             <span v-if="supabaseLoaded">{{
               totalValueAdded > 0
-                ? $t("dashboard.new_value_increase")
-                : $t("dashboard.no_value_increase")
+                ? $t("pages.dashboard.new_value_increase")
+                : $t("pages.dashboard.no_value_increase")
             }}</span>
             <div
               v-else
@@ -300,7 +304,7 @@ onMounted(async () => {
             ></div>
           </div>
           <div class="text-muted-foreground">
-            {{ $t("dashboard.data_from_30d") }}
+            {{ $t("pages.dashboard.data_from_30d") }}
           </div>
         </CardFooter>
       </Card>
@@ -311,7 +315,7 @@ onMounted(async () => {
     v-if="supabaseLoaded"
   >
     <h1 class="font-semibold text-3xl">
-      {{ $t("dashboard.deployed_items") }}
+      {{ $t("pages.dashboard.deployed_items") }}
     </h1>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <Card
@@ -328,29 +332,29 @@ onMounted(async () => {
           </CardTitle>
           <CardDescription
             >{{
-              item.weight.toLocaleString($t("global.locale"), {
+              item.weight.toLocaleString($t("language.locale"), {
                 minimumFractionDigits: 1,
                 maximumFractionDigits: 1,
               })
             }}
-            {{ $t("global.mass") }} &bull; {{ $t("global.currency") }}
+            {{ $t("language.mass") }} &bull; {{ $t("language.currency") }}
             {{
-              item.price.toLocaleString($t("global.locale"))
+              item.price.toLocaleString($t("language.locale"))
             }}</CardDescription
           >
         </CardHeader>
         <CardContent class="sm:block hidden">
           <img
             :src="item.image_url"
-            :alt="$t('dashboard.item_image_alt')"
+            :alt="$t('pages.dashboard.item_image_alt')"
             class="rounded-lg"
           />
         </CardContent>
         <CardFooter>
           <CardDescription>{{
-            $t("dashboard.deployed_on", {
+            $t("pages.dashboard.deployed_on", {
               date: new Date(item.deployed).toLocaleDateString(
-                $t("global.locale"),
+                $t("language.locale"),
                 {
                   year: "numeric",
                   month: "numeric",

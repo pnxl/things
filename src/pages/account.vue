@@ -111,15 +111,15 @@ onMounted(async () => {
 </script>
 
 <template>
-  <SiteHeader :title="$t('account.title')" />
+  <SiteHeader :title="$t('pages.account.title')" />
 
   <div class="w-full max-w-md gap-4 p-4 lg:gap-6 lg:p-6">
     <form>
       <FieldGroup>
         <FieldSet>
-          <FieldLegend>{{ $t("account.account_settings") }}</FieldLegend>
+          <FieldLegend>{{ $t("pages.account.account_settings") }}</FieldLegend>
           <FieldDescription>
-            {{ $t("account.account_settings_description") }}
+            {{ $t("pages.account.account_settings_description") }}
           </FieldDescription>
 
           <div
@@ -149,36 +149,36 @@ onMounted(async () => {
               <Avatar class="h-24 w-24 max-w-24 rounded-lg bg-secondary">
                 <AvatarImage
                   :src="profilePictureUrl"
-                  :alt="$t('account.profile_picture_alt')"
+                  :alt="$t('pages.account.profile_picture_alt')"
                 />
                 <AvatarFallback class="rounded-lg my-auto"> 👤 </AvatarFallback>
               </Avatar>
 
               <div class="flex flex-col my-auto gap-1">
                 <FieldLabel for="user-id">
-                  {{ $t("account.profile_picture") }}
+                  {{ $t("pages.account.profile_picture") }}
                 </FieldLabel>
                 <FieldDescription>
-                  {{ $t("account.profile_picture_description") }}
+                  {{ $t("pages.account.profile_picture_description") }}
                 </FieldDescription>
 
                 <Field orientation="horizontal" class="mt-2">
                   <Button type="submit" @click.prevent="uploadProfilePicture()">
-                    {{ $t("account.upload_button") }}
+                    {{ $t("pages.account.upload_button") }}
                   </Button>
                   <Button
                     variant="outline"
                     type="button"
                     @click.prevent="deleteProfilePicture()"
                   >
-                    {{ $t("account.clear_button") }}
+                    {{ $t("pages.account.clear_button") }}
                   </Button>
                 </Field>
               </div>
             </div>
             <Field>
               <FieldLabel for="display-name">
-                {{ $t("account.display_name") }}
+                {{ $t("pages.account.display_name") }}
               </FieldLabel>
               <Input
                 id="display-name"
@@ -190,7 +190,7 @@ onMounted(async () => {
             </Field>
             <Field>
               <FieldLabel for="email-address">
-                {{ $t("account.email_address") }}
+                {{ $t("pages.account.email_address") }}
               </FieldLabel>
               <Input
                 id="email-address"
@@ -200,10 +200,10 @@ onMounted(async () => {
             </Field>
             <Field>
               <FieldLabel for="user-id">
-                {{ $t("account.user_id") }}
+                {{ $t("pages.account.user_id") }}
               </FieldLabel>
               <FieldDescription>
-                {{ $t("account.user_id_description") }}
+                {{ $t("pages.account.user_id_description") }}
               </FieldDescription>
               <Input
                 id="user-id"
@@ -216,7 +216,7 @@ onMounted(async () => {
 
           <Field orientation="horizontal">
             <Button type="submit" @click="saveChanges()">
-              {{ $t("account.save_button") }}
+              {{ $t("pages.account.save_button") }}
             </Button>
             <Button
               variant="outline"
@@ -226,21 +226,21 @@ onMounted(async () => {
                 email = userdata.email;
               "
             >
-              {{ $t("account.discard_button") }}
+              {{ $t("pages.account.discard_button") }}
             </Button>
           </Field>
         </FieldSet>
         <FieldSeparator />
         <FieldSet>
           <FieldLegend>{{
-            $t("account.password_and_authentication")
+            $t("pages.account.password_and_authentication")
           }}</FieldLegend>
           <FieldDescription>
-            {{ $t("account.password_and_authentication_description") }}
+            {{ $t("pages.account.password_and_authentication_description") }}
           </FieldDescription>
           <FieldGroup>
             <Field>
-              <Button> {{ $t("account.change_password") }} </Button>
+              <Button> {{ $t("pages.account.change_password") }} </Button>
             </Field>
           </FieldGroup>
         </FieldSet>

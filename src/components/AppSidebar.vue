@@ -44,22 +44,22 @@ const { t } = useI18n();
 
 const items = [
   {
-    title: t("sidebar.dashboard"),
+    title: t("components.sidebar.dashboard"),
     url: "/dashboard",
     icon: IconLayoutDashboard,
   },
   {
-    title: t("sidebar.items"),
+    title: t("components.sidebar.items"),
     url: "/items",
     icon: IconBoxSeam,
   },
   {
-    title: t("sidebar.search"),
+    title: t("components.sidebar.search"),
     url: "/search",
     icon: IconSearch,
   },
   {
-    title: t("sidebar.tags"),
+    title: t("components.sidebar.tags"),
     url: "/tags",
     icon: IconTags,
   },
@@ -99,7 +99,7 @@ onMounted(async () => {
       <a href="#" class="flex flex-row">
         <img
           src="@/assets/icon.png"
-          :alt="$t('sidebar.logo_alt')"
+          :alt="$t('components.sidebar.logo_alt')"
           class="mr-2 h-7 w-7 rounded-sm"
         />
         <span class="text-base font-semibold">things.pnxl.dev</span>
@@ -115,7 +115,7 @@ onMounted(async () => {
                 class="bg-accent text-accent-foreground hover:bg-accent/90 hover:text-accent-foreground active:bg-accent/90 active:text-accent-foreground min-w-8 transition-colors duration-200 ease-linear"
               >
                 <IconCirclePlusFilled />
-                <span>{{ $t("sidebar.add_new_item") }}</span>
+                <span>{{ $t("components.sidebar.add_new_item") }}</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
@@ -151,7 +151,7 @@ onMounted(async () => {
                   : ''
               "
               ><IconLogin />
-              <span>{{ $t("sidebar.login") }}</span>
+              <span>{{ $t("components.sidebar.login") }}</span>
             </SidebarMenuButton>
           </router-link>
 
@@ -164,14 +164,14 @@ onMounted(async () => {
                 <Avatar class="h-8 w-8 rounded-lg">
                   <AvatarImage
                     :src="profilePictureUrl"
-                    :alt="$t('sidebar.profile_picture_alt')"
+                    :alt="$t('components.sidebar.profile_picture_alt')"
                   />
                   <AvatarFallback class="rounded-lg"> 👤 </AvatarFallback>
                 </Avatar>
                 <div class="grid flex-1 text-left text-sm leading-tight">
                   <span class="truncate font-medium">{{
                     userdata.user_metadata.display_name ||
-                    $t("sidebar.unknown_user")
+                    $t("components.sidebar.unknown_user")
                   }}</span>
                   <span class="text-muted-foreground truncate text-xs">
                     {{ userdata.email }}
@@ -193,14 +193,14 @@ onMounted(async () => {
                   <Avatar class="h-8 w-8 rounded-lg">
                     <AvatarImage
                       :src="profilePictureUrl"
-                      :alt="$t('sidebar.profile_picture_alt')"
+                      :alt="$t('components.sidebar.profile_picture_alt')"
                     />
                     <AvatarFallback class="rounded-lg"> 👤 </AvatarFallback>
                   </Avatar>
                   <div class="grid flex-1 text-left text-sm leading-tight">
                     <span class="truncate font-medium">{{
                       userdata.user_metadata.display_name ||
-                      $t("sidebar.unknown_user")
+                      $t("components.sidebar.unknown_user")
                     }}</span>
                     <span class="text-muted-foreground truncate text-xs">
                       {{ userdata.email }}
@@ -212,17 +212,17 @@ onMounted(async () => {
               <DropdownMenuGroup>
                 <DropdownMenuItem @click="$router.push('/account')">
                   <IconUserCircle />
-                  {{ $t("sidebar.account") }}
+                  {{ $t("components.sidebar.account") }}
                 </DropdownMenuItem>
                 <DropdownMenuItem @click="$router.push('/settings')">
                   <IconSettings />
-                  {{ $t("sidebar.settings") }}
+                  {{ $t("components.sidebar.settings") }}
                 </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuItem variant="destructive" @click="logout()">
                 <IconLogout />
-                {{ $t("sidebar.logout") }}
+                {{ $t("components.sidebar.logout") }}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

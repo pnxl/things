@@ -72,15 +72,15 @@ async function saveChanges() {
 </script>
 
 <template>
-  <SiteHeader :title="$t('settings.title')" />
+  <SiteHeader :title="$t('pages.settings.title')" />
 
   <div class="w-full max-w-md gap-4 p-4 lg:gap-6 lg:p-6">
     <form>
       <FieldGroup>
         <FieldSet>
-          <FieldLegend>{{ $t("settings.general") }}</FieldLegend>
+          <FieldLegend>{{ $t("pages.settings.general") }}</FieldLegend>
           <FieldDescription>
-            {{ $t("settings.general_description") }}
+            {{ $t("pages.settings.general_description") }}
           </FieldDescription>
 
           <div
@@ -108,34 +108,34 @@ async function saveChanges() {
           <FieldGroup
             ><Field>
               <FieldLabel for="appearance">
-                {{ $t("settings.appearance") }}
+                {{ $t("pages.settings.appearance") }}
               </FieldLabel>
               <Select v-model="appearance" :default-value="appearance">
                 <SelectTrigger id="appearance">
                   <SelectValue
-                    placeholder="{{ $t('settings.appearance_system') }}"
+                    placeholder="{{ $t('pages.settings.appearance_system') }}"
                   />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="light">
-                    {{ $t("settings.appearance_light") }}
+                    {{ $t("pages.settings.appearance_light") }}
                   </SelectItem>
                   <SelectItem value="dark">
-                    {{ $t("settings.appearance_dark") }}
+                    {{ $t("pages.settings.appearance_dark") }}
                   </SelectItem>
                   <SelectItem value="system">
-                    {{ $t("settings.appearance_system") }}
+                    {{ $t("pages.settings.appearance_system") }}
                   </SelectItem>
                 </SelectContent>
               </Select> </Field
             ><Field>
               <FieldLabel for="appearance">
-                {{ $t("settings.language") }}
+                {{ $t("pages.settings.language") }}
               </FieldLabel>
               <Select v-model="language" :default-value="language">
                 <SelectTrigger id="language">
                   <SelectValue
-                    :placeholder="$t('settings.language_placeholder')"
+                    :placeholder="$t('pages.settings.language_placeholder')"
                   />
                 </SelectTrigger>
                 <SelectContent>
@@ -148,7 +148,7 @@ async function saveChanges() {
 
           <Field orientation="horizontal">
             <Button type="submit" @click="saveChanges()">
-              {{ $t("settings.save_button") }}
+              {{ $t("pages.settings.save_button") }}
             </Button>
             <Button
               variant="outline"
@@ -158,7 +158,7 @@ async function saveChanges() {
                   userdata.user_metadata.settings?.appearance || 'system'
               "
             >
-              {{ $t("settings.discard_button") }}
+              {{ $t("pages.settings.discard_button") }}
             </Button>
           </Field>
         </FieldSet>

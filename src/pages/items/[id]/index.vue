@@ -74,8 +74,8 @@ async function stopRemarksSync() {
 
 const item = ref({
   id: "",
-  name: t("item.name_placeholder"),
-  category: t("item.unknown_category"),
+  name: t("pages.items.viewer.name_placeholder"),
+  category: t("pages.items.viewer.unknown_category"),
   price: 0,
   weight: 0,
   deployed: null,
@@ -184,7 +184,7 @@ onMounted(async () => {
       class="flex flex-row gap-1 cursor-pointer -ml-3 hover:bg-transparent! hover:text-primary/80 hover:underline duration-200 transition-colors"
     >
       <IconArrowLeft class="size-4 my-auto" />
-      {{ t("item.go_back") }}
+      {{ t("pages.items.viewer.go_back") }}
     </Button>
     <div class="flex flex-row gap-1">
       <Button
@@ -193,7 +193,7 @@ onMounted(async () => {
         class="flex flex-row gap-1 cursor-pointer -mr-3 hover:bg-transparent! hover:text-primary/80 hover:underline duration-200 transition-colors"
       >
         <IconPencil class="size-4 my-auto" />
-        {{ t("item.edit_item") }}
+        {{ t("pages.items.viewer.edit_item") }}
       </Button>
 
       <Dialog>
@@ -203,20 +203,22 @@ onMounted(async () => {
             class="flex text-destructive flex-row gap-1 cursor-pointer -mr-3 hover:bg-transparent! hover:text-destructive/80 hover:underline duration-200 transition-colors"
           >
             <IconTrash class="size-4 my-auto" />
-            {{ t("item.delete_item") }}
+            {{ t("pages.items.viewer.delete_item") }}
           </Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{{ t("item.delete_confirmation") }}</DialogTitle>
+            <DialogTitle>{{
+              t("pages.items.viewer.delete_confirmation")
+            }}</DialogTitle>
             <DialogDescription>
-              {{ t("item.delete_warning") }}
+              {{ t("pages.items.viewer.delete_warning") }}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter class="sm:justify-end flex sm:flex-row flex-col gap-2">
             <DialogClose as-child>
               <Button type="button" variant="secondary" class="cursor-pointer">
-                {{ t("item.delete_cancel") }}
+                {{ t("pages.items.viewer.delete_cancel") }}
               </Button>
             </DialogClose>
             <DialogClose as-child>
@@ -226,7 +228,7 @@ onMounted(async () => {
                 class="cursor-pointer"
                 @click="deleteItem()"
               >
-                {{ t("item.delete_confirm") }}
+                {{ t("pages.items.viewer.delete_confirm") }}
               </Button>
             </DialogClose>
           </DialogFooter>
@@ -259,8 +261,8 @@ onMounted(async () => {
             {{
               item.category
                 ? categories.find((c) => c.id === item.category)?.name ||
-                  $t("item.unknown_category")
-                : $t("item.unknown_category")
+                  $t("pages.items.viewer.unknown_category")
+                : $t("pages.items.viewer.unknown_category")
             }}
           </h1>
           <div
@@ -280,25 +282,30 @@ onMounted(async () => {
           class="border border-muted-foreground/50 rounded-md px-2 py-1"
         >
           <IconTag class="size-4 inline-block mr-1" />
-          {{ tags.find((t) => t.id === tag)?.name || $t("item.unknown_tag") }}
+          {{
+            tags.find((t) => t.id === tag)?.name ||
+            $t("pages.items.viewer.unknown_tag")
+          }}
         </div>
       </div>
 
       <div class="grid grid-cols-2 gap-4 lg:gap-6">
         <Card class="@container/card">
           <CardHeader>
-            <CardDescription>{{ $t("item.mass") }}</CardDescription>
+            <CardDescription>{{
+              $t("pages.items.viewer.mass")
+            }}</CardDescription>
             <CardTitle
               class="text-xl font-semibold tabular-nums @[250px]/card:text-2xl"
             >
               <span v-if="supabaseLoaded"
                 >{{
-                  item.weight.toLocaleString($t("global.locale"), {
+                  item.weight.toLocaleString($t("language.locale"), {
                     minimumFractionDigits: 1,
                     maximumFractionDigits: 1,
                   })
                 }}
-                {{ $t("global.mass") }}</span
+                {{ $t("language.mass") }}</span
               >
               <div
                 v-else
@@ -310,14 +317,16 @@ onMounted(async () => {
 
         <Card class="@container/card">
           <CardHeader>
-            <CardDescription>{{ $t("item.price") }}</CardDescription>
+            <CardDescription>{{
+              $t("pages.items.viewer.price")
+            }}</CardDescription>
             <CardTitle
               class="text-xl font-semibold tabular-nums @[250px]/card:text-xl"
             >
               <span v-if="supabaseLoaded"
-                >{{ $t("global.currency") }}
+                >{{ $t("language.currency") }}
                 {{
-                  item.price.toLocaleString($t("global.locale"), {
+                  item.price.toLocaleString($t("language.locale"), {
                     maximumFractionDigits: 2,
                   })
                 }}</span
@@ -335,12 +344,14 @@ onMounted(async () => {
         <Card class="@container/card" v-if="item.deployed === null">
           <CardHeader>
             <CardDescription>{{
-              $t("item.deployment_status")
+              $t("pages.items.viewer.deployment_status")
             }}</CardDescription>
             <CardTitle
               class="text-lg font-semibold tabular-nums @[250px]/card:text-xl"
             >
-              <span v-if="supabaseLoaded">{{ $t("item.not_deployed") }}</span>
+              <span v-if="supabaseLoaded">{{
+                $t("pages.items.viewer.not_deployed")
+              }}</span>
               <div
                 v-else
                 class="bg-primary/25 animate-pulse h-8 w-64 rounded-md"
@@ -353,14 +364,14 @@ onMounted(async () => {
           <Card class="@container/card" v-if="item.deployed !== null">
             <CardHeader class="flex flex-row justify-between">
               <CardDescription class="my-auto">{{
-                $t("item.deployed_on")
+                $t("pages.items.viewer.deployed_on")
               }}</CardDescription>
               <CardTitle
                 class="text-lg font-semibold tabular-nums @[250px]/card:text-xl"
               >
                 <span v-if="supabaseLoaded">{{
                   new Date(item.deployed).toLocaleDateString(
-                    $t("global.locale"),
+                    $t("language.locale"),
                     {
                       year: "numeric",
                       month: "numeric",
@@ -378,7 +389,7 @@ onMounted(async () => {
           <Card class="@container/card" v-if="item.deployed_at !== null">
             <CardHeader class="flex flex-row justify-between">
               <CardDescription class="my-auto">{{
-                $t("item.deployed_at")
+                $t("pages.items.viewer.deployed_at")
               }}</CardDescription>
               <CardTitle
                 class="text-lg font-semibold tabular-nums @[250px]/card:text-xl"
@@ -394,7 +405,7 @@ onMounted(async () => {
           <Card class="@container/card" v-if="item.person_responsible !== null">
             <CardHeader class="flex flex-row justify-between">
               <CardDescription class="my-auto">{{
-                $t("item.person_responsible")
+                $t("pages.items.viewer.person_responsible")
               }}</CardDescription>
               <CardTitle
                 class="text-lg font-semibold tabular-nums @[250px]/card:text-xl"
@@ -411,10 +422,12 @@ onMounted(async () => {
       </div>
 
       <Field>
-        <FieldLabel for="remarks">{{ $t("item.remarks") }}</FieldLabel>
+        <FieldLabel for="remarks">{{
+          $t("pages.items.viewer.remarks")
+        }}</FieldLabel>
         <Textarea
           id="remarks"
-          :placeholder="$t('item.remarks_placeholder')"
+          :placeholder="$t('pages.items.editor.remarks_placeholder')"
           :default-value="remarksField"
           v-model="remarksField"
           @focus="startRemarksSync()"
@@ -432,11 +445,13 @@ onMounted(async () => {
           <span class="font-medium text-right">{{ customField.value }}</span>
         </div>
         <div class="w-full border-b flex flex-row justify-between text-sm">
-          <span class="opacity-75">{{ $t("item.created_at") }}</span>
+          <span class="opacity-75">{{
+            $t("pages.items.viewer.created_at")
+          }}</span>
           <span class="font-medium text-right">{{
             item.created_at
               ? new Date(item.created_at).toLocaleDateString(
-                  $t("global.locale"),
+                  $t("language.locale"),
                   {
                     year: "numeric",
                     month: "numeric",
@@ -447,7 +462,9 @@ onMounted(async () => {
           }}</span>
         </div>
         <div class="w-full border-b flex flex-row justify-between text-sm">
-          <span class="opacity-75">{{ $t("item.unique_id") }}</span>
+          <span class="opacity-75">{{
+            $t("pages.items.viewer.unique_id")
+          }}</span>
           <span class="font-medium text-right">{{ item.id }}</span>
         </div>
       </div>
@@ -470,11 +487,13 @@ onMounted(async () => {
           <span class="font-medium text-right">{{ customField.value }}</span>
         </div>
         <div class="w-full border-b flex flex-row justify-between text-sm">
-          <span class="opacity-75">{{ $t("item.created_at") }}</span>
+          <span class="opacity-75">{{
+            $t("pages.items.viewer.created_at")
+          }}</span>
           <span class="font-medium text-right">{{
             item.created_at
               ? new Date(item.created_at).toLocaleDateString(
-                  $t("global.locale"),
+                  $t("language.locale"),
                   {
                     year: "numeric",
                     month: "numeric",
@@ -485,7 +504,9 @@ onMounted(async () => {
           }}</span>
         </div>
         <div class="w-full border-b flex flex-row justify-between text-sm">
-          <span class="opacity-75">{{ $t("item.unique_id") }}</span>
+          <span class="opacity-75">{{
+            $t("pages.items.viewer.unique_id")
+          }}</span>
           <span class="font-medium text-right">{{ item.id }}</span>
         </div>
       </div>

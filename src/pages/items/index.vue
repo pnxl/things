@@ -111,7 +111,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <SiteHeader :title="$t('items.title')" />
+  <SiteHeader :title="$t('pages.items.editors.title')" />
 
   <div
     class="flex flex-row justify-between gap-2 text-center text-destructive bg-destructive/10 rounded-md m-4 md:m-6 p-4 border border-destructive"
@@ -127,7 +127,7 @@ onMounted(async () => {
       class="w-full md:w-1/3 2xl:w-1/4 md:h-full p-4 gap-4 md:gap-6 lg:p-6 md:flex flex-col"
     >
       <h1 class="text-lg font-medium pb-2 md:hidden">
-        {{ $t("items.categories") }}
+        {{ $t("pages.items.categories") }}
       </h1>
       <div class="flex flex-col gap-1">
         <router-link
@@ -140,7 +140,7 @@ onMounted(async () => {
           "
         >
           <IconBlocks class="size-4 my-auto" />
-          <span class="text-sm">{{ $t("items.all_items") }}</span>
+          <span class="text-sm">{{ $t("pages.items.all_items") }}</span>
         </router-link>
         <router-link
           v-for="category in categories"
@@ -166,11 +166,11 @@ onMounted(async () => {
         <h1 class="text-lg font-medium">
           {{
             $route.query.f
-              ? $t("items.items_in_category", {
+              ? $t("pages.items.items_in_category", {
                   category: categories.find((c) => c.id === $route.query.f)
                     ?.name,
                 })
-              : $t("items.all_items")
+              : $t("pages.items.all_items")
           }}
         </h1>
         <div class="flex flex-row gap-0">
@@ -267,14 +267,14 @@ onMounted(async () => {
             </CardTitle>
             <CardDescription
               >{{
-                item.weight.toLocaleString($t("global.locale"), {
+                item.weight.toLocaleString($t("language.locale"), {
                   minimumFractionDigits: 1,
                   maximumFractionDigits: 1,
                 })
               }}
-              {{ $t("global.mass") }} &bull; {{ $t("global.currency") }}
+              {{ $t("language.mass") }} &bull; {{ $t("language.currency") }}
               {{
-                item.price.toLocaleString($t("global.locale"))
+                item.price.toLocaleString($t("language.locale"))
               }}</CardDescription
             >
             <div class="opacity-50">
@@ -284,7 +284,8 @@ onMounted(async () => {
                 class="text-sm border rounded-md px-1.5 border-muted-foreground inline-block mr-1 last:mr-0"
               >
                 {{
-                  tags.find((t) => t.id === tag)?.name || $t("item.unknown_tag")
+                  tags.find((t) => t.id === tag)?.name ||
+                  $t("pages.items.viewer.unknown_tag")
                 }}
               </div>
             </div>
@@ -294,7 +295,7 @@ onMounted(async () => {
           >
             <img
               :src="item.image_url"
-              :alt="$t('dashboard.item_image_alt')"
+              :alt="$t('pages.dashboard.item_image_alt')"
               :class="
                 (viewMode === 'grid' ? 'aspect-3/2' : 'aspect-square') +
                 ' rounded-lg border shadow-sm object-cover object-center'

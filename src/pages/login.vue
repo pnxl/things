@@ -62,7 +62,7 @@ if (cookies.get("sb-access-token")) {
 </script>
 
 <template>
-  <SiteHeader :title="$t('login.title')" />
+  <SiteHeader :title="$t('pages.login.title')" />
   <div
     class="bg-background flex min-h-[92svh] md:min-h-[80svh] flex-col items-center justify-center gap-6 p-6 md:p-10"
   >
@@ -73,9 +73,11 @@ if (cookies.get("sb-access-token")) {
             <div
               class="flex flex-col items-center gap-2 text-center transition-all ease-in-out"
             >
-              <h1 class="text-xl font-bold">{{ $t("login.form_title") }}</h1>
+              <h1 class="text-xl font-bold">
+                {{ $t("pages.login.form_title") }}
+              </h1>
               <FieldDescription>
-                {{ $t("login.form_description") }}
+                {{ $t("pages.login.form_description") }}
               </FieldDescription>
             </div>
             <div
@@ -93,7 +95,7 @@ if (cookies.get("sb-access-token")) {
             </div>
             <Field class="transition-all ease-in-out">
               <FieldLabel for="email">
-                {{ $t("login.email_label") }}
+                {{ $t("pages.login.email_label") }}
               </FieldLabel>
               <Input
                 id="email"
@@ -106,13 +108,13 @@ if (cookies.get("sb-access-token")) {
             <Field>
               <div class="flex items-center">
                 <FieldLabel for="password">
-                  {{ $t("login.password_label") }}
+                  {{ $t("pages.login.password_label") }}
                 </FieldLabel>
                 <a
                   href="#"
                   class="ml-auto inline-block text-sm underline-offset-4 hover:underline opacity-50 hover:opacity-70 transition-all duration-200"
                 >
-                  {{ $t("login.forgot_password") }}
+                  {{ $t("pages.login.forgot_password") }}
                 </a>
               </div>
               <Input
@@ -134,7 +136,7 @@ if (cookies.get("sb-access-token")) {
                 "
               >
                 <IconLoader2 v-if="loggingIn" class="size-5 animate-spin" />
-                <span v-else>{{ $t("login.login_button") }}</span>
+                <span v-else>{{ $t("pages.login.login_button") }}</span>
               </Button>
             </Field>
           </FieldGroup>

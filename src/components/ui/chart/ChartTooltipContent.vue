@@ -120,7 +120,7 @@ const tooltipLabel = computed(() => {
               v-if="value"
               class="text-foreground font-mono font-medium tabular-nums"
             >
-              {{ value.toLocaleString($t("global.locale")) }}
+              {{ value.toLocaleString($t("language.locale")) }}
             </span>
           </div>
         </div>
