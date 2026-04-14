@@ -48,7 +48,6 @@ function startRemarksSync() {
 
   remarksInterval.value = setInterval(async () => {
     if (remarksField.value !== item.value.remarks) {
-      console.log("test", remarksField.value);
       item.value.remarks = remarksField.value;
 
       await supabase
@@ -63,7 +62,6 @@ async function stopRemarksSync() {
   if (remarksInterval.value) {
     clearInterval(remarksInterval.value);
     remarksInterval.value = null;
-    console.log("stop");
 
     await supabase
       .from("items")
