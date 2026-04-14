@@ -107,6 +107,7 @@ onMounted(async () => {
           <SidebarMenu>
             <SidebarMenuItem class="flex items-center gap-2">
               <SidebarMenuButton
+                @click="$router.push('/items/create')"
                 tooltip="Quick Create"
                 class="bg-accent text-accent-foreground hover:bg-accent/90 hover:text-accent-foreground active:bg-accent/90 active:text-accent-foreground min-w-8 transition-colors duration-200 ease-linear"
               >
