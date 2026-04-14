@@ -352,6 +352,7 @@ onMounted(async () => {
                   :value="category.id"
                   v-for="category in categories"
                   :key="category.id"
+                  class="focus:bg-input focus:text-accent-foreground"
                 >
                   {{ category.name }}
                 </SelectItem>
@@ -374,7 +375,12 @@ onMounted(async () => {
                 />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem :value="tag.id" v-for="tag in tags" :key="tag.id">
+                <SelectItem
+                  :value="tag.id"
+                  v-for="tag in tags"
+                  :key="tag.id"
+                  class="focus:bg-input focus:text-accent-foreground"
+                >
                   {{ tag.name }}
                 </SelectItem>
               </SelectContent>
