@@ -87,6 +87,7 @@ const item = ref({
   created_at: "" as string | null,
 });
 const itemImage = ref("");
+const itemImageExists = ref(false);
 const categories = ref<any[]>([]);
 const tags = ref<any[]>([]);
 
@@ -121,8 +122,16 @@ onMounted(async () => {
 
     const { data } = await supabase.storage
       .from("items")
-      .getPublicUrl(String(item.id));
+      .getPublicUrl(String(item.value.id));
     itemImage.value = data?.publicUrl;
+
+    const doesItemExist = await supabase.storage
+      .from("items")
+      .exists(String(item.value.id));
+
+    if (doesItemExist.data === true) {
+      itemImageExists.value = true;
+    }
 
     supabaseLoaded.value = true;
 
@@ -229,7 +238,7 @@ onMounted(async () => {
   <div class="p-4 lg:p-6 grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
     <section class="flex flex-col gap-4 lg:gap-6">
       <img
-        v-if="supabaseLoaded && !itemImage.endsWith('undefined')"
+        v-if="supabaseLoaded && itemImageExists"
         :src="itemImage"
         alt="Item Image"
         class="w-full object-cover object-center aspect-3/2 rounded-md shadow-sm md:hidden"
@@ -445,7 +454,7 @@ onMounted(async () => {
     </section>
     <section class="flex-col gap-4 lg:gap-6 hidden md:flex">
       <img
-        v-if="supabaseLoaded && !itemImage.endsWith('undefined')"
+        v-if="supabaseLoaded && itemImageExists"
         :src="itemImage"
         alt="Item Image"
         class="w-full object-cover object-center aspect-3/2 rounded-md shadow-sm"
