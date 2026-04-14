@@ -212,6 +212,11 @@ const i18n = createI18n({
         remarks_placeholder: "Any additional notes can be added here!",
         created_at: "Created At",
         unique_id: "Unique Identifier",
+        delete_confirmation: "Are you absolutely sure?",
+        delete_warning:
+          "This action cannot be undone. This will permanently delete the item and remove it from your inventory.",
+        delete_cancel: "Nevermind!",
+        delete_confirm: "I'm sure, delete it!",
         editor: {
           save_item: "Save Item",
           discard_changes: "Discard Changes",

@@ -192,16 +192,15 @@ onMounted(async () => {
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Are you absolutely sure?</DialogTitle>
+            <DialogTitle>{{ t("item.delete_confirmation") }}</DialogTitle>
             <DialogDescription>
-              This action cannot be undone. This will permanently delete the
-              item and remove it from your inventory.
+              {{ t("item.delete_warning") }}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter class="sm:justify-end flex sm:flex-row flex-col gap-2">
             <DialogClose as-child>
               <Button type="button" variant="secondary" class="cursor-pointer">
-                Nevermind!
+                {{ t("item.delete_cancel") }}
               </Button>
             </DialogClose>
             <DialogClose as-child>
@@ -211,7 +210,7 @@ onMounted(async () => {
                 class="cursor-pointer"
                 @click="deleteItem()"
               >
-                I'm sure, delete it!
+                {{ t("item.delete_confirm") }}
               </Button>
             </DialogClose>
           </DialogFooter>
