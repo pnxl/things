@@ -86,6 +86,7 @@ const item = ref({
   custom: [] as any[],
   created_at: "" as string | null,
 });
+const itemImage = ref("");
 const categories = ref<any[]>([]);
 const tags = ref<any[]>([]);
 
@@ -117,6 +118,12 @@ onMounted(async () => {
     }
 
     item.value = itemData.data[0];
+
+    const { data } = await supabase.storage
+      .from("items")
+      .getPublicUrl(String(item.id));
+    itemImage.value = data?.publicUrl;
+
     supabaseLoaded.value = true;
 
     remarksField.value = item.value.remarks || "";
@@ -222,8 +229,8 @@ onMounted(async () => {
   <div class="p-4 lg:p-6 grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
     <section class="flex flex-col gap-4 lg:gap-6">
       <img
-        v-if="supabaseLoaded"
-        src="https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png"
+        v-if="supabaseLoaded && !itemImage.endsWith('undefined')"
+        :src="itemImage"
         alt="Item Image"
         class="w-full object-cover object-center aspect-3/2 rounded-md shadow-sm md:hidden"
       />
@@ -438,8 +445,8 @@ onMounted(async () => {
     </section>
     <section class="flex-col gap-4 lg:gap-6 hidden md:flex">
       <img
-        v-if="supabaseLoaded"
-        src="https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png"
+        v-if="supabaseLoaded && !itemImage.endsWith('undefined')"
+        :src="itemImage"
         alt="Item Image"
         class="w-full object-cover object-center aspect-3/2 rounded-md shadow-sm"
       />
