@@ -69,6 +69,13 @@ declare module 'vue-router/auto-routes' {
       { id: ParamValue<false> },
       | never
     >,
+    '/items/[id]/edit': RouteRecordInfo<
+      '/items/[id]/edit',
+      '/items/:id/edit',
+      { id: ParamValue<true> },
+      { id: ParamValue<false> },
+      | never
+    >,
     '/login': RouteRecordInfo<
       '/login',
       '/login',
@@ -129,6 +136,12 @@ declare module 'vue-router/auto-routes' {
     'src/pages/items/[id]/index.vue': {
       routes:
         | '/items/[id]/'
+      views:
+        | never
+    }
+    'src/pages/items/[id]/edit.vue': {
+      routes:
+        | '/items/[id]/edit'
       views:
         | never
     }
