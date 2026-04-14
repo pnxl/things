@@ -80,8 +80,17 @@ onMounted(async () => {
 
     // fetch image URLs from supabase buckets and add them to each item in items
     for (const item of items.value) {
-      const { data } = supabase.storage.from("items").getPublicUrl(item.id);
-      item.image_url = data?.publicUrl;
+      const { data } = await supabase.storage
+        .from("items")
+        .getPublicUrl(String(item.id));
+
+      const doesItemExist = await supabase.storage
+        .from("items")
+        .exists(String(item.id));
+
+      if (doesItemExist.data === true) {
+        item.image_url = data?.publicUrl;
+      }
     }
     supabaseLoaded.value = true;
     errorMessages.value = [];
@@ -281,6 +290,7 @@ onMounted(async () => {
             </div>
           </CardHeader>
           <CardContent
+            v-if="item.image_url"
             :class="(viewMode === 'grid' ? '' : 'w-fit') + ' sm:block hidden'"
           >
             <img
