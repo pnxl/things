@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import SiteHeader from "@/components/SiteHeader.vue";
-
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -18,27 +16,25 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { IconX } from "@tabler/icons-vue";
+import SiteHeader from "@/components/SiteHeader.vue";
+import ErrorBanner from "@/components/ErrorBanner.vue";
 
 import { useCookies } from "@vueuse/integrations/useCookies";
 import { useRouter } from "vue-router";
 import { supabase } from "@/lib/supabase";
 import { ref } from "vue";
 
-const cookies = useCookies(["sb-access-token"]);
-const router = useRouter();
-
-if (!cookies.get("sb-access-token")) {
-  router.push({ path: "/login" });
+if (!useCookies(["sb-access-token"]).get("sb-access-token")) {
+  useRouter().replace({ path: "/login" });
 }
 
+const errorMessages = ref<string[]>([]);
+
 const userdata = JSON.parse(localStorage.getItem("sb-user-data") || "{}");
+const usersettings = userdata.user_metadata.settings || {};
 
-const errorUpdating = ref("");
-const successUpdating = ref("");
-
-const appearance = ref(userdata.user_metadata.settings?.appearance || "system");
-const language = ref(userdata.user_metadata.settings?.language || "id");
+const appearance = ref(usersettings.appearance || "system");
+const language = ref(usersettings.language || "id");
 
 async function saveChanges() {
   const settings = {
@@ -57,15 +53,17 @@ async function saveChanges() {
     }),
   );
 
-  const { data, error } = await supabase.auth.updateUser({
+  const { error } = await supabase.auth.updateUser({
     data: {
       settings: settings,
     },
   });
+
   if (error) {
-    errorUpdating.value = error.message;
+    console.error("Error updating user settings:", error);
+    errorMessages.value.push(error.message);
   } else {
-    successUpdating.value = "Changes saved successfully!";
+    errorMessages.value = [];
     location.reload();
   }
 }
@@ -83,28 +81,8 @@ async function saveChanges() {
             {{ $t("pages.settings.general_description") }}
           </FieldDescription>
 
-          <div
-            class="flex flex-row justify-between gap-2 text-center text-destructive bg-destructive/10 rounded-md p-4 border border-destructive"
-            v-if="errorUpdating !== ''"
-          >
-            <span class="my-auto">{{ errorUpdating }}</span>
-            <Button variant="ghost" size="icon-sm" @click="errorUpdating = ''">
-              <IconX />
-            </Button>
-          </div>
-          <div
-            class="flex flex-row justify-between gap-2 text-center text-accent bg-accent/10 rounded-md p-4 border border-accent"
-            v-if="successUpdating !== ''"
-          >
-            <span class="my-auto">{{ successUpdating }}</span>
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              @click="successUpdating = ''"
-            >
-              <IconX />
-            </Button>
-          </div>
+          <ErrorBanner :errors="errorMessages" />
+
           <FieldGroup
             ><Field>
               <FieldLabel for="appearance">

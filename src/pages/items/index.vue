@@ -1,6 +1,10 @@
 <script setup lang="ts">
-import SiteHeader from "@/components/SiteHeader.vue";
-
+import {
+  IconBlocks,
+  IconFolder,
+  IconLayoutGrid,
+  IconLayoutList,
+} from "@tabler/icons-vue";
 import {
   Card,
   CardDescription,
@@ -8,41 +12,32 @@ import {
   CardTitle,
   CardContent,
 } from "@/components/ui/card";
+import Separator from "@/components/ui/separator/Separator.vue";
+import Button from "@/components/ui/button/Button.vue";
+
+import SiteHeader from "@/components/SiteHeader.vue";
+import ErrorBanner from "@/components/ErrorBanner.vue";
 
 import { useCookies } from "@vueuse/integrations/useCookies";
 import { useRouter } from "vue-router";
-
-const cookies = useCookies(["sb-access-token"]);
-const router = useRouter();
-
-if (!cookies.get("sb-access-token")) {
-  router.replace({ path: "/login" });
-}
-
 import { supabase } from "@/lib/supabase";
 import { ref, onMounted } from "vue";
-import Separator from "@/components/ui/separator/Separator.vue";
-import {
-  IconBlocks,
-  IconFolder,
-  IconLayoutGrid,
-  IconLayoutList,
-  IconX,
-} from "@tabler/icons-vue";
-import Button from "@/components/ui/button/Button.vue";
+
+if (!useCookies(["sb-access-token"]).get("sb-access-token")) {
+  useRouter().replace({ path: "/login" });
+}
+
+const errorMessages = ref<string[]>([]);
+const supabaseLoaded = ref(false);
+
+const userdata = JSON.parse(localStorage.getItem("sb-user-data") || "{}");
+const viewMode = ref(
+  String(userdata.user_metadata.settings?.viewmode) || "grid",
+);
 
 const items = ref<any[]>([]);
 const categories = ref<any[]>([]);
 const tags = ref<any[]>([]);
-
-const supabaseLoaded = ref(false);
-const errorUpdating = ref("");
-
-const userdata = JSON.parse(localStorage.getItem("sb-user-data") || "{}");
-
-const viewMode = ref(
-  String(userdata.user_metadata.settings?.viewmode) || "grid",
-);
 
 async function setViewMode(mode: string) {
   viewMode.value = mode;
@@ -89,39 +84,33 @@ onMounted(async () => {
       item.image_url = data?.publicUrl;
     }
     supabaseLoaded.value = true;
+    errorMessages.value = [];
   } else {
     console.error("Error fetching items:", itemsData.error);
-    errorUpdating.value = itemsData.error.message;
+    errorMessages.value.push(itemsData.error.message);
   }
 
   if (!categoriesData.error) {
     categories.value = categoriesData.data;
+    errorMessages.value = [];
   } else {
     console.error("Error fetching categories:", categoriesData.error);
-    errorUpdating.value = categoriesData.error.message;
+    errorMessages.value.push(categoriesData.error.message);
   }
 
   if (!tagsData.error) {
     tags.value = tagsData.data;
+    errorMessages.value = [];
   } else {
     console.error("Error fetching tags:", tagsData.error);
-    errorUpdating.value = tagsData.error.message;
+    errorMessages.value.push(tagsData.error.message);
   }
 });
 </script>
 
 <template>
   <SiteHeader :title="$t('pages.items.editors.title')" />
-
-  <div
-    class="flex flex-row justify-between gap-2 text-center text-destructive bg-destructive/10 rounded-md m-4 md:m-6 p-4 border border-destructive"
-    v-if="errorUpdating !== ''"
-  >
-    <span class="my-auto">{{ errorUpdating }}</span>
-    <Button variant="ghost" size="icon-sm" @click="errorUpdating = ''">
-      <IconX />
-    </Button>
-  </div>
+  <ErrorBanner :errors="errorMessages" />
   <div class="flex flex-col md:flex-row h-full">
     <section
       class="w-full md:w-1/3 2xl:w-1/4 md:h-full p-4 gap-4 md:gap-6 lg:p-6 md:flex flex-col"

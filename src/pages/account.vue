@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import SiteHeader from "@/components/SiteHeader.vue";
-
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -12,28 +10,78 @@ import {
   FieldSet,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-import { IconX } from "@tabler/icons-vue";
+import SiteHeader from "@/components/SiteHeader.vue";
+import ErrorBanner from "@/components/ErrorBanner.vue";
 
 import { useCookies } from "@vueuse/integrations/useCookies";
 import { useRouter } from "vue-router";
 import { supabase } from "@/lib/supabase";
 import { ref, onMounted } from "vue";
 
-const cookies = useCookies(["sb-access-token"]);
-const router = useRouter();
-
-if (!cookies.get("sb-access-token")) {
-  router.replace({ path: "/login" });
+if (!useCookies(["sb-access-token"]).get("sb-access-token")) {
+  useRouter().replace({ path: "/login" });
 }
 
-const userdata = JSON.parse(localStorage.getItem("sb-user-data") || "{}");
+const errorMessages = ref<string[]>([]);
 
+const userdata = JSON.parse(localStorage.getItem("sb-user-data") || "{}");
 const displayname = ref(userdata.user_metadata.display_name);
 const email = ref(userdata.email);
-const errorUpdating = ref("");
-const successUpdating = ref("");
 const profilePictureUrl = ref("");
+
+async function getProfilePicture() {
+  const fetchedProfilePicture = supabase.storage
+    .from("profile_pictures")
+    .getPublicUrl(userdata.id);
+
+  profilePictureUrl.value =
+    fetchedProfilePicture.data.publicUrl + "?t=" + new Date().getTime();
+}
+
+async function uploadProfilePicture() {
+  const fileInput = document.createElement("input");
+
+  fileInput.type = "file";
+  fileInput.accept = "image/png, image/jpeg, image/webp";
+
+  fileInput.onchange = async () => {
+    const file = fileInput.files?.[0];
+    if (!file) return;
+
+    const { error } = await supabase.storage
+      .from("profile_pictures")
+      .upload(userdata.id, file, {
+        cacheControl: "3600",
+        upsert: true,
+      });
+
+    if (error) {
+      errorMessages.value.push(error.message);
+    } else {
+      errorMessages.value = [];
+      getProfilePicture();
+    }
+  };
+
+  fileInput.click();
+}
+
+async function deleteProfilePicture() {
+  const { error } = await supabase.storage
+    .from("profile_pictures")
+    .remove([userdata.id]);
+
+  if (error) {
+    errorMessages.value.push(error.message);
+  } else {
+    errorMessages.value = [];
+    profilePictureUrl.value = "";
+  }
+
+  location.reload();
+}
 
 async function saveChanges() {
   const updates = {
@@ -46,73 +94,32 @@ async function saveChanges() {
     },
   };
 
-  const { data, error } = await supabase.auth.updateUser(updates);
+  const { error } = await supabase.auth.updateUser(updates);
   if (error) {
-    errorUpdating.value = error.message;
+    errorMessages.value.push(error.message);
   } else {
-    successUpdating.value = "Changes saved successfully!";
-    console.log(data);
+    errorMessages.value = [];
+    localStorage.setItem(
+      "sb-user-data",
+      JSON.stringify({
+        ...userdata,
+        email: updates.email,
+        user_metadata: {
+          ...userdata.user_metadata,
+          display_name: updates.data.display_name,
+        },
+      }),
+    );
   }
-}
-
-async function getProfilePicture() {
-  const { data } = supabase.storage
-    .from("profile_pictures")
-    .getPublicUrl(userdata.id);
-
-  return data.publicUrl;
-}
-
-async function uploadProfilePicture() {
-  const fileInput = document.createElement("input");
-
-  fileInput.type = "file";
-  fileInput.accept = "image/png, image/jpeg, image/webp";
-  fileInput.click();
-
-  fileInput.onchange = async () => {
-    const file = fileInput.files?.[0];
-    if (!file) return;
-
-    const { data, error } = await supabase.storage
-      .from("profile_pictures")
-      .upload(userdata.id, file, {
-        cacheControl: "3600",
-        upsert: true,
-      });
-
-    if (error) {
-      errorUpdating.value = error.message;
-    } else {
-      profilePictureUrl.value = await getProfilePicture();
-      successUpdating.value = "Profile picture updated successfully!";
-    }
-  };
-}
-
-async function deleteProfilePicture() {
-  const { data, error } = await supabase.storage
-    .from("profile_pictures")
-    .remove([userdata.id]);
-
-  if (error) {
-    errorUpdating.value = error.message;
-  } else {
-    profilePictureUrl.value = "";
-    successUpdating.value = "Profile picture cleared successfully!";
-  }
-
-  location.reload();
 }
 
 onMounted(async () => {
-  profilePictureUrl.value = await getProfilePicture();
+  getProfilePicture();
 });
 </script>
 
 <template>
   <SiteHeader :title="$t('pages.account.title')" />
-
   <div class="w-full max-w-md gap-4 p-4 lg:gap-6 lg:p-6">
     <form>
       <FieldGroup>
@@ -121,29 +128,7 @@ onMounted(async () => {
           <FieldDescription>
             {{ $t("pages.account.account_settings_description") }}
           </FieldDescription>
-
-          <div
-            class="flex flex-row justify-between gap-2 text-center text-destructive bg-destructive/10 rounded-md p-4 border border-destructive"
-            v-if="errorUpdating !== ''"
-          >
-            <span class="my-auto">{{ errorUpdating }}</span>
-            <Button variant="ghost" size="icon-sm" @click="errorUpdating = ''">
-              <IconX />
-            </Button>
-          </div>
-          <div
-            class="flex flex-row justify-between gap-2 text-center text-accent bg-accent/10 rounded-md p-4 border border-accent"
-            v-if="successUpdating !== ''"
-          >
-            <span class="my-auto">{{ successUpdating }}</span>
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              @click="successUpdating = ''"
-            >
-              <IconX />
-            </Button>
-          </div>
+          <ErrorBanner :errors="errorMessages" />
           <FieldGroup>
             <div class="flex flex-row gap-4">
               <Avatar class="h-24 w-24 max-w-24 rounded-lg bg-secondary">
