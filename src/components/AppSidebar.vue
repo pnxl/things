@@ -80,16 +80,12 @@ async function logout() {
   location.reload();
 }
 
-async function getProfilePicture() {
-  const { data } = supabase.storage
+onMounted(async () => {
+  const fetchedProfilePicture = supabase.storage
     .from("profile_pictures")
     .getPublicUrl(userdata.id);
 
-  return data.publicUrl;
-}
-
-onMounted(async () => {
-  profilePictureUrl.value = await getProfilePicture();
+  profilePictureUrl.value = fetchedProfilePicture.data.publicUrl;
 });
 </script>
 
