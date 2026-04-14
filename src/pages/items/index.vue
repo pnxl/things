@@ -109,7 +109,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <SiteHeader :title="$t('pages.items.editors.title')" />
+  <SiteHeader :title="$t('pages.items.title')" />
   <ErrorBanner :errors="errorMessages" />
   <div class="flex flex-col md:flex-row h-full">
     <section
