@@ -1,18 +1,30 @@
 <script setup lang="ts">
-import { IconDeviceFloppy, IconLoader2, IconX } from "@tabler/icons-vue";
+import {
+  IconChevronDown,
+  IconDeviceFloppy,
+  IconLoader2,
+  IconX,
+} from "@tabler/icons-vue";
 import Button from "@/components/ui/button/Button.vue";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import Textarea from "@/components/ui/textarea/Textarea.vue";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Separator } from "@/components/ui/separator";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 import SiteHeader from "@/components/SiteHeader.vue";
 import ErrorBanner from "@/components/ErrorBanner.vue";
@@ -22,7 +34,9 @@ import { ref, onMounted } from "vue";
 import { useCookies } from "@vueuse/integrations/useCookies";
 import { useRoute, useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
-import Separator from "@/components/ui/separator/Separator.vue";
+
+import type { DateValue } from "@internationalized/date";
+import { getLocalTimeZone, today, parseDate } from "@internationalized/date";
 
 const route = useRoute();
 const router = useRouter();
@@ -36,15 +50,18 @@ if (!useCookies(["sb-access-token"]).get("sb-access-token")) {
 const errorMessages = ref<string[]>([]);
 const supabaseLoaded = ref(false);
 
+const datePickerPicked = ref(today(getLocalTimeZone())) as ref<DateValue>;
+const datePickerOpen = ref(false);
+
 const item = ref({
   id: "",
   name: t("pages.items.editor.name_placeholder"),
   category: t("pages.items.editor.unknown_category"),
   price: 0,
   weight: 0,
-  deployed: null,
-  deployed_at: null,
-  person_responsible: null,
+  deployed: "" as string | null,
+  deployed_at: "" as string | null,
+  person_responsible: "" as string | null,
   tags: null,
   remarks: "" as string | null,
   custom: [] as any[],
@@ -54,12 +71,12 @@ const itemImage = ref("");
 const itemImageExists = ref(false);
 const itemImageIsUploading = ref(false);
 const itemImageIsDeleting = ref(false);
+const itemIsDeployed = ref(false);
 
 const categories = ref<any[]>([]);
 const tags = ref<any[]>([]);
 
 const remarksField = ref("");
-const remarksInterval = ref<ReturnType<typeof setInterval> | null>(null);
 
 async function upsertItemImage() {
   const fileInput = document.createElement("input");
@@ -113,35 +130,6 @@ async function deleteItemImage() {
   }
 }
 
-async function startRemarksSync() {
-  if (remarksInterval.value) clearInterval(remarksInterval.value);
-
-  remarksInterval.value = setInterval(async () => {
-    if (remarksField.value !== item.value.remarks) {
-      console.log("test", remarksField.value);
-      item.value.remarks = remarksField.value;
-
-      await supabase
-        .from("items")
-        .update({ remarks: remarksField.value })
-        .eq("id", item.value.id);
-    }
-  }, 5000);
-}
-
-async function stopRemarksSync() {
-  if (remarksInterval.value) {
-    clearInterval(remarksInterval.value);
-    remarksInterval.value = null;
-    console.log("stop");
-
-    await supabase
-      .from("items")
-      .update({ remarks: remarksField.value })
-      .eq("id", item.value.id);
-  }
-}
-
 async function addBlankCustomField() {
   if (item.value.custom[item.value.custom.length - 1].key !== "") {
     item.value.custom.push({ key: "", value: "" });
@@ -156,6 +144,16 @@ async function trimBlankCustomFields() {
 
 async function saveChanges() {
   trimBlankCustomFields();
+
+  item.value.remarks = remarksField.value;
+
+  if (itemIsDeployed.value === true) {
+    item.value.deployed = new Date(datePickerPicked.value).toISOString();
+  } else if (itemIsDeployed.value === false) {
+    item.value.deployed = null;
+    item.value.deployed_at = null;
+    item.value.person_responsible = null;
+  }
 
   const { error } = await supabase
     .from("items")
@@ -201,6 +199,18 @@ onMounted(async () => {
 
     if (doesItemImageExist.data === true) {
       itemImageExists.value = true;
+    }
+
+    if (item.value.deployed !== null) {
+      itemIsDeployed.value = true;
+
+      datePickerPicked.value = parseDate(
+        new Date(item.value.deployed).toLocaleDateString("en-CA", {
+          year: "numeric",
+          month: "numeric",
+          day: "numeric",
+        }),
+      );
     }
 
     errorMessages.value = [];
@@ -420,6 +430,88 @@ onMounted(async () => {
         </Field>
       </FieldGroup>
 
+      <FieldGroup class="my-4">
+        <div class="flex items-center gap-3">
+          <Checkbox id="item_is_deployed" v-model="itemIsDeployed" />
+          <Label for="item_is_deployed">{{
+            $t("pages.items.editor.is_deployed")
+          }}</Label>
+        </div>
+
+        <div class="flex flex-col gap-3" v-if="itemIsDeployed">
+          <Label for="date-picker">
+            {{ $t("pages.items.editor.deployed_date") }}
+          </Label>
+          <div class="flex gap-2">
+            <Popover v-model:open="datePickerOpen">
+              <PopoverTrigger as-child>
+                <Button
+                  id="date-picker"
+                  variant="outline"
+                  class="justify-between font-normal"
+                >
+                  {{
+                    datePickerPicked
+                      ? datePickerPicked
+                          .toDate(getLocalTimeZone())
+                          .toLocaleDateString($t("language.locale"), {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          })
+                      : "Select date"
+                  }}
+                  <IconChevronDown />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent class="w-auto overflow-hidden p-0" align="start">
+                <Calendar
+                  :model-value="datePickerPicked"
+                  @update:model-value="
+                    (value) => {
+                      if (value) {
+                        datePickerPicked = value;
+                        datePickerOpen = false;
+                      }
+                    }
+                  "
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+        </div>
+
+        <Field v-if="itemIsDeployed">
+          <FieldLabel for="deployed_at">
+            {{ $t("pages.items.editor.deployed_at") }}
+          </FieldLabel>
+          <Input
+            id="deployed_at"
+            :placeholder="$t('pages.items.editor.deployed_at_placeholder')"
+            :disabled="supabaseLoaded ? false : true"
+            :class="supabaseLoaded ? '' : 'animate-pulse!'"
+            required
+            v-model="item.deployed_at"
+          />
+        </Field>
+
+        <Field v-if="itemIsDeployed">
+          <FieldLabel for="person_responsible">
+            {{ $t("pages.items.editor.person_responsible") }}
+          </FieldLabel>
+          <Input
+            id="person_responsible"
+            :placeholder="
+              $t('pages.items.editor.person_responsible_placeholder')
+            "
+            :disabled="supabaseLoaded ? false : true"
+            :class="supabaseLoaded ? '' : 'animate-pulse!'"
+            required
+            v-model="item.person_responsible"
+          />
+        </Field>
+      </FieldGroup>
+
       <Field>
         <FieldLabel for="remarks">{{
           $t("pages.items.editor.remarks")
@@ -431,8 +523,6 @@ onMounted(async () => {
           :placeholder="$t('pages.items.editor.remarks_placeholder')"
           :default-value="remarksField"
           v-model="remarksField"
-          @focus="startRemarksSync()"
-          @blur="stopRemarksSync()"
         />
       </Field>
 
