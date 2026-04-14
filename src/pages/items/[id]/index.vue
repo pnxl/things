@@ -172,7 +172,7 @@ onMounted(async () => {
     </Button>
     <div class="flex flex-row gap-1">
       <Button
-        @click="$router.push('/items')"
+        @click="$router.push(`/items/${item.id}/edit`)"
         variant="ghost"
         class="flex flex-row gap-1 cursor-pointer -mr-3 hover:bg-transparent! hover:text-primary/80 hover:underline duration-200 transition-colors"
       >
