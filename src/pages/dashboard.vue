@@ -374,7 +374,7 @@ onMounted(async () => {
             }}</CardDescription
           >
         </CardHeader>
-        <CardContent class="sm:block hidden">
+        <CardContent class="sm:block hidden" v-if="item.image_url">
           <img
             :src="item.image_url"
             :alt="$t('pages.dashboard.item_image_alt')"
