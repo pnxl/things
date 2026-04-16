@@ -86,6 +86,10 @@ const i18n = createI18n({
           categories: "Kategori",
           all_items: "Semua Barang",
           items_in_category: "Barang dalam {category}",
+          new_category: "Kategori Baru",
+          new_category_description:
+            "Buat kategori baru untuk mengorganisir barang Anda.",
+          new_category_name: "Nama",
           viewer: {
             go_back: "Kembali ke Barang",
             name_placeholder: "Barang Tanpa Nama",
@@ -254,6 +258,9 @@ const i18n = createI18n({
           categories: "Categories",
           all_items: "All Items",
           items_in_category: "Items in {category}",
+          new_category: "New Category",
+          new_category_description: "Create a new category to organize items.",
+          new_category_name: "Name",
           viewer: {
             go_back: "Go Back to Items",
             name_placeholder: "Unnamed Item",

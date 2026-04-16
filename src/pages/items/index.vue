@@ -2,6 +2,7 @@
 import {
   IconBlocks,
   IconFolder,
+  IconFolderPlus,
   IconLayoutGrid,
   IconLayoutList,
 } from "@tabler/icons-vue";
@@ -14,14 +15,25 @@ import {
 } from "@/components/ui/card";
 import Separator from "@/components/ui/separator/Separator.vue";
 import Button from "@/components/ui/button/Button.vue";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Field, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 
 import SiteHeader from "@/components/SiteHeader.vue";
 import ErrorBanner from "@/components/ErrorBanner.vue";
 
 import { useCookies } from "@vueuse/integrations/useCookies";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
+import { useI18n } from "vue-i18n";
 import { supabase } from "@/lib/supabase";
 import { ref, onMounted } from "vue";
+
+const route = useRoute();
+const { t } = useI18n();
 
 if (!useCookies(["sb-access-token"]).get("sb-access-token")) {
   useRouter().replace({ path: "/login" });
@@ -120,7 +132,37 @@ onMounted(async () => {
 </script>
 
 <template>
-  <SiteHeader :title="$t('pages.items.title')" />
+  <SiteHeader
+    :title="
+      route.query.f
+        ? t('pages.items.items_in_category', {
+            category: categories.find((c) => c.id === $route.query.f)?.name,
+          })
+        : t('pages.items.all_items')
+    "
+  >
+    <div class="flex flex-row gap-0">
+      <Button
+        variant="outline"
+        size="sm"
+        :class="
+          (viewMode === 'grid' ? 'bg-input!' : 'border-r-0') + ' rounded-r-none'
+        "
+        @click.prevent="setViewMode('grid')"
+      >
+        <IconLayoutGrid />
+      </Button>
+      <Button
+        variant="outline"
+        size="sm"
+        :class="
+          (viewMode === 'list' ? 'bg-input!' : 'border-l-0') + ' rounded-l-none'
+        "
+        @click.prevent="setViewMode('list')"
+      >
+        <IconLayoutList />
+      </Button></div
+  ></SiteHeader>
   <ErrorBanner :errors="errorMessages" />
   <div class="flex flex-col md:flex-row h-full">
     <section
@@ -129,32 +171,68 @@ onMounted(async () => {
       <h1 class="text-lg font-medium pb-2 md:hidden">
         {{ $t("pages.items.categories") }}
       </h1>
-      <div class="flex flex-col gap-1">
-        <router-link
-          to="/items"
-          :class="
-            (!$route.query.f
-              ? 'bg-accent text-background dark:text-primary dark:bg-accent/70 cursor-default'
-              : 'hover:bg-accent/10 dark:hover:bg-accent/70') +
-            ' flex flex-row gap-2 duration-200 transition-colors px-3 p-1.5 rounded-md'
-          "
-        >
-          <IconBlocks class="size-4 my-auto" />
-          <span class="text-sm">{{ $t("pages.items.all_items") }}</span>
-        </router-link>
-        <router-link
-          v-for="category in categories"
-          :to="`/items?f=${category.id}`"
-          :class="
-            ($route.query.f === category.id
-              ? 'bg-secondary/70 cursor-default'
-              : ' hover:bg-secondary/70') +
-            ' flex flex-row gap-2 duration-200 transition-colors px-3 p-1.5 rounded-md'
-          "
-        >
-          <IconFolder class="size-4 my-auto" />
-          <span class="text-sm">{{ category.name }}</span>
-        </router-link>
+      <div class="flex flex-col justify-between md:h-full gap-4 md:gap-6">
+        <div class="flex flex-col gap-1">
+          <router-link
+            to="/items"
+            :class="
+              (!$route.query.f
+                ? 'bg-secondary/70 cursor-default'
+                : ' hover:bg-secondary/70') +
+              ' flex flex-row gap-2 duration-200 transition-colors px-3 p-1.5 rounded-md'
+            "
+          >
+            <IconBlocks class="size-4 my-auto" />
+            <span class="text-sm">{{ $t("pages.items.all_items") }}</span>
+          </router-link>
+          <router-link
+            v-for="category in categories"
+            :to="`/items?f=${category.id}`"
+            :class="
+              ($route.query.f === category.id
+                ? 'bg-secondary/70 cursor-default'
+                : ' hover:bg-secondary/70') +
+              ' flex flex-row gap-2 duration-200 transition-colors px-3 p-1.5 rounded-md'
+            "
+          >
+            <IconFolder class="size-4 my-auto" />
+            <span class="text-sm">{{ category.name }}</span>
+          </router-link>
+        </div>
+        <Popover>
+          <PopoverTrigger>
+            <Button class="w-full">
+              <IconFolderPlus class="size-4 my-auto" />
+              <span class="text-sm">{{ $t("pages.items.new_category") }}</span>
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent class="w-80 my-2">
+            <div class="grid gap-4">
+              <div class="space-y-2">
+                <h4 class="font-medium leading-none">
+                  {{ $t("pages.items.new_category") }}
+                </h4>
+                <p class="text-sm text-muted-foreground">
+                  {{ $t("pages.items.new_category_description") }}
+                </p>
+              </div>
+
+              <Field>
+                <div class="flex items-center">
+                  <FieldLabel for="password">
+                    {{ $t("pages.items.new_category_name") }}
+                  </FieldLabel>
+                </div>
+                <Input
+                  id="password"
+                  type="password"
+                  required
+                  v-model="password"
+                />
+              </Field>
+            </div>
+          </PopoverContent>
+        </Popover>
       </div>
     </section>
     <Separator
@@ -162,42 +240,6 @@ onMounted(async () => {
       class="data-[orientation=vertical]:h-full md:block hidden"
     />
     <section class="flex flex-col gap-4 p-4 lg:gap-6 lg:p-6 w-full">
-      <div class="flex flex-row justify-between">
-        <h1 class="text-lg font-medium">
-          {{
-            $route.query.f
-              ? $t("pages.items.items_in_category", {
-                  category: categories.find((c) => c.id === $route.query.f)
-                    ?.name,
-                })
-              : $t("pages.items.all_items")
-          }}
-        </h1>
-        <div class="flex flex-row gap-0">
-          <Button
-            variant="outline"
-            size="sm"
-            :class="
-              (viewMode === 'grid' ? 'bg-input!' : 'border-r-0') +
-              ' rounded-r-none'
-            "
-            @click.prevent="setViewMode('grid')"
-          >
-            <IconLayoutGrid />
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            :class="
-              (viewMode === 'list' ? 'bg-input!' : 'border-l-0') +
-              ' rounded-l-none'
-            "
-            @click.prevent="setViewMode('list')"
-          >
-            <IconLayoutList />
-          </Button>
-        </div>
-      </div>
       <div
         v-if="!supabaseLoaded"
         :class="
