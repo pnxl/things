@@ -15,9 +15,14 @@ defineProps({ title: String });
         orientation="vertical"
         class="mx-2 data-[orientation=vertical]:h-4"
       />
-      <h1 class="text-base font-medium">
-        {{ title }}
-      </h1>
+      <div class="flex flex-row justify-between w-full items-center">
+        <h1 class="text-base font-medium">
+          {{ title }}
+        </h1>
+        <div class="w-fit">
+          <slot />
+        </div>
+      </div>
     </div>
   </header>
 </template>
