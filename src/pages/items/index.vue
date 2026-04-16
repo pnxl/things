@@ -84,6 +84,8 @@ onMounted(async () => {
         .from("items")
         .getPublicUrl(String(item.id));
 
+      // if it doesn't exist don't add the image_url property to the item
+      // supabase is kinda weird about it because it'll still return a string
       const doesItemExist = await supabase.storage
         .from("items")
         .exists(String(item.id));

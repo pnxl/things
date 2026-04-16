@@ -119,10 +119,21 @@ onMounted(async () => {
       )
       .slice(0, 4);
 
-    // fetch image URLs from supabase buckets and add them to each item in deployedItems
+    // fetch image URLs from supabase buckets and add them to each item in items
     for (const item of deployedItems.value) {
-      const { data } = supabase.storage.from("items").getPublicUrl(item.id);
-      item.image_url = data?.publicUrl;
+      const { data } = await supabase.storage
+        .from("items")
+        .getPublicUrl(String(item.id));
+
+      // if it doesn't exist don't add the image_url property to the item
+      // supabase is kinda weird about it because it'll still return a string
+      const doesItemExist = await supabase.storage
+        .from("items")
+        .exists(String(item.id));
+
+      if (doesItemExist.data === true) {
+        item.image_url = data?.publicUrl;
+      }
     }
 
     supabaseLoaded.value = true;
