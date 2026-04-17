@@ -98,6 +98,7 @@ if (data.session !== null) {
 
 <template>
   <SidebarProvider
+    @contextmenu.prevent
     :style="{
       '--sidebar-width': 'calc(var(--spacing) * 72)',
       '--header-height': 'calc(var(--spacing) * 12)',
