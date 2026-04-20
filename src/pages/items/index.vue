@@ -51,6 +51,31 @@ const items = ref<any[]>([]);
 const categories = ref<any[]>([]);
 const tags = ref<any[]>([]);
 
+const newCategoryPopupOpen = ref(false);
+const newCategoryName = ref("");
+
+async function createCategory() {
+  if (newCategoryName.value.trim() === "") {
+    return;
+  }
+
+  const { data, error } = await supabase
+    .from("categories")
+    .insert({ name: newCategoryName.value })
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Error creating category:", error);
+    errorMessages.value.push(error.message);
+  } else {
+    categories.value.push(data);
+    newCategoryName.value = "";
+    errorMessages.value = [];
+    newCategoryPopupOpen.value = false;
+  }
+}
+
 async function setViewMode(mode: string) {
   viewMode.value = mode;
 
@@ -199,7 +224,7 @@ onMounted(async () => {
             <span class="text-sm">{{ category.name }}</span>
           </router-link>
         </div>
-        <Popover>
+        <Popover v-model:open="newCategoryPopupOpen">
           <PopoverTrigger>
             <Button class="w-full">
               <IconFolderPlus class="size-4 my-auto" />
@@ -224,11 +249,18 @@ onMounted(async () => {
                   </FieldLabel>
                 </div>
                 <Input
-                  id="password"
-                  type="password"
+                  id="new-category"
+                  type="text"
                   required
-                  v-model="password"
+                  v-model="newCategoryName"
                 />
+                <Button
+                  variant="outline"
+                  class="w-full"
+                  @click="createCategory()"
+                >
+                  {{ $t("pages.items.create_category") }}
+                </Button>
               </Field>
             </div>
           </PopoverContent>
