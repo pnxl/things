@@ -5,6 +5,9 @@ import {
   IconFolderPlus,
   IconLayoutGrid,
   IconLayoutList,
+  IconTrashX,
+  IconForklift,
+  IconPencil,
 } from "@tabler/icons-vue";
 import {
   Card,
@@ -12,7 +15,24 @@ import {
   CardHeader,
   CardTitle,
   CardContent,
+  CardFooter,
 } from "@/components/ui/card";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import Separator from "@/components/ui/separator/Separator.vue";
 import Button from "@/components/ui/button/Button.vue";
 import {
@@ -31,6 +51,7 @@ import { useRouter, useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { supabase } from "@/lib/supabase";
 import { ref, onMounted } from "vue";
+import { de } from "zod/locales";
 
 const route = useRoute();
 const { t } = useI18n();
@@ -53,6 +74,12 @@ const tags = ref<any[]>([]);
 
 const newCategoryPopupOpen = ref(false);
 const newCategoryName = ref("");
+
+const currentItemId = ref<string | null>(null);
+const currentDialogEntry = ref<string | number | undefined>("");
+const renameModalIsOpen = ref(false);
+const moveToLocationModalIsOpen = ref(false);
+const deleteConfirmationModalIsOpen = ref(false);
 
 async function createCategory() {
   if (newCategoryName.value.trim() === "") {
@@ -105,6 +132,123 @@ async function setViewMode(mode: string) {
       },
     },
   });
+}
+
+function deployItem(itemId: string) {
+  supabase
+    .from("items")
+    .update({ deployed: new Date().toISOString() })
+    .eq("id", itemId)
+    .then(({ error }) => {
+      if (error) {
+        errorMessages.value.push(error.message);
+      } else {
+        // update the items array and set the deployed property of the item to the current date
+        const itemIndex = items.value.findIndex((item) => item.id === itemId);
+        if (itemIndex !== -1) {
+          const item = items.value[itemIndex];
+          item.deployed = new Date().toISOString();
+        }
+
+        errorMessages.value = [];
+      }
+    });
+}
+
+function undeployItem(itemId: string) {
+  supabase
+    .from("items")
+    .update({ deployed: null, deployed_at: null, person_responsible: null })
+    .eq("id", itemId)
+    .then(({ error }) => {
+      if (error) {
+        errorMessages.value.push(error.message);
+      } else {
+        // update the items array and set the deployed property of the item to null
+        const itemIndex = items.value.findIndex((item) => item.id === itemId);
+        if (itemIndex !== -1) {
+          const item = items.value[itemIndex];
+          item.deployed = null;
+          item.deployed_at = null;
+          item.person_responsible = null;
+        }
+
+        errorMessages.value = [];
+      }
+    });
+}
+
+function deleteItem(itemId: string) {
+  supabase
+    .from("items")
+    .delete()
+    .eq("id", itemId)
+    .then(({ error }) => {
+      if (error) {
+        errorMessages.value.push(error.message);
+      } else {
+        // update the dashboard data and remove the item from items
+        const itemIndex = items.value.findIndex((item) => item.id === itemId);
+        if (itemIndex !== -1) {
+          items.value.splice(itemIndex, 1);
+        }
+
+        errorMessages.value = [];
+      }
+    });
+
+  deleteConfirmationModalIsOpen.value = false;
+  currentItemId.value = null;
+}
+
+function editItemName(itemId: string, newName: string) {
+  supabase
+    .from("items")
+    .update({ name: newName })
+    .eq("id", itemId)
+    .then(({ error }) => {
+      if (error) {
+        errorMessages.value.push(error.message);
+      } else {
+        // update the dashboard data and remove the item from items
+        const itemIndex = items.value.findIndex((item) => item.id === itemId);
+        if (itemIndex !== -1) {
+          const item = items.value[itemIndex];
+          item.name = newName;
+        }
+
+        errorMessages.value = [];
+      }
+    });
+
+  renameModalIsOpen.value = false;
+  currentItemId.value = null;
+  currentDialogEntry.value = "";
+}
+
+function editItemLocation(itemId: string, newLocation: string) {
+  supabase
+    .from("items")
+    .update({ deployed_at: newLocation })
+    .eq("id", itemId)
+    .then(({ error }) => {
+      if (error) {
+        errorMessages.value.push(error.message);
+      } else {
+        // update the dashboard data and remove the item from items
+        const itemIndex = items.value.findIndex((item) => item.id === itemId);
+        if (itemIndex !== -1) {
+          const item = items.value[itemIndex];
+          item.deployed_at = newLocation;
+        }
+
+        errorMessages.value = [];
+      }
+    });
+
+  moveToLocationModalIsOpen.value = false;
+  currentItemId.value = null;
+  currentDialogEntry.value = "";
 }
 
 onMounted(async () => {
@@ -189,6 +333,97 @@ onMounted(async () => {
       </Button></div
   ></SiteHeader>
   <ErrorBanner :errors="errorMessages" />
+
+  <Dialog v-model:open="renameModalIsOpen">
+    <form>
+      <DialogContent class="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>{{ $t("components.dialog.rename") }}</DialogTitle>
+          <DialogDescription>
+            {{ $t("components.dialog.rename_description") }}
+          </DialogDescription>
+        </DialogHeader>
+        <Input id="name-1" name="name" v-model="currentDialogEntry" />
+        <DialogFooter>
+          <DialogClose as-child>
+            <Button variant="outline">
+              {{ $t("components.dialog.generic_cancel") }}
+            </Button>
+          </DialogClose>
+          <Button
+            type="submit"
+            @click="
+              editItemName(String(currentItemId), String(currentDialogEntry))
+            "
+          >
+            {{ $t("components.dialog.generic_confirm") }}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </form>
+  </Dialog>
+
+  <Dialog v-model:open="moveToLocationModalIsOpen">
+    <form>
+      <DialogContent class="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>{{
+            $t("components.dialog.move_to_location")
+          }}</DialogTitle>
+          <DialogDescription>
+            {{ $t("components.dialog.move_to_location_description") }}
+          </DialogDescription>
+        </DialogHeader>
+        <Input id="name-1" name="name" v-model="currentDialogEntry" />
+        <DialogFooter>
+          <DialogClose as-child>
+            <Button variant="outline">
+              {{ $t("components.dialog.generic_cancel") }}
+            </Button>
+          </DialogClose>
+          <Button
+            type="submit"
+            @click="
+              editItemLocation(
+                String(currentItemId),
+                String(currentDialogEntry),
+              )
+            "
+          >
+            {{ $t("components.dialog.generic_confirm") }}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </form>
+  </Dialog>
+
+  <Dialog v-model:open="deleteConfirmationModalIsOpen">
+    <form>
+      <DialogContent class="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>{{ $t("components.dialog.delete") }}</DialogTitle>
+          <DialogDescription>
+            {{ $t("components.dialog.delete_description") }}
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <DialogClose as-child>
+            <Button variant="outline">
+              {{ $t("components.dialog.delete_cancel") }}
+            </Button>
+          </DialogClose>
+          <Button
+            type="submit"
+            @click="deleteItem(String(currentItemId))"
+            variant="destructive"
+          >
+            {{ $t("components.dialog.delete_confirm") }}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </form>
+  </Dialog>
+
   <div class="flex flex-col md:flex-row h-full">
     <section
       class="w-full md:w-1/3 2xl:w-1/4 md:h-full p-4 gap-4 md:gap-6 lg:p-6 md:flex flex-col"
@@ -317,68 +552,155 @@ onMounted(async () => {
             : 'flex flex-col gap-4'
         "
       >
-        <Card
+        <ContextMenu
           v-for="item in items.filter(
             (item) => !$route.query.f || item.category === $route.query.f,
           )"
           :key="item.id"
-          @click="$router.push(`/items/${item.id}`)"
-          :class="
-            (viewMode === 'grid' ? '' : 'flex flex-row') +
-            ' @container/card hover:bg-secondary transition-colors duration-200 cursor-pointer justify-between'
-          "
         >
-          <CardHeader
-            :class="
-              (viewMode === 'grid' ? '' : 'gap-1 justify-between') +
-              ' w-full flex flex-col'
-            "
-          >
-            <CardTitle
-              class="text-xl font-medium tabular-nums @[250px]/card:text-xl line-clamp-1"
-            >
-              {{ item.name }}
-            </CardTitle>
-            <CardDescription
-              >{{
-                item.weight.toLocaleString($t("language.locale"), {
-                  minimumFractionDigits: 1,
-                  maximumFractionDigits: 1,
-                })
-              }}
-              {{ $t("language.units.mass") }} &bull;
-              {{ $t("language.units.currency") }}
-              {{
-                item.price.toLocaleString($t("language.locale"))
-              }}</CardDescription
-            >
-            <div class="opacity-50">
-              <div
-                v-for="tag in item.tags"
-                :key="tag"
-                class="text-sm border rounded-md px-1.5 border-muted-foreground inline-block mr-1 last:mr-0"
-              >
-                {{
-                  tags.find((t) => t.id === tag)?.name ||
-                  $t("pages.items.viewer.unknown_tag")
-                }}
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent
-            v-if="item.image_url"
-            :class="(viewMode === 'grid' ? '' : 'w-fit') + ' sm:block hidden'"
-          >
-            <img
-              :src="item.image_url"
-              :alt="$t('pages.dashboard.item_image_alt')"
+          <ContextMenuTrigger>
+            <Card
+              @click="$router.push(`/items/${item.id}`)"
               :class="
-                (viewMode === 'grid' ? 'aspect-3/2' : 'aspect-square') +
-                ' rounded-lg border shadow-sm object-cover object-center'
+                (viewMode === 'grid' ? '' : 'flex flex-row') +
+                ' @container/card hover:bg-secondary transition-colors duration-200 cursor-pointer justify-between'
               "
-            />
-          </CardContent>
-        </Card>
+            >
+              <CardHeader
+                :class="
+                  (viewMode === 'grid' ? '' : 'gap-1 justify-between') +
+                  ' w-full flex flex-col'
+                "
+              >
+                <CardTitle
+                  class="text-xl font-medium tabular-nums @[250px]/card:text-xl line-clamp-1"
+                >
+                  {{ item.name }}
+                </CardTitle>
+                <CardDescription
+                  >{{
+                    item.weight.toLocaleString($t("language.locale"), {
+                      minimumFractionDigits: 1,
+                      maximumFractionDigits: 1,
+                    })
+                  }}
+                  {{ $t("language.units.mass") }} &bull;
+                  {{ $t("language.units.currency") }}
+                  {{
+                    item.price.toLocaleString($t("language.locale"))
+                  }}</CardDescription
+                >
+                <div class="opacity-50">
+                  <div
+                    v-for="tag in item.tags"
+                    :key="tag"
+                    class="text-sm border rounded-md px-1.5 border-muted-foreground inline-block mr-1 last:mr-0"
+                  >
+                    {{
+                      tags.find((t) => t.id === tag)?.name ||
+                      $t("pages.items.viewer.unknown_tag")
+                    }}
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent
+                v-if="item.image_url"
+                :class="
+                  (viewMode === 'grid' ? '' : 'w-fit') + ' sm:block hidden'
+                "
+              >
+                <img
+                  :src="item.image_url"
+                  :alt="$t('pages.dashboard.item_image_alt')"
+                  :class="
+                    (viewMode === 'grid' ? 'aspect-3/2' : 'aspect-square') +
+                    ' rounded-lg border shadow-sm object-cover object-center'
+                  "
+                />
+              </CardContent>
+              <CardFooter v-if="item.deployed !== null">
+                <CardDescription>{{
+                  item.deployed_at
+                    ? $t("pages.dashboard.deployed_on_with_at", {
+                        date: new Date(item.deployed).toLocaleDateString(
+                          $t("language.locale"),
+                          {
+                            year: "numeric",
+                            month: "numeric",
+                            day: "numeric",
+                          },
+                        ),
+                        location: item.deployed_at,
+                      })
+                    : $t("pages.dashboard.deployed_on", {
+                        date: new Date(item.deployed).toLocaleDateString(
+                          $t("language.locale"),
+                          {
+                            year: "numeric",
+                            month: "numeric",
+                            day: "numeric",
+                          },
+                        ),
+                      })
+                }}</CardDescription>
+              </CardFooter>
+            </Card>
+          </ContextMenuTrigger>
+          <ContextMenuContent class="md:w-56 w-48">
+            <ContextMenuItem @click="$router.push(`/items/${item.id}`)"
+              ><IconBlocks /> {{ $t("components.context_menu.item.view_item") }}
+            </ContextMenuItem>
+            <ContextMenuItem
+              @click="undeployItem(item.id)"
+              v-if="item.deployed !== null"
+              ><IconForklift />
+              {{ $t("components.context_menu.item.undeploy_item") }}
+            </ContextMenuItem>
+            <ContextMenuItem
+              @click="deployItem(item.id)"
+              v-if="item.deployed === null"
+              ><IconForklift />
+              {{ $t("components.context_menu.item.deploy_item") }}
+            </ContextMenuItem>
+            <ContextMenuItem @click="$router.push(`/items/${item.id}/edit`)"
+              ><IconPencil />
+              {{ $t("components.context_menu.item.open_in_editor") }}
+            </ContextMenuItem>
+            <ContextMenuSeparator />
+            <ContextMenuItem
+              @click="
+                renameModalIsOpen = true;
+                currentItemId = item.id;
+                currentDialogEntry = item.name;
+              "
+              inset
+            >
+              {{ $t("components.context_menu.item.rename") }}
+            </ContextMenuItem>
+            <ContextMenuItem
+              @click="
+                moveToLocationModalIsOpen = true;
+                currentItemId = item.id;
+                currentDialogEntry = item.deployed_at || '';
+              "
+              v-if="item.deployed !== null"
+              inset
+            >
+              {{ $t("components.context_menu.item.move_to_location") }}
+            </ContextMenuItem>
+            <ContextMenuSeparator />
+            <ContextMenuItem
+              @click="
+                deleteConfirmationModalIsOpen = true;
+                currentItemId = item.id;
+              "
+              variant="destructive"
+              class="text-destructive"
+            >
+              <IconTrashX /> {{ $t("components.context_menu.item.delete") }}
+            </ContextMenuItem>
+          </ContextMenuContent>
+        </ContextMenu>
       </div>
     </section>
   </div>

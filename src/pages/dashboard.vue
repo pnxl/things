@@ -1,5 +1,12 @@
 <script setup lang="ts">
-import { IconArrowUp, IconArrowDown } from "@tabler/icons-vue";
+import {
+  IconArrowUp,
+  IconArrowDown,
+  IconTrashX,
+  IconBlocks,
+  IconForklift,
+  IconPencil,
+} from "@tabler/icons-vue";
 import {
   Card,
   CardDescription,
@@ -10,6 +17,24 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 import SiteHeader from "@/components/SiteHeader.vue";
 import ErrorBanner from "@/components/ErrorBanner.vue";
@@ -28,6 +53,12 @@ if (!useCookies(["sb-access-token"]).get("sb-access-token")) {
 
 const errorMessages = ref<string[]>([]);
 const supabaseLoaded = ref(false);
+
+const currentItemId = ref<string | null>(null);
+const currentDialogEntry = ref<string | number | undefined>("");
+const renameModalIsOpen = ref(false);
+const moveToLocationModalIsOpen = ref(false);
+const deleteConfirmationModalIsOpen = ref(false);
 
 const dashboardData = ref({
   categoriesCount: 0,
@@ -74,6 +105,117 @@ function shortenNumber(input: number): string {
   }
 }
 
+function undeployItem(itemId: string) {
+  supabase
+    .from("items")
+    .update({ deployed: null, deployed_at: null, person_responsible: null })
+    .eq("id", itemId)
+    .then(({ error }) => {
+      if (error) {
+        errorMessages.value.push(error.message);
+      } else {
+        // update the dashboard data and remove the item from deployedItems
+        const itemIndex = deployedItems.value.findIndex(
+          (item) => item.id === itemId,
+        );
+        if (itemIndex !== -1) {
+          const item = deployedItems.value[itemIndex];
+          dashboardData.value.deployedItemsCount--;
+          if (new Date(item.deployed) >= yesterday) {
+            dashboardData.value.deployedItemsAdded--;
+          }
+          deployedItems.value.splice(itemIndex, 1);
+        }
+
+        errorMessages.value = [];
+      }
+    });
+}
+
+function deleteItem(itemId: string) {
+  supabase
+    .from("items")
+    .delete()
+    .eq("id", itemId)
+    .then(({ error }) => {
+      if (error) {
+        errorMessages.value.push(error.message);
+      } else {
+        // update the dashboard data and remove the item from deployedItems
+        const itemIndex = deployedItems.value.findIndex(
+          (item) => item.id === itemId,
+        );
+        if (itemIndex !== -1) {
+          const item = deployedItems.value[itemIndex];
+          dashboardData.value.deployedItemsCount--;
+          if (new Date(item.deployed) >= yesterday) {
+            dashboardData.value.deployedItemsAdded--;
+          }
+          deployedItems.value.splice(itemIndex, 1);
+        }
+
+        errorMessages.value = [];
+      }
+    });
+
+  deleteConfirmationModalIsOpen.value = false;
+  currentItemId.value = null;
+}
+
+function editItemName(itemId: string, newName: string) {
+  supabase
+    .from("items")
+    .update({ name: newName })
+    .eq("id", itemId)
+    .then(({ error }) => {
+      if (error) {
+        errorMessages.value.push(error.message);
+      } else {
+        // update the dashboard data and remove the item from deployedItems
+        const itemIndex = deployedItems.value.findIndex(
+          (item) => item.id === itemId,
+        );
+        if (itemIndex !== -1) {
+          const item = deployedItems.value[itemIndex];
+          item.name = newName;
+        }
+
+        errorMessages.value = [];
+      }
+    });
+
+  renameModalIsOpen.value = false;
+  currentItemId.value = null;
+  currentDialogEntry.value = "";
+}
+
+function editItemLocation(itemId: string, newLocation: string) {
+  supabase
+    .from("items")
+    .update({ deployed_at: newLocation })
+    .eq("id", itemId)
+    .then(({ error }) => {
+      if (error) {
+        errorMessages.value.push(error.message);
+      } else {
+        // update the dashboard data and remove the item from deployedItems
+        const itemIndex = deployedItems.value.findIndex(
+          (item) => item.id === itemId,
+        );
+        if (itemIndex !== -1) {
+          const item = deployedItems.value[itemIndex];
+          item.deployed_at = newLocation;
+        }
+
+        errorMessages.value = [];
+      }
+    });
+
+  moveToLocationModalIsOpen.value = false;
+  currentItemId.value = null;
+  currentDialogEntry.value = "";
+}
+
 onMounted(async () => {
   const categoriesData = await supabase.from("categories").select();
   const itemsData = await supabase.from("items").select();
@@ -97,10 +239,10 @@ onMounted(async () => {
     ).length;
 
     dashboardData.value.deployedItemsCount = itemsData.data.filter(
-      (item) => item.deployed !== "",
+      (item) => item.deployed !== null,
     ).length;
     dashboardData.value.deployedItemsAdded = itemsData.data.filter(
-      (item) => item.deployed !== "" && new Date(item.deployed) >= yesterday,
+      (item) => item.deployed !== null && new Date(item.deployed) >= yesterday,
     ).length;
 
     dashboardData.value.totalValue = itemsData.data.reduce(
@@ -112,7 +254,7 @@ onMounted(async () => {
       .reduce((sum, item) => sum + item.price, 0);
 
     deployedItems.value = itemsData.data
-      .filter((item) => item.deployed !== "")
+      .filter((item) => item.deployed !== null)
       .sort(
         (a, b) =>
           new Date(b.deployed).getTime() - new Date(a.deployed).getTime(),
@@ -149,6 +291,97 @@ onMounted(async () => {
 <template>
   <SiteHeader :title="$t('pages.dashboard.title')" />
   <ErrorBanner :errors="errorMessages" />
+
+  <Dialog v-model:open="renameModalIsOpen">
+    <form>
+      <DialogContent class="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>{{ $t("components.dialog.rename") }}</DialogTitle>
+          <DialogDescription>
+            {{ $t("components.dialog.rename_description") }}
+          </DialogDescription>
+        </DialogHeader>
+        <Input id="name-1" name="name" v-model="currentDialogEntry" />
+        <DialogFooter>
+          <DialogClose as-child>
+            <Button variant="outline">
+              {{ $t("components.dialog.generic_cancel") }}
+            </Button>
+          </DialogClose>
+          <Button
+            type="submit"
+            @click="
+              editItemName(String(currentItemId), String(currentDialogEntry))
+            "
+          >
+            {{ $t("components.dialog.generic_confirm") }}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </form>
+  </Dialog>
+
+  <Dialog v-model:open="moveToLocationModalIsOpen">
+    <form>
+      <DialogContent class="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>{{
+            $t("components.dialog.move_to_location")
+          }}</DialogTitle>
+          <DialogDescription>
+            {{ $t("components.dialog.move_to_location_description") }}
+          </DialogDescription>
+        </DialogHeader>
+        <Input id="name-1" name="name" v-model="currentDialogEntry" />
+        <DialogFooter>
+          <DialogClose as-child>
+            <Button variant="outline">
+              {{ $t("components.dialog.generic_cancel") }}
+            </Button>
+          </DialogClose>
+          <Button
+            type="submit"
+            @click="
+              editItemLocation(
+                String(currentItemId),
+                String(currentDialogEntry),
+              )
+            "
+          >
+            {{ $t("components.dialog.generic_confirm") }}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </form>
+  </Dialog>
+
+  <Dialog v-model:open="deleteConfirmationModalIsOpen">
+    <form>
+      <DialogContent class="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>{{ $t("components.dialog.delete") }}</DialogTitle>
+          <DialogDescription>
+            {{ $t("components.dialog.delete_description") }}
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <DialogClose as-child>
+            <Button variant="outline">
+              {{ $t("components.dialog.delete_cancel") }}
+            </Button>
+          </DialogClose>
+          <Button
+            type="submit"
+            @click="deleteItem(String(currentItemId))"
+            variant="destructive"
+          >
+            {{ $t("components.dialog.delete_confirm") }}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </form>
+  </Dialog>
+
   <section class="flex flex-col gap-4 p-4 lg:gap-6 lg:p-6">
     <h1 class="font-semibold text-3xl">
       {{ $t("pages.dashboard.inventory_summary") }}
@@ -279,7 +512,7 @@ onMounted(async () => {
               {{
                 dashboardData.deployedItemsCount > 0
                   ? $t("pages.dashboard.new_deployments")
-                  : $t("pages.dashboard.no_new_deployments")
+                  : $t("pages.dashboard.no_deployments")
               }}</span
             >
             <div
@@ -342,60 +575,119 @@ onMounted(async () => {
   </section>
   <section
     class="flex flex-col gap-4 p-4 lg:gap-6 lg:p-6"
-    v-if="supabaseLoaded"
+    v-if="supabaseLoaded && deployedItems.length > 0"
   >
     <h1 class="font-semibold text-3xl">
       {{ $t("pages.dashboard.deployed_items") }}
     </h1>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <Card
-        v-for="item in deployedItems"
-        :key="item.id"
-        @click="$router.push(`/items/${item.id}`)"
-        class="@container/card hover:bg-secondary transition-colors duration-200 cursor-pointer"
-      >
-        <CardHeader>
-          <CardTitle
-            class="text-xl font-medium tabular-nums @[250px]/card:text-xl line-clamp-1"
+      <ContextMenu v-for="item in deployedItems" :key="item.id">
+        <ContextMenuTrigger>
+          <Card
+            @click="$router.push(`/items/${item.id}`)"
+            class="@container/card hover:bg-secondary transition-colors duration-200 cursor-pointer"
           >
-            {{ item.name }}
-          </CardTitle>
-          <CardDescription
-            >{{
-              item.weight.toLocaleString($t("language.locale"), {
-                minimumFractionDigits: 1,
-                maximumFractionDigits: 1,
-              })
-            }}
-            {{ $t("language.units.mass") }} &bull;
-            {{ $t("language.units.currency") }}
-            {{
-              item.price.toLocaleString($t("language.locale"))
-            }}</CardDescription
+            <CardHeader>
+              <CardTitle
+                class="text-xl font-medium tabular-nums @[250px]/card:text-xl line-clamp-1"
+              >
+                {{ item.name }}
+              </CardTitle>
+              <CardDescription
+                >{{
+                  item.weight.toLocaleString($t("language.locale"), {
+                    minimumFractionDigits: 1,
+                    maximumFractionDigits: 1,
+                  })
+                }}
+                {{ $t("language.units.mass") }} &bull;
+                {{ $t("language.units.currency") }}
+                {{
+                  item.price.toLocaleString($t("language.locale"))
+                }}</CardDescription
+              >
+            </CardHeader>
+            <CardContent class="sm:block hidden" v-if="item.image_url">
+              <img
+                :src="item.image_url"
+                :alt="$t('pages.dashboard.item_image_alt')"
+                class="rounded-lg"
+              />
+            </CardContent>
+            <CardFooter>
+              <CardDescription>{{
+                item.deployed_at
+                  ? $t("pages.dashboard.deployed_on_with_at", {
+                      date: new Date(item.deployed).toLocaleDateString(
+                        $t("language.locale"),
+                        {
+                          year: "numeric",
+                          month: "numeric",
+                          day: "numeric",
+                        },
+                      ),
+                      location: item.deployed_at,
+                    })
+                  : $t("pages.dashboard.deployed_on", {
+                      date: new Date(item.deployed).toLocaleDateString(
+                        $t("language.locale"),
+                        {
+                          year: "numeric",
+                          month: "numeric",
+                          day: "numeric",
+                        },
+                      ),
+                    })
+              }}</CardDescription>
+            </CardFooter>
+          </Card>
+        </ContextMenuTrigger>
+        <ContextMenuContent class="md:w-56 w-48">
+          <ContextMenuItem @click="$router.push(`/items/${item.id}`)"
+            ><IconBlocks /> {{ $t("components.context_menu.item.view_item") }}
+          </ContextMenuItem>
+          <ContextMenuItem @click="undeployItem(item.id)"
+            ><IconForklift />
+            {{ $t("components.context_menu.item.undeploy_item") }}
+          </ContextMenuItem>
+          <ContextMenuItem @click="$router.push(`/items/${item.id}/edit`)"
+            ><IconPencil />
+            {{ $t("components.context_menu.item.open_in_editor") }}
+          </ContextMenuItem>
+          <ContextMenuSeparator />
+          <ContextMenuItem
+            @click="
+              renameModalIsOpen = true;
+              currentItemId = item.id;
+              currentDialogEntry = item.name;
+            "
+            inset
           >
-        </CardHeader>
-        <CardContent class="sm:block hidden" v-if="item.image_url">
-          <img
-            :src="item.image_url"
-            :alt="$t('pages.dashboard.item_image_alt')"
-            class="rounded-lg"
-          />
-        </CardContent>
-        <CardFooter>
-          <CardDescription>{{
-            $t("pages.dashboard.deployed_on", {
-              date: new Date(item.deployed).toLocaleDateString(
-                $t("language.locale"),
-                {
-                  year: "numeric",
-                  month: "numeric",
-                  day: "numeric",
-                },
-              ),
-            })
-          }}</CardDescription>
-        </CardFooter>
-      </Card>
+            {{ $t("components.context_menu.item.rename") }}
+          </ContextMenuItem>
+          <ContextMenuItem
+            @click="
+              moveToLocationModalIsOpen = true;
+              currentItemId = item.id;
+              currentDialogEntry = item.deployed_at || '';
+            "
+            inset
+          >
+            {{ $t("components.context_menu.item.move_to_location") }}
+          </ContextMenuItem>
+          <ContextMenuSeparator />
+          <ContextMenuItem
+            @click="
+              deleteConfirmationModalIsOpen = true;
+              currentItemId = item.id;
+            "
+            variant="destructive"
+            class="text-destructive"
+          >
+            <IconTrashX /> {{ $t("components.context_menu.item.delete") }}
+          </ContextMenuItem>
+        </ContextMenuContent>
+      </ContextMenu>
     </div>
   </section>
 </template>
