@@ -42,6 +42,35 @@ const i18n = createI18n({
           login: "Masuk",
           unknown_user: "Pengguna Tidak Dikenal",
         },
+        context_menu: {
+          item: {
+            view_item: "Lihat Barang",
+            deploy_item: "Tempatkan Sekarang",
+            undeploy_item: "Batalkan Penempatan",
+            open_in_editor: "Buka di Editor",
+            rename: "Ganti Nama...",
+            move_to_location: "Pindahkan Lokasi...",
+            edit_person_responsible: "Ganti Penanggung Jawab...",
+            delete: "Hapus",
+          },
+        },
+        dialog: {
+          rename: "Ganti Nama Barang",
+          rename_description: "Masukkan nama baru untuk barang ini.",
+          move_to_location: "Pindahkan Barang ke Lokasi Baru",
+          move_to_location_description:
+            "Masukkan lokasi baru untuk barang ini. Ini dapat digunakan untuk melacak di mana barang Anda berada.",
+          edit_person_responsible: "Ganti Penanggung Jawab",
+          edit_person_responsible_description:
+            "Masukkan nama orang yang bertanggung jawab untuk barang ini. Ini dapat digunakan untuk melacak siapa yang bertanggung jawab atas barang-barang tertentu.",
+          generic_cancel: "Batal",
+          generic_confirm: "Simpan Perubahan",
+          delete: "Apakah Anda benar-benar yakin?",
+          delete_description:
+            "Tindakan ini tidak dapat dibatalkan. Ini akan menghapus barang ini secara permanen dan menghilangkannya dari inventaris Anda.",
+          delete_cancel: "Gajadi, deh..",
+          delete_confirm: "Yakin, hapus aja!",
+        },
       },
       pages: {
         404: {
@@ -79,6 +108,7 @@ const i18n = createI18n({
           data_compared_yesterday: "Dibanding kemarin",
           deployed_items: "Barang yg. Ditempatkan",
           deployed_on: "Dikeluarkan pada {date}",
+          deployed_on_with_at: "Dikeluarkan {date} di {location}",
           item_image_alt: "Gambar Barang",
         },
         items: {
@@ -216,6 +246,35 @@ const i18n = createI18n({
           login: "Log In",
           unknown_user: "Unknown User",
         },
+        context_menu: {
+          item: {
+            view_item: "View Item",
+            deploy_item: "Quick Deploy",
+            undeploy_item: "Undeploy Item",
+            open_in_editor: "Open In Editor",
+            rename: "Rename...",
+            move_to_location: "Move To Location...",
+            edit_person_responsible: "Edit Person Responsible...",
+            delete: "Delete",
+          },
+        },
+        dialog: {
+          rename: "Rename Item",
+          rename_description: "Enter a new name for this item.",
+          move_to_location: "Move Item To New Location",
+          move_to_location_description:
+            "Enter a new location for this item. This can be used to track where your items are.",
+          edit_person_responsible: "Edit Person Responsible",
+          edit_person_responsible_description:
+            "Enter the name of the person responsible for this item. This can be used to keep track of who is responsible for which items.",
+          generic_cancel: "Cancel",
+          generic_confirm: "Save Changes",
+          delete: "Are you absolutely sure?",
+          delete_description:
+            "This action cannot be undone. This will permanently delete the item and remove it from your inventory.",
+          delete_cancel: "Nevermind!",
+          delete_confirm: "I'm sure, delete it!",
+        },
       },
       pages: {
         404: {
@@ -252,6 +311,7 @@ const i18n = createI18n({
           data_compared_yesterday: "Data compared to yesterday",
           deployed_items: "Deployed Items",
           deployed_on: "Deployed on {date}",
+          deployed_on_with_at: "Deployed {date} at {location}",
           item_image_alt: "Item Image",
         },
         items: {
