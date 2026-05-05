@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import { IconDeviceFloppy, IconX } from "@tabler/icons-vue";
 import Button from "@/components/ui/button/Button.vue";
-import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import {
+  Field,
+  FieldGroup,
+  FieldLabel,
+  FieldError,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -34,8 +39,8 @@ const errorMessages = ref<string[]>([]);
 const supabaseLoaded = ref(false);
 
 const item = ref({
-  name: t("pages.items.editor.name_placeholder"),
-  category: t("pages.items.editor.unknown_category"),
+  name: "",
+  category: null,
   price: 0,
   weight: 0,
   tags: null,
@@ -79,11 +84,18 @@ async function saveChanges() {
 }
 
 onMounted(async () => {
-  const categoriesData = await supabase.from("categories").select();
+  const categoriesData = await supabase
+    .from("categories")
+    .select()
+    .order("name", { ascending: true });
   const tagsData = await supabase.from("tags").select();
 
   if (!categoriesData.error) {
     categories.value = categoriesData.data;
+    categories.value.unshift({
+      id: null,
+      name: t("pages.items.editor.unknown_category"),
+    });
     errorMessages.value = [];
     supabaseLoaded.value = true;
   } else {
@@ -105,7 +117,13 @@ onMounted(async () => {
 </script>
 
 <template>
-  <SiteHeader :title="item.name" />
+  <SiteHeader
+    :title="
+      $t('pages.items.editor.create_item', {
+        name: item.name,
+      })
+    "
+  />
   <ErrorBanner :errors="errorMessages" />
   <div
     class="flex flex-row justify-between text-sm m-4 mb-0 lg:mb-0 lg:m-6 gap-1 text-primary"
@@ -137,6 +155,7 @@ onMounted(async () => {
           </FieldLabel>
           <Input
             id="item_name"
+            aria-describedby="name-error"
             :placeholder="$t('pages.items.editor.name_placeholder')"
             required
             :disabled="supabaseLoaded ? false : true"
@@ -155,9 +174,7 @@ onMounted(async () => {
               :class="supabaseLoaded ? '' : 'animate-pulse!'"
             >
               <SelectTrigger id="category">
-                <SelectValue
-                  :placeholder="$t('pages.items.editor.category_placeholder')"
-                />
+                <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem

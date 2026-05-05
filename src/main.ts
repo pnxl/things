@@ -53,10 +53,16 @@ const i18n = createI18n({
             edit_person_responsible: "Ganti Penanggung Jawab...",
             delete: "Hapus",
           },
+          category: {
+            view_items_in_category: "Lihat Barang dalam Kategori",
+            rename: "Ganti Nama...",
+            delete: "Hapus",
+          },
         },
         dialog: {
           rename: "Ganti Nama Barang",
           rename_description: "Masukkan nama baru untuk barang ini.",
+          category_rename_description: "Masukkan nama baru untuk kategori ini.",
           move_to_location: "Pindahkan Barang ke Lokasi Baru",
           move_to_location_description:
             "Masukkan lokasi baru untuk barang ini. Ini dapat digunakan untuk melacak di mana barang Anda berada.",
@@ -68,6 +74,8 @@ const i18n = createI18n({
           delete: "Apakah Anda benar-benar yakin?",
           delete_description:
             "Tindakan ini tidak dapat dibatalkan. Ini akan menghapus barang ini secara permanen dan menghilangkannya dari inventaris Anda.",
+          category_delete_description:
+            "Tindakan ini tidak dapat dibatalkan. Barang yang termasuk dalam kategori ini tidak akan dihapus, tetapi akan dikategorikan ulang sebagai 'Tidak Dikategorikan'.",
           delete_cancel: "Gajadi, deh..",
           delete_confirm: "Yakin, hapus aja!",
         },
@@ -147,6 +155,7 @@ const i18n = createI18n({
             delete_confirm: "Yakin, hapus aja!",
           },
           editor: {
+            create_item: "Buat Barang Baru — {name}",
             save_item: "Simpan Barang",
             discard_changes: "Buang Perubahan",
             name: "Nama Barang",
@@ -257,10 +266,16 @@ const i18n = createI18n({
             edit_person_responsible: "Edit Person Responsible...",
             delete: "Delete",
           },
+          category: {
+            view_items_in_category: "View Items in Category",
+            rename: "Rename...",
+            delete: "Delete",
+          },
         },
         dialog: {
           rename: "Rename Item",
           rename_description: "Enter a new name for this item.",
+          category_rename_description: "Enter a new name for this category.",
           move_to_location: "Move Item To New Location",
           move_to_location_description:
             "Enter a new location for this item. This can be used to track where your items are.",
@@ -272,6 +287,8 @@ const i18n = createI18n({
           delete: "Are you absolutely sure?",
           delete_description:
             "This action cannot be undone. This will permanently delete the item and remove it from your inventory.",
+          category_delete_description:
+            "This action cannot be undone. Items that are in this category will not be deleted, but will be recategorized as 'Uncategorised'.",
           delete_cancel: "Nevermind!",
           delete_confirm: "I'm sure, delete it!",
         },
@@ -299,7 +316,7 @@ const i18n = createI18n({
           total_items: "Total Items",
           items_deployed: "Items Deployed",
           total_value: "Total Value",
-          no_new_categories: "No changes recently.",
+          no_categories: "No changes recently.",
           new_categories: "New categories were added!",
           no_new_items: "No new toys... yet.",
           new_items: "Wow, new toys!",
@@ -348,6 +365,7 @@ const i18n = createI18n({
             delete_confirm: "I'm sure, delete it!",
           },
           editor: {
+            create_item: "Create New Item — {name}",
             save_item: "Save Item",
             discard_changes: "Discard Changes",
             name: "Item Name",

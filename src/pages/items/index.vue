@@ -8,6 +8,8 @@ import {
   IconTrashX,
   IconForklift,
   IconPencil,
+  IconPackages,
+  IconFolderOpen,
 } from "@tabler/icons-vue";
 import {
   Card,
@@ -40,7 +42,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Field, FieldLabel } from "@/components/ui/field";
+import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
 import SiteHeader from "@/components/SiteHeader.vue";
@@ -51,13 +53,13 @@ import { useRouter, useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { supabase } from "@/lib/supabase";
 import { ref, onMounted } from "vue";
-import { de } from "zod/locales";
 
+const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
 
 if (!useCookies(["sb-access-token"]).get("sb-access-token")) {
-  useRouter().replace({ path: "/login" });
+  router.replace({ path: "/login" });
 }
 
 const errorMessages = ref<string[]>([]);
@@ -80,6 +82,11 @@ const currentDialogEntry = ref<string | number | undefined>("");
 const renameModalIsOpen = ref(false);
 const moveToLocationModalIsOpen = ref(false);
 const deleteConfirmationModalIsOpen = ref(false);
+
+const currentCategoryId = ref<string | null>(null);
+const currentCategoryDialogEntry = ref<string>("");
+const categoryRenameModalIsOpen = ref(false);
+const categoryDeleteConfirmationModalIsOpen = ref(false);
 
 async function createCategory() {
   if (newCategoryName.value.trim() === "") {
@@ -251,9 +258,66 @@ function editItemLocation(itemId: string, newLocation: string) {
   currentDialogEntry.value = "";
 }
 
+function deleteCategory(categoryId: string) {
+  supabase
+    .from("categories")
+    .delete()
+    .eq("id", categoryId)
+    .then(({ error }) => {
+      if (error) {
+        errorMessages.value.push(error.message);
+      } else {
+        // update the dashboard data and remove the category from categories
+        const categoryIndex = categories.value.findIndex(
+          (category) => category.id === categoryId,
+        );
+        if (categoryIndex !== -1) {
+          categories.value.splice(categoryIndex, 1);
+        }
+
+        router.push("/items");
+
+        errorMessages.value = [];
+      }
+    });
+
+  categoryDeleteConfirmationModalIsOpen.value = false;
+  currentCategoryId.value = null;
+}
+
+function editCategoryName(categoryId: string, newName: string) {
+  supabase
+    .from("categories")
+    .update({ name: newName })
+    .eq("id", categoryId)
+    .then(({ error }) => {
+      if (error) {
+        errorMessages.value.push(error.message);
+      } else {
+        // update the dashboard data and remove the category from categories
+        const categoryIndex = categories.value.findIndex(
+          (category) => category.id === categoryId,
+        );
+        if (categoryIndex !== -1) {
+          const category = categories.value[categoryIndex];
+          category.name = newName;
+        }
+
+        errorMessages.value = [];
+      }
+    });
+
+  categoryRenameModalIsOpen.value = false;
+  currentCategoryId.value = null;
+  currentDialogEntry.value = "";
+}
+
 onMounted(async () => {
   const itemsData = await supabase.from("items").select();
-  const categoriesData = await supabase.from("categories").select();
+  const categoriesData = await supabase
+    .from("categories")
+    .select()
+    .order("name", { ascending: true });
   const tagsData = await supabase.from("tags").select();
 
   if (!itemsData.error) {
@@ -424,6 +488,65 @@ onMounted(async () => {
     </form>
   </Dialog>
 
+  <Dialog v-model:open="categoryRenameModalIsOpen">
+    <form>
+      <DialogContent class="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>{{ $t("components.dialog.rename") }}</DialogTitle>
+          <DialogDescription>
+            {{ $t("components.dialog.category_rename_description") }}
+          </DialogDescription>
+        </DialogHeader>
+        <Input id="name-1" name="name" v-model="currentCategoryDialogEntry" />
+        <DialogFooter>
+          <DialogClose as-child>
+            <Button variant="outline">
+              {{ $t("components.dialog.generic_cancel") }}
+            </Button>
+          </DialogClose>
+          <Button
+            type="submit"
+            @click="
+              editCategoryName(
+                String(currentCategoryId),
+                String(currentCategoryDialogEntry),
+              )
+            "
+          >
+            {{ $t("components.dialog.generic_confirm") }}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </form>
+  </Dialog>
+
+  <Dialog v-model:open="categoryDeleteConfirmationModalIsOpen">
+    <form>
+      <DialogContent class="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>{{ $t("components.dialog.delete") }}</DialogTitle>
+          <DialogDescription>
+            {{ $t("components.dialog.category_delete_description") }}
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <DialogClose as-child>
+            <Button variant="outline">
+              {{ $t("components.dialog.delete_cancel") }}
+            </Button>
+          </DialogClose>
+          <Button
+            type="submit"
+            @click="deleteCategory(String(currentCategoryId))"
+            variant="destructive"
+          >
+            {{ $t("components.dialog.delete_confirm") }}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </form>
+  </Dialog>
+
   <div class="flex flex-col md:flex-row h-full">
     <section
       class="w-full md:w-1/3 2xl:w-1/4 md:h-full p-4 gap-4 md:gap-6 lg:p-6 md:flex flex-col"
@@ -442,22 +565,56 @@ onMounted(async () => {
               ' flex flex-row gap-2 duration-200 transition-colors px-3 p-1.5 rounded-md'
             "
           >
-            <IconBlocks class="size-4 my-auto" />
+            <IconPackages class="size-4 my-auto" />
             <span class="text-sm">{{ $t("pages.items.all_items") }}</span>
           </router-link>
-          <router-link
-            v-for="category in categories"
-            :to="`/items?f=${category.id}`"
-            :class="
-              ($route.query.f === category.id
-                ? 'bg-secondary/70 cursor-default'
-                : ' hover:bg-secondary/70') +
-              ' flex flex-row gap-2 duration-200 transition-colors px-3 p-1.5 rounded-md'
-            "
-          >
-            <IconFolder class="size-4 my-auto" />
-            <span class="text-sm">{{ category.name }}</span>
-          </router-link>
+
+          <ContextMenu v-for="category in categories" :key="category.id">
+            <ContextMenuTrigger>
+              <router-link
+                :to="`/items?f=${category.id}`"
+                :class="
+                  ($route.query.f === category.id
+                    ? 'bg-secondary/70 cursor-default'
+                    : ' hover:bg-secondary/70') +
+                  ' flex flex-row gap-2 duration-200 transition-colors px-3 p-1.5 rounded-md'
+                "
+              >
+                <IconFolder class="size-4 my-auto" />
+                <span class="text-sm">{{ category.name }}</span>
+              </router-link>
+            </ContextMenuTrigger>
+            <ContextMenuContent class="md:w-56 w-48">
+              <ContextMenuItem @click="$router.push(`/items?f=${category.id}`)"
+                ><IconFolderOpen />
+                {{
+                  $t("components.context_menu.category.view_items_in_category")
+                }}
+              </ContextMenuItem>
+              <ContextMenuSeparator />
+              <ContextMenuItem
+                inset
+                @click="
+                  categoryRenameModalIsOpen = true;
+                  currentCategoryId = category.id;
+                  currentCategoryDialogEntry = category.name;
+                "
+              >
+                {{ $t("components.context_menu.category.rename") }}
+              </ContextMenuItem>
+              <ContextMenuItem
+                @click="
+                  categoryDeleteConfirmationModalIsOpen = true;
+                  currentCategoryId = category.id;
+                "
+                variant="destructive"
+                class="text-destructive"
+              >
+                <IconTrashX />
+                {{ $t("components.context_menu.category.delete") }}
+              </ContextMenuItem>
+            </ContextMenuContent>
+          </ContextMenu>
         </div>
         <Popover v-model:open="newCategoryPopupOpen">
           <PopoverTrigger>
@@ -478,11 +635,6 @@ onMounted(async () => {
               </div>
 
               <Field>
-                <div class="flex items-center">
-                  <FieldLabel for="password">
-                    {{ $t("pages.items.new_category_name") }}
-                  </FieldLabel>
-                </div>
                 <Input
                   id="new-category"
                   type="text"

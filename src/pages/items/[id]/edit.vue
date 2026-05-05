@@ -56,7 +56,7 @@ const datePickerOpen = ref(false);
 const item = ref({
   id: "",
   name: t("pages.items.editor.name_placeholder"),
-  category: t("pages.items.editor.unknown_category"),
+  category: null as string | null,
   price: 0,
   weight: 0,
   deployed: "" as string | null,
@@ -64,7 +64,7 @@ const item = ref({
   person_responsible: "" as string | null,
   tags: null,
   remarks: "" as string | null,
-  custom: [] as any[],
+  custom: [{ key: "", value: "" }] as any[],
   created_at: "" as string | null,
 });
 const itemImage = ref("");
@@ -217,6 +217,11 @@ onMounted(async () => {
     supabaseLoaded.value = true;
 
     remarksField.value = item.value.remarks || "";
+
+    if (item.value.custom.length === 0) {
+      item.value.custom.push({ key: "", value: "" });
+    }
+
     addBlankCustomField();
   } else {
     if (itemData.error.code === "22P02") {
@@ -230,6 +235,10 @@ onMounted(async () => {
 
   if (!categoriesData.error) {
     categories.value = categoriesData.data;
+    categories.value.unshift({
+      id: null,
+      name: t("pages.items.editor.unknown_category"),
+    });
     errorMessages.value = [];
   } else {
     console.error("Error fetching categories:", categoriesData.error);
@@ -344,7 +353,7 @@ onMounted(async () => {
             >
               <SelectTrigger id="category">
                 <SelectValue
-                  :placeholder="$t('pages.items.editor.category_placeholder')"
+                  :placeholder="$t('pages.items.editor.unknown_category')"
                 />
               </SelectTrigger>
               <SelectContent>
@@ -653,8 +662,8 @@ onMounted(async () => {
             />
             <Input
               :id="`value-${field.value}`"
-              class="w-2/3!"
               :placeholder="$t('pages.items.editor.custom_field_value')"
+              class="w-2/3!"
               required
               v-model="field.value"
               @focus="addBlankCustomField()"
