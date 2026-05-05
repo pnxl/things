@@ -42,17 +42,6 @@ async function saveChanges() {
     language: language.value,
   };
 
-  localStorage.setItem(
-    "sb-user-data",
-    JSON.stringify({
-      ...userdata,
-      user_metadata: {
-        ...userdata.user_metadata,
-        settings: settings,
-      },
-    }),
-  );
-
   const { error } = await supabase.auth.updateUser({
     data: {
       settings: settings,
@@ -64,6 +53,18 @@ async function saveChanges() {
     errorMessages.value.push(error.message);
   } else {
     errorMessages.value = [];
+
+    localStorage.setItem(
+      "sb-user-data",
+      JSON.stringify({
+        ...userdata,
+        user_metadata: {
+          ...userdata.user_metadata,
+          settings: settings,
+        },
+      }),
+    );
+
     location.reload();
   }
 }
