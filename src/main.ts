@@ -167,6 +167,14 @@ const i18n = createI18n({
             tags_placeholder: "Tambahkan tag untuk barang Anda",
             mass: "Massa",
             price: "Harga",
+            view_qr_code: "Lihat Kode QR",
+            view_qr_code_popover_title: "Kode QR",
+            view_qr_code_popover_description:
+              "Ini adalah kode QR untuk barang ini. Anda dapat memindai ini di perangkat apa pun untuk kembali ke halaman ini.",
+            view_barcode: "Lihat Barcode",
+            view_barcode_popover_title: "Barcode",
+            view_barcode_popover_description:
+              "Ini adalah barcode untuk barang ini. Anda dapat memindai ini di website ini untuk melihat detailnya.",
             add_image: "Tambah Gambar",
             replace_image: "Ganti Gambar",
             remove_image: "Hapus Gambar",
@@ -377,7 +385,14 @@ const i18n = createI18n({
             tags_placeholder: "Add some tags for your item",
             mass: "Mass",
             price: "Price",
-            view_scanner_codes: "View Scanner Codes",
+            view_qr_code: "View QR Code",
+            view_qr_code_popover_title: "QR Code",
+            view_qr_code_popover_description:
+              "Here's the QR code for this item. You can scan this on any device to go back to this page.",
+            view_barcode: "View Barcode",
+            view_barcode_popover_title: "Barcode",
+            view_barcode_popover_description:
+              "Here's the barcode for this item. You can scan this on this website to view its details.",
             add_image: "Add Image",
             replace_image: "Replace Image",
             remove_image: "Remove Image",

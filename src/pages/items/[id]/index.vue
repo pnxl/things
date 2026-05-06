@@ -35,9 +35,11 @@ import {
 import Textarea from "@/components/ui/textarea/Textarea.vue";
 
 import { supabase } from "@/lib/supabase";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
+
+import BwipJs from "@bwip-js/browser";
 
 const { t } = useI18n();
 
@@ -93,6 +95,11 @@ const itemImageExists = ref(false);
 const categories = ref<any[]>([]);
 const tags = ref<any[]>([]);
 
+const qrCodeSrc = ref("");
+const barcodeSrc = ref("");
+const qrCodePopoverOpen = ref(false);
+const barcodePopoverOpen = ref(false);
+
 const supabaseLoaded = ref(false);
 const errorUpdating = ref("");
 
@@ -100,6 +107,8 @@ async function deleteItem() {
   await supabase.from("items").delete().eq("id", item.value.id);
   router.push("/items");
 }
+
+const origin = computed(() => window.location.origin);
 
 onMounted(async () => {
   let id = "00000000-0000-0000-0000-000000000000";
@@ -139,7 +148,31 @@ onMounted(async () => {
 
     remarksField.value = item.value.remarks || "";
 
-    console.log(item.value);
+    try {
+      const svg = BwipJs.toSVG({
+        bcid: "qrcode",
+        text: `${window.location.origin}/items/${item.value.id}`,
+        scale: 3,
+        includetext: false,
+      });
+
+      qrCodeSrc.value = "data:image/svg+xml;base64," + btoa(svg);
+    } catch (e) {
+      errorUpdating.value = String(e);
+    }
+
+    try {
+      const svg = BwipJs.toSVG({
+        bcid: "code128",
+        text: `${item.value.id}`,
+        scale: 3,
+        includetext: false,
+      });
+
+      barcodeSrc.value = "data:image/svg+xml;base64," + btoa(svg);
+    } catch (e) {
+      errorUpdating.value = String(e);
+    }
   } else {
     if (itemData.error.code === "22P02") {
       router.push("/404");
@@ -436,54 +469,72 @@ onMounted(async () => {
           @blur="stopRemarksSync()"
         />
       </Field>
-
-      <div class="flex md:hidden flex-col gap-2" v-if="supabaseLoaded">
-        <div
-          v-for="customField in item.custom"
-          :key="customField.key"
-          class="w-full border-b flex flex-row justify-between text-sm"
-        >
-          <span class="opacity-75">{{ customField.key }}</span>
-          <span class="font-medium text-right">{{ customField.value }}</span>
-        </div>
-        <div class="w-full border-b flex flex-row justify-between text-sm">
-          <span class="opacity-75">{{
-            $t("pages.items.viewer.created_at")
-          }}</span>
-          <span class="font-medium text-right">{{
-            item.created_at
-              ? new Date(item.created_at).toLocaleDateString(
-                  $t("language.locale"),
-                  {
-                    year: "numeric",
-                    month: "numeric",
-                    day: "numeric",
-                  },
-                )
-              : ""
-          }}</span>
-        </div>
-        <div class="w-full border-b flex flex-row justify-between text-sm">
-          <span class="opacity-75">{{
-            $t("pages.items.viewer.unique_id")
-          }}</span>
-          <span class="font-medium text-right">{{ item.id }}</span>
-        </div>
-      </div>
     </section>
-    <section class="flex-col gap-4 lg:gap-6 hidden md:flex">
+    <section class="flex-col gap-4 lg:gap-6 flex">
       <img
         v-if="supabaseLoaded && itemImageExists"
         :src="itemImage"
         alt="Item Image"
-        class="w-full object-cover object-center aspect-3/2 rounded-md shadow-sm"
+        class="w-full object-cover object-center aspect-3/2 rounded-md hidden md:block shadow-sm"
       />
 
-      <Button variant="secondary" class="w-full" :disabled="!supabaseLoaded"
-        ><span>
-          {{ $t("pages.items.editor.view_scanner_codes") }}
-        </span></Button
-      >
+      <div class="grid grid-cols-2 gap-2">
+        <Popover v-model:open="qrCodePopoverOpen">
+          <PopoverTrigger class="w-full">
+            <Button
+              variant="secondary"
+              class="w-full"
+              :disabled="!supabaseLoaded"
+              ><span>
+                {{ $t("pages.items.editor.view_qr_code") }}
+              </span></Button
+            >
+          </PopoverTrigger>
+          <PopoverContent class="w-80 my-2 flex flex-col gap-y-2">
+            <h1 class="font-semibold">
+              {{ $t("pages.items.editor.view_qr_code_popover_title") }}
+            </h1>
+            <p class="text-sm text-muted-foreground">
+              {{ $t("pages.items.editor.view_qr_code_popover_description") }}
+            </p>
+            <img
+              class="w-full aspect-square object-cover dark:invert mt-4"
+              :src="qrCodeSrc"
+            />
+            <span class="text-xs text-muted-foreground text-center">
+              {{ origin }}/items/{{ item.id }}
+            </span>
+          </PopoverContent>
+        </Popover>
+
+        <Popover v-model:open="barcodePopoverOpen">
+          <PopoverTrigger class="w-full">
+            <Button
+              variant="secondary"
+              class="w-full"
+              :disabled="!supabaseLoaded"
+              ><span>
+                {{ $t("pages.items.editor.view_barcode") }}
+              </span></Button
+            >
+          </PopoverTrigger>
+          <PopoverContent class="w-80 my-2 flex flex-col gap-y-2">
+            <h1 class="font-semibold">
+              {{ $t("pages.items.editor.view_barcode_popover_title") }}
+            </h1>
+            <p class="text-sm text-muted-foreground">
+              {{ $t("pages.items.editor.view_barcode_popover_description") }}
+            </p>
+            <img
+              class="w-full object-cover dark:invert mt-4"
+              :src="barcodeSrc"
+            />
+            <span class="text-xs text-muted-foreground text-center">
+              {{ item.id }}
+            </span>
+          </PopoverContent>
+        </Popover>
+      </div>
 
       <div class="flex flex-col gap-2" v-if="supabaseLoaded">
         <div
