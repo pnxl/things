@@ -55,7 +55,7 @@ const datePickerOpen = ref(false);
 
 const item = ref({
   id: "",
-  name: t("pages.items.editor.name_placeholder"),
+  name: "",
   category: null as string | null,
   price: 0,
   weight: 0,
@@ -256,7 +256,13 @@ onMounted(async () => {
 </script>
 
 <template>
-  <SiteHeader :title="item.name" />
+  <SiteHeader
+    :title="
+      $t('pages.items.editor.edit_item', {
+        name: item.name,
+      })
+    "
+  />
   <ErrorBanner :errors="errorMessages" />
   <div
     class="flex flex-row justify-between text-sm m-4 mb-0 lg:mb-0 lg:m-6 gap-1 text-primary"
