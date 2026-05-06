@@ -40,6 +40,7 @@ async function saveChanges() {
   const settings = {
     appearance: appearance.value,
     language: language.value,
+    viewmode: usersettings.viewmode || "grid",
   };
 
   const { error } = await supabase.auth.updateUser({
