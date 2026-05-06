@@ -9,7 +9,7 @@ import {
   IconX,
 } from "@tabler/icons-vue";
 
-import Button from "@/components/ui/button/Button.vue";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardDescription,
@@ -26,8 +26,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import Field from "@/components/ui/field/Field.vue";
-import FieldLabel from "@/components/ui/field/FieldLabel.vue";
+import { Field, FieldLabel } from "@/components/ui/field";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import Textarea from "@/components/ui/textarea/Textarea.vue";
 
 import { supabase } from "@/lib/supabase";
@@ -474,6 +478,12 @@ onMounted(async () => {
         alt="Item Image"
         class="w-full object-cover object-center aspect-3/2 rounded-md shadow-sm"
       />
+
+      <Button variant="secondary" class="w-full" :disabled="!supabaseLoaded"
+        ><span>
+          {{ $t("pages.items.editor.view_scanner_codes") }}
+        </span></Button
+      >
 
       <div class="flex flex-col gap-2" v-if="supabaseLoaded">
         <div

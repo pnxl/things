@@ -377,6 +377,7 @@ const i18n = createI18n({
             tags_placeholder: "Add some tags for your item",
             mass: "Mass",
             price: "Price",
+            view_scanner_codes: "View Scanner Codes",
             add_image: "Add Image",
             replace_image: "Replace Image",
             remove_image: "Remove Image",
