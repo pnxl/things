@@ -30,7 +30,8 @@ import SiteHeader from "@/components/SiteHeader.vue";
 import ErrorBanner from "@/components/ErrorBanner.vue";
 
 import { supabase } from "@/lib/supabase";
-import { ref, onMounted } from "vue";
+import { computed, ref, onMounted } from "vue";
+import type { Ref } from "vue";
 import { useCookies } from "@vueuse/integrations/useCookies";
 import { useRoute, useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
@@ -50,7 +51,7 @@ if (!useCookies(["sb-access-token"]).get("sb-access-token")) {
 const errorMessages = ref<string[]>([]);
 const supabaseLoaded = ref(false);
 
-const datePickerPicked = ref(today(getLocalTimeZone())) as ref<DateValue>;
+const datePickerPicked = ref(today(getLocalTimeZone())) as Ref<DateValue>;
 const datePickerOpen = ref(false);
 
 const item = ref({
@@ -72,6 +73,20 @@ const itemImageExists = ref(false);
 const itemImageIsUploading = ref(false);
 const itemImageIsDeleting = ref(false);
 const itemIsDeployed = ref(false);
+
+const deployedAtField = computed({
+  get: () => item.value.deployed_at ?? "",
+  set: (value: string) => {
+    item.value.deployed_at = value === "" ? null : value;
+  },
+});
+
+const personResponsibleField = computed({
+  get: () => item.value.person_responsible ?? "",
+  set: (value: string) => {
+    item.value.person_responsible = value === "" ? null : value;
+  },
+});
 
 const categories = ref<any[]>([]);
 const tags = ref<any[]>([]);
@@ -148,7 +163,9 @@ async function saveChanges() {
   item.value.remarks = remarksField.value;
 
   if (itemIsDeployed.value === true) {
-    item.value.deployed = new Date(datePickerPicked.value).toISOString();
+    item.value.deployed = new Date(
+      datePickerPicked.value.toString(),
+    ).toISOString();
   } else if (itemIsDeployed.value === false) {
     item.value.deployed = null;
     item.value.deployed_at = null;
@@ -512,7 +529,7 @@ onMounted(async () => {
             :disabled="supabaseLoaded ? false : true"
             :class="supabaseLoaded ? '' : 'animate-pulse!'"
             required
-            v-model="item.deployed_at"
+            v-model="deployedAtField"
           />
         </Field>
 
@@ -528,7 +545,7 @@ onMounted(async () => {
             :disabled="supabaseLoaded ? false : true"
             :class="supabaseLoaded ? '' : 'animate-pulse!'"
             required
-            v-model="item.person_responsible"
+            v-model="personResponsibleField"
           />
         </Field>
       </FieldGroup>
