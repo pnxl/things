@@ -94,6 +94,10 @@ if (data.session !== null) {
     (data.session?.expires_in ?? 0) * 1000 - 60000,
   );
 }
+
+if (error) {
+  console.error("Error getting session!", error);
+}
 </script>
 
 <template>
