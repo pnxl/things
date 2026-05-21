@@ -65,8 +65,6 @@ async function saveChanges() {
         },
       }),
     );
-
-    location.reload();
   }
 }
 </script>
