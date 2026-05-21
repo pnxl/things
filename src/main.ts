@@ -155,7 +155,8 @@ const i18n = createI18n({
             delete_confirm: "Yakin, hapus aja!",
           },
           editor: {
-            create_item: "Buat Barang Baru — {name}",
+            create_item: "Membuat '{name}'",
+            edit_item: "Mengedit '{name}'",
             save_item: "Simpan Barang",
             discard_changes: "Buang Perubahan",
             name: "Nama Barang",
@@ -193,6 +194,9 @@ const i18n = createI18n({
             person_responsible_placeholder:
               "Siapa yang bertanggung jawab atas penempatan ini?",
           },
+        },
+        search: {
+          title: "Pencarian",
         },
         account: {
           title: "Akun",
@@ -373,7 +377,8 @@ const i18n = createI18n({
             delete_confirm: "I'm sure, delete it!",
           },
           editor: {
-            create_item: "Create New Item — {name}",
+            create_item: "Creating '{name}'",
+            edit_item: "Editing '{name}'",
             save_item: "Save Item",
             discard_changes: "Discard Changes",
             name: "Item Name",
@@ -411,6 +416,9 @@ const i18n = createI18n({
             person_responsible_placeholder:
               "Who is responsible for this deployment?",
           },
+        },
+        search: {
+          title: "Search",
         },
         account: {
           title: "Account",
