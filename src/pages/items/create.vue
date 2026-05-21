@@ -1,12 +1,7 @@
 <script setup lang="ts">
 import { IconDeviceFloppy, IconX } from "@tabler/icons-vue";
 import Button from "@/components/ui/button/Button.vue";
-import {
-  Field,
-  FieldGroup,
-  FieldLabel,
-  FieldError,
-} from "@/components/ui/field";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import {
   Select,
