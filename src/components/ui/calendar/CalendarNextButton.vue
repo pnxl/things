@@ -1,27 +1,33 @@
 <script lang="ts" setup>
-import type { CalendarNextProps } from "reka-ui"
-import type { HTMLAttributes } from "vue"
-import { reactiveOmit } from "@vueuse/core"
-import { IconChevronRight } from '@tabler/icons-vue'
-import { CalendarNext, useForwardProps } from "reka-ui"
-import { cn } from "@/lib/utils"
-import { buttonVariants } from '@/components/ui/button'
+import { IconChevronRight } from "@tabler/icons-vue";
+import { reactiveOmit } from "@vueuse/core";
+import type { CalendarNextProps } from "reka-ui";
+import { CalendarNext, useForwardProps } from "reka-ui";
+import type { HTMLAttributes } from "vue";
 
-const props = defineProps<CalendarNextProps & { class?: HTMLAttributes["class"] }>()
+import { cn } from "@/lib/utils";
 
-const delegatedProps = reactiveOmit(props, "class")
+import { buttonVariants } from "@/components/ui/button";
 
-const forwardedProps = useForwardProps(delegatedProps)
+const props = defineProps<
+  CalendarNextProps & { class?: HTMLAttributes["class"] }
+>();
+
+const delegatedProps = reactiveOmit(props, "class");
+
+const forwardedProps = useForwardProps(delegatedProps);
 </script>
 
 <template>
   <CalendarNext
     data-slot="calendar-next-button"
-    :class="cn(
-      buttonVariants({ variant: 'outline' }),
-      'size-7 bg-transparent p-0 opacity-50 hover:opacity-100',
-      props.class,
-    )"
+    :class="
+      cn(
+        buttonVariants({ variant: 'outline' }),
+        'size-7 bg-transparent p-0 opacity-50 hover:opacity-100',
+        props.class
+      )
+    "
     v-bind="forwardedProps"
   >
     <slot>

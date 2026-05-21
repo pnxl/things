@@ -1,4 +1,12 @@
 <script setup lang="ts">
+import { useCookies } from "@vueuse/integrations/useCookies";
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+
+import { supabase } from "@/lib/supabase";
+
+import ErrorBanner from "@/components/ErrorBanner.vue";
+import SiteHeader from "@/components/SiteHeader.vue";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -15,14 +23,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-import SiteHeader from "@/components/SiteHeader.vue";
-import ErrorBanner from "@/components/ErrorBanner.vue";
-
-import { useCookies } from "@vueuse/integrations/useCookies";
-import { useRouter } from "vue-router";
-import { supabase } from "@/lib/supabase";
-import { ref } from "vue";
 
 if (!useCookies(["sb-access-token"]).get("sb-access-token")) {
   useRouter().replace({ path: "/login" });
@@ -63,7 +63,7 @@ async function saveChanges() {
           ...userdata.user_metadata,
           settings: settings,
         },
-      }),
+      })
     );
   }
 }
@@ -88,7 +88,10 @@ async function saveChanges() {
               <FieldLabel for="appearance">
                 {{ $t("pages.settings.appearance") }}
               </FieldLabel>
-              <Select v-model="appearance" :default-value="appearance">
+              <Select
+                v-model="appearance"
+                :default-value="appearance"
+              >
                 <SelectTrigger id="appearance">
                   <SelectValue
                     placeholder="{{ $t('pages.settings.appearance_system') }}"
@@ -110,7 +113,10 @@ async function saveChanges() {
               <FieldLabel for="appearance">
                 {{ $t("pages.settings.language") }}
               </FieldLabel>
-              <Select v-model="language" :default-value="language">
+              <Select
+                v-model="language"
+                :default-value="language"
+              >
                 <SelectTrigger id="language">
                   <SelectValue
                     :placeholder="$t('pages.settings.language_placeholder')"
@@ -125,7 +131,10 @@ async function saveChanges() {
           </FieldGroup>
 
           <Field orientation="horizontal">
-            <Button type="submit" @click="saveChanges()">
+            <Button
+              type="submit"
+              @click="saveChanges()"
+            >
               {{ $t("pages.settings.save_button") }}
             </Button>
             <Button

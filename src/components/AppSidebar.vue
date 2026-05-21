@@ -2,15 +2,20 @@
 import {
   IconBoxSeam,
   IconCirclePlusFilled,
-  IconLayoutDashboard,
-  IconSearch,
-  IconTags,
   IconDotsVertical,
+  IconLayoutDashboard,
   IconLogin,
   IconLogout,
+  IconSearch,
   IconSettings,
+  IconTags,
   IconUserCircle,
 } from "@tabler/icons-vue";
+import { useCookies } from "@vueuse/integrations/useCookies";
+import { onMounted, ref } from "vue";
+import { useI18n } from "vue-i18n";
+
+import { supabase } from "@/lib/supabase";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -26,19 +31,14 @@ import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarHeader,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-
-import { ref, onMounted } from "vue";
-import { supabase } from "@/lib/supabase";
-import { useCookies } from "@vueuse/integrations/useCookies";
-import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
 
@@ -90,9 +90,15 @@ onMounted(async () => {
 </script>
 
 <template>
-  <Sidebar collapsible="offcanvas" class="ease-in-out">
+  <Sidebar
+    collapsible="offcanvas"
+    class="ease-in-out"
+  >
     <SidebarHeader>
-      <a href="#" class="flex flex-row">
+      <a
+        href="#"
+        class="flex flex-row"
+      >
         <img
           src="@/assets/icon.png"
           :alt="$t('components.sidebar.logo_alt')"
@@ -117,7 +123,10 @@ onMounted(async () => {
             </SidebarMenuItem>
           </SidebarMenu>
           <SidebarMenu>
-            <SidebarMenuItem v-for="item in items" :key="item.title">
+            <SidebarMenuItem
+              v-for="item in items"
+              :key="item.title"
+            >
               <router-link :to="item.url">
                 <SidebarMenuButton
                   :tooltip="item.title"
@@ -127,7 +136,10 @@ onMounted(async () => {
                       : ''
                   "
                 >
-                  <component :is="item.icon" v-if="item.icon" />
+                  <component
+                    :is="item.icon"
+                    v-if="item.icon"
+                  />
                   <span>{{ item.title }}</span>
                 </SidebarMenuButton>
               </router-link>
@@ -139,7 +151,10 @@ onMounted(async () => {
     <SidebarFooter :class="cookies.get('sb-access-token') ? '' : 'mt-auto'">
       <SidebarMenu>
         <SidebarMenuItem>
-          <router-link to="/login" v-if="!cookies.get('sb-access-token')">
+          <router-link
+            to="/login"
+            v-if="!cookies.get('sb-access-token')"
+          >
             <SidebarMenuButton
               tooltip="Log In"
               :class="
@@ -217,7 +232,10 @@ onMounted(async () => {
                 </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
-              <DropdownMenuItem variant="destructive" @click="logout()">
+              <DropdownMenuItem
+                variant="destructive"
+                @click="logout()"
+              >
                 <IconLogout />
                 {{ $t("components.sidebar.logout") }}
               </DropdownMenuItem>

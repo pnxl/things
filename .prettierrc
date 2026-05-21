@@ -1,0 +1,41 @@
+{
+  "useTabs": false,
+  "trailingComma": "es5",
+  "tabWidth": 2,
+  "semi": true,
+  "singleQuote": false,
+  "bracketSpacing": true,
+  "objectWrap": "preserve",
+  "bracketSameLine": false,
+  "arrowParens": "always",
+  "vueIndentScriptAndStyle": false,
+  "endOfLine": "lf",
+  "singleAttributePerLine": true,
+  "importOrder": [
+    "<BUILTIN_MODULES>",
+    "<THIRD_PARTY_MODULES>",
+    "^src/lib/(.*)$",
+    "^@/lib/(.*)$",
+    "^src/composables/(.*)$",
+    "^@/composables/(.*)$",
+    "^@headlessui/vue(.*)$",
+    "^@headlessui/(.*)$",
+    "^~icons/mdi(.*)$",
+    "^components/(.*)$",
+    "^src/components/(.*)$",
+    "^@/components/(.*)$",
+    "^src/assets/(.*)$",
+    "^@/assets/(.*)$",
+    "^assets/(.*)$",
+    "^public/(.*)$",
+    "^[./]"
+  ],
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true,
+  "importOrderCaseInsensitive": true,
+  "tailwindStylesheet": "./src/assets/styles/tailwind.css",
+  "plugins": [
+    "prettier-plugin-tailwindcss",
+    "@trivago/prettier-plugin-sort-imports"
+  ]
+}

@@ -2,22 +2,32 @@
 import {
   IconBlocks,
   IconFolder,
+  IconFolderOpen,
   IconFolderPlus,
+  IconForklift,
   IconLayoutGrid,
   IconLayoutList,
-  IconTrashX,
-  IconForklift,
-  IconPencil,
   IconPackages,
-  IconFolderOpen,
+  IconPencil,
+  IconTrashX,
 } from "@tabler/icons-vue";
+import { useCookies } from "@vueuse/integrations/useCookies";
+import { onMounted, ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRoute, useRouter } from "vue-router";
+
+import { supabase } from "@/lib/supabase";
+
+import ErrorBanner from "@/components/ErrorBanner.vue";
+import SiteHeader from "@/components/SiteHeader.vue";
+import Button from "@/components/ui/button/Button.vue";
 import {
   Card,
+  CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
-  CardContent,
-  CardFooter,
 } from "@/components/ui/card";
 import {
   ContextMenu,
@@ -35,24 +45,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import Separator from "@/components/ui/separator/Separator.vue";
-import Button from "@/components/ui/button/Button.vue";
+import { Field } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Field } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-
-import SiteHeader from "@/components/SiteHeader.vue";
-import ErrorBanner from "@/components/ErrorBanner.vue";
-
-import { useCookies } from "@vueuse/integrations/useCookies";
-import { useRouter, useRoute } from "vue-router";
-import { useI18n } from "vue-i18n";
-import { supabase } from "@/lib/supabase";
-import { ref, onMounted } from "vue";
+import Separator from "@/components/ui/separator/Separator.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -67,7 +67,7 @@ const supabaseLoaded = ref(false);
 
 const userdata = JSON.parse(localStorage.getItem("sb-user-data") || "{}");
 const viewMode = ref(
-  String(userdata.user_metadata.settings?.viewmode) || "grid",
+  String(userdata.user_metadata.settings?.viewmode) || "grid"
 );
 
 const items = ref<any[]>([]);
@@ -128,7 +128,7 @@ async function setViewMode(mode: string) {
           ...settings,
         },
       },
-    }),
+    })
   );
 
   await supabase.auth.updateUser({
@@ -269,7 +269,7 @@ function deleteCategory(categoryId: string) {
       } else {
         // update the dashboard data and remove the category from categories
         const categoryIndex = categories.value.findIndex(
-          (category) => category.id === categoryId,
+          (category) => category.id === categoryId
         );
         if (categoryIndex !== -1) {
           categories.value.splice(categoryIndex, 1);
@@ -296,7 +296,7 @@ function editCategoryName(categoryId: string, newName: string) {
       } else {
         // update the dashboard data and remove the category from categories
         const categoryIndex = categories.value.findIndex(
-          (category) => category.id === categoryId,
+          (category) => category.id === categoryId
         );
         if (categoryIndex !== -1) {
           const category = categories.value[categoryIndex];
@@ -407,7 +407,11 @@ onMounted(async () => {
             {{ $t("components.dialog.rename_description") }}
           </DialogDescription>
         </DialogHeader>
-        <Input id="name-1" name="name" v-model="currentDialogEntry" />
+        <Input
+          id="name-1"
+          name="name"
+          v-model="currentDialogEntry"
+        />
         <DialogFooter>
           <DialogClose as-child>
             <Button variant="outline">
@@ -438,7 +442,11 @@ onMounted(async () => {
             {{ $t("components.dialog.move_to_location_description") }}
           </DialogDescription>
         </DialogHeader>
-        <Input id="name-1" name="name" v-model="currentDialogEntry" />
+        <Input
+          id="name-1"
+          name="name"
+          v-model="currentDialogEntry"
+        />
         <DialogFooter>
           <DialogClose as-child>
             <Button variant="outline">
@@ -450,7 +458,7 @@ onMounted(async () => {
             @click="
               editItemLocation(
                 String(currentItemId),
-                String(currentDialogEntry),
+                String(currentDialogEntry)
               )
             "
           >
@@ -497,7 +505,11 @@ onMounted(async () => {
             {{ $t("components.dialog.category_rename_description") }}
           </DialogDescription>
         </DialogHeader>
-        <Input id="name-1" name="name" v-model="currentCategoryDialogEntry" />
+        <Input
+          id="name-1"
+          name="name"
+          v-model="currentCategoryDialogEntry"
+        />
         <DialogFooter>
           <DialogClose as-child>
             <Button variant="outline">
@@ -509,7 +521,7 @@ onMounted(async () => {
             @click="
               editCategoryName(
                 String(currentCategoryId),
-                String(currentCategoryDialogEntry),
+                String(currentCategoryDialogEntry)
               )
             "
           >
@@ -569,7 +581,10 @@ onMounted(async () => {
             <span class="text-sm">{{ $t("pages.items.all_items") }}</span>
           </router-link>
 
-          <ContextMenu v-for="category in categories" :key="category.id">
+          <ContextMenu
+            v-for="category in categories"
+            :key="category.id"
+          >
             <ContextMenuTrigger>
               <router-link
                 :to="`/items?f=${category.id}`"
@@ -780,7 +795,7 @@ onMounted(async () => {
                             year: "numeric",
                             month: "numeric",
                             day: "numeric",
-                          },
+                          }
                         ),
                         location: item.deployed_at,
                       })
@@ -791,7 +806,7 @@ onMounted(async () => {
                             year: "numeric",
                             month: "numeric",
                             day: "numeric",
-                          },
+                          }
                         ),
                       })
                 }}</CardDescription>

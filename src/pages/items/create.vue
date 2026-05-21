@@ -1,5 +1,14 @@
 <script setup lang="ts">
 import { IconDeviceFloppy, IconX } from "@tabler/icons-vue";
+import { useCookies } from "@vueuse/integrations/useCookies";
+import { onMounted, ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
+
+import { supabase } from "@/lib/supabase";
+
+import ErrorBanner from "@/components/ErrorBanner.vue";
+import SiteHeader from "@/components/SiteHeader.vue";
 import Button from "@/components/ui/button/Button.vue";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -10,17 +19,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
-
-import SiteHeader from "@/components/SiteHeader.vue";
-import ErrorBanner from "@/components/ErrorBanner.vue";
-
-import { supabase } from "@/lib/supabase";
-import { ref, onMounted } from "vue";
-import { useCookies } from "@vueuse/integrations/useCookies";
-import { useRouter } from "vue-router";
-import { useI18n } from "vue-i18n";
+import { Textarea } from "@/components/ui/textarea";
 
 const router = useRouter();
 
@@ -56,7 +56,7 @@ async function addBlankCustomField() {
 
 async function trimBlankCustomFields() {
   item.value.custom = item.value.custom.filter(
-    (field) => field.key.trim() !== "" && field.value.trim() !== "",
+    (field) => field.key.trim() !== "" && field.value.trim() !== ""
   );
 }
 
@@ -213,7 +213,10 @@ onMounted(async () => {
         </div>
       </FieldGroup>
 
-      <Separator orientation="horizontal" class="my-2" />
+      <Separator
+        orientation="horizontal"
+        class="my-2"
+      />
 
       <FieldGroup class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
         <Field>
@@ -275,8 +278,14 @@ onMounted(async () => {
       </Field>
 
       <div class="flex md:hidden flex-col gap-2 lg:gap-4">
-        <Separator orientation="horizontal" class="my-2" />
-        <div class="flex flex-col gap-4" v-if="supabaseLoaded">
+        <Separator
+          orientation="horizontal"
+          class="my-2"
+        />
+        <div
+          class="flex flex-col gap-4"
+          v-if="supabaseLoaded"
+        >
           <FieldLabel>
             {{ $t("pages.items.editor.custom_fields") }}
           </FieldLabel>
@@ -303,7 +312,10 @@ onMounted(async () => {
         </div>
       </div>
     </section>
-    <section class="flex-col hidden md:flex gap-2" v-if="supabaseLoaded">
+    <section
+      class="flex-col hidden md:flex gap-2"
+      v-if="supabaseLoaded"
+    >
       <FieldLabel>
         {{ $t("pages.items.editor.custom_fields") }}
       </FieldLabel>

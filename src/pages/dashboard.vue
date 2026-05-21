@@ -1,22 +1,32 @@
 <script setup lang="ts">
 import {
-  IconArrowUp,
   IconArrowDown,
-  IconTrashX,
+  IconArrowUp,
   IconBlocks,
   IconForklift,
   IconPencil,
+  IconTrashX,
 } from "@tabler/icons-vue";
+import { useCookies } from "@vueuse/integrations/useCookies";
+import { onMounted, ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
+
+import { supabase } from "@/lib/supabase";
+
+import ErrorBanner from "@/components/ErrorBanner.vue";
+import SiteHeader from "@/components/SiteHeader.vue";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
+  CardAction,
+  CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
-  CardContent,
-  CardAction,
-  CardFooter,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -34,16 +44,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-
-import SiteHeader from "@/components/SiteHeader.vue";
-import ErrorBanner from "@/components/ErrorBanner.vue";
-
-import { supabase } from "@/lib/supabase";
-import { ref, onMounted } from "vue";
-import { useCookies } from "@vueuse/integrations/useCookies";
-import { useRouter } from "vue-router";
-import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
 
@@ -116,7 +116,7 @@ function undeployItem(itemId: string) {
       } else {
         // update the dashboard data and remove the item from deployedItems
         const itemIndex = deployedItems.value.findIndex(
-          (item) => item.id === itemId,
+          (item) => item.id === itemId
         );
         if (itemIndex !== -1) {
           const item = deployedItems.value[itemIndex];
@@ -143,7 +143,7 @@ function deleteItem(itemId: string) {
       } else {
         // update the dashboard data and remove the item from deployedItems
         const itemIndex = deployedItems.value.findIndex(
-          (item) => item.id === itemId,
+          (item) => item.id === itemId
         );
         if (itemIndex !== -1) {
           const item = deployedItems.value[itemIndex];
@@ -173,7 +173,7 @@ function editItemName(itemId: string, newName: string) {
       } else {
         // update the dashboard data and remove the item from deployedItems
         const itemIndex = deployedItems.value.findIndex(
-          (item) => item.id === itemId,
+          (item) => item.id === itemId
         );
         if (itemIndex !== -1) {
           const item = deployedItems.value[itemIndex];
@@ -200,7 +200,7 @@ function editItemLocation(itemId: string, newLocation: string) {
       } else {
         // update the dashboard data and remove the item from deployedItems
         const itemIndex = deployedItems.value.findIndex(
-          (item) => item.id === itemId,
+          (item) => item.id === itemId
         );
         if (itemIndex !== -1) {
           const item = deployedItems.value[itemIndex];
@@ -223,7 +223,7 @@ onMounted(async () => {
   if (!categoriesData.error) {
     dashboardData.value.categoriesCount = categoriesData.data.length;
     dashboardData.value.categoriesAdded = categoriesData.data.filter(
-      (category) => new Date(category.created_at) >= thirtyDaysAgo,
+      (category) => new Date(category.created_at) >= thirtyDaysAgo
     ).length;
 
     errorMessages.value = [];
@@ -235,19 +235,19 @@ onMounted(async () => {
   if (!itemsData.error) {
     dashboardData.value.itemsCount = itemsData.data.length;
     dashboardData.value.itemsAdded = itemsData.data.filter(
-      (item) => new Date(item.created_at) >= thirtyDaysAgo,
+      (item) => new Date(item.created_at) >= thirtyDaysAgo
     ).length;
 
     dashboardData.value.deployedItemsCount = itemsData.data.filter(
-      (item) => item.deployed !== null,
+      (item) => item.deployed !== null
     ).length;
     dashboardData.value.deployedItemsAdded = itemsData.data.filter(
-      (item) => item.deployed !== null && new Date(item.deployed) >= yesterday,
+      (item) => item.deployed !== null && new Date(item.deployed) >= yesterday
     ).length;
 
     dashboardData.value.totalValue = itemsData.data.reduce(
       (sum, item) => sum + item.price,
-      0,
+      0
     );
     dashboardData.value.totalValueAdded = itemsData.data
       .filter((item) => new Date(item.created_at) >= thirtyDaysAgo)
@@ -257,7 +257,7 @@ onMounted(async () => {
       .filter((item) => item.deployed !== null)
       .sort(
         (a, b) =>
-          new Date(b.deployed).getTime() - new Date(a.deployed).getTime(),
+          new Date(b.deployed).getTime() - new Date(a.deployed).getTime()
       )
       .slice(0, 4);
 
@@ -301,7 +301,11 @@ onMounted(async () => {
             {{ $t("components.dialog.rename_description") }}
           </DialogDescription>
         </DialogHeader>
-        <Input id="name-1" name="name" v-model="currentDialogEntry" />
+        <Input
+          id="name-1"
+          name="name"
+          v-model="currentDialogEntry"
+        />
         <DialogFooter>
           <DialogClose as-child>
             <Button variant="outline">
@@ -332,7 +336,11 @@ onMounted(async () => {
             {{ $t("components.dialog.move_to_location_description") }}
           </DialogDescription>
         </DialogHeader>
-        <Input id="name-1" name="name" v-model="currentDialogEntry" />
+        <Input
+          id="name-1"
+          name="name"
+          v-model="currentDialogEntry"
+        />
         <DialogFooter>
           <DialogClose as-child>
             <Button variant="outline">
@@ -344,7 +352,7 @@ onMounted(async () => {
             @click="
               editItemLocation(
                 String(currentItemId),
-                String(currentDialogEntry),
+                String(currentDialogEntry)
               )
             "
           >
@@ -581,7 +589,10 @@ onMounted(async () => {
       {{ $t("pages.dashboard.deployed_items") }}
     </h1>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <ContextMenu v-for="item in deployedItems" :key="item.id">
+      <ContextMenu
+        v-for="item in deployedItems"
+        :key="item.id"
+      >
         <ContextMenuTrigger>
           <Card
             @click="$router.push(`/items/${item.id}`)"
@@ -607,7 +618,10 @@ onMounted(async () => {
                 }}</CardDescription
               >
             </CardHeader>
-            <CardContent class="sm:block hidden" v-if="item.image_url">
+            <CardContent
+              class="sm:block hidden"
+              v-if="item.image_url"
+            >
               <img
                 :src="item.image_url"
                 :alt="$t('pages.dashboard.item_image_alt')"
@@ -624,7 +638,7 @@ onMounted(async () => {
                           year: "numeric",
                           month: "numeric",
                           day: "numeric",
-                        },
+                        }
                       ),
                       location: item.deployed_at,
                     })
@@ -635,7 +649,7 @@ onMounted(async () => {
                           year: "numeric",
                           month: "numeric",
                           day: "numeric",
-                        },
+                        }
                       ),
                     })
               }}</CardDescription>

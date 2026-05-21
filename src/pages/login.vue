@@ -1,10 +1,16 @@
 <script setup lang="ts">
-import SiteHeader from "@/components/SiteHeader.vue";
-
-import type { HTMLAttributes } from "vue";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import { IconLoader2, IconX } from "@tabler/icons-vue";
+import { useStorage } from "@vueuse/core";
+import { useCookies } from "@vueuse/integrations/useCookies";
+import type { HTMLAttributes } from "vue";
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+
+import { supabase } from "@/lib/supabase";
+import { cn } from "@/lib/utils";
+
+import SiteHeader from "@/components/SiteHeader.vue";
+import { Button } from "@/components/ui/button";
 import {
   Field,
   FieldDescription,
@@ -16,12 +22,6 @@ import { Input } from "@/components/ui/input";
 const props = defineProps<{
   class?: HTMLAttributes["class"];
 }>();
-
-import { supabase } from "@/lib/supabase";
-import { ref } from "vue";
-import { useCookies } from "@vueuse/integrations/useCookies";
-import { useStorage } from "@vueuse/core";
-import { useRouter } from "vue-router";
 
 const router = useRouter();
 
@@ -135,7 +135,10 @@ if (cookies.get("sb-access-token")) {
                   email.length > 0 && password.length > 0 ? login() : null
                 "
               >
-                <IconLoader2 v-if="loggingIn" class="size-5 animate-spin" />
+                <IconLoader2
+                  v-if="loggingIn"
+                  class="size-5 animate-spin"
+                />
                 <span v-else>{{ $t("pages.login.login_button") }}</span>
               </Button>
             </Field>

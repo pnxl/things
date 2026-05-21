@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import SiteHeader from "@/components/SiteHeader.vue";
-
+import BwipJs from "@bwip-js/browser";
 import {
   IconArrowLeft,
   IconPencil,
@@ -8,7 +7,13 @@ import {
   IconTrash,
   IconX,
 } from "@tabler/icons-vue";
+import { computed, onMounted, ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRoute, useRouter } from "vue-router";
 
+import { supabase } from "@/lib/supabase";
+
+import SiteHeader from "@/components/SiteHeader.vue";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -33,13 +38,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import Textarea from "@/components/ui/textarea/Textarea.vue";
-
-import { supabase } from "@/lib/supabase";
-import { ref, onMounted, computed } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { useI18n } from "vue-i18n";
-
-import BwipJs from "@bwip-js/browser";
 
 const { t } = useI18n();
 
@@ -206,7 +204,11 @@ onMounted(async () => {
     v-if="errorUpdating !== ''"
   >
     <span class="my-auto">{{ errorUpdating }}</span>
-    <Button variant="ghost" size="icon-sm" @click="errorUpdating = ''">
+    <Button
+      variant="ghost"
+      size="icon-sm"
+      @click="errorUpdating = ''"
+    >
       <IconX />
     </Button>
   </div>
@@ -252,7 +254,11 @@ onMounted(async () => {
           </DialogHeader>
           <DialogFooter class="sm:justify-end flex sm:flex-row flex-col gap-2">
             <DialogClose as-child>
-              <Button type="button" variant="secondary" class="cursor-pointer">
+              <Button
+                type="button"
+                variant="secondary"
+                class="cursor-pointer"
+              >
                 {{ t("pages.items.viewer.delete_cancel") }}
               </Button>
             </DialogClose>
@@ -283,7 +289,10 @@ onMounted(async () => {
 
       <div class="flex flex-col gap-2">
         <div>
-          <h1 v-if="supabaseLoaded" class="font-semibold text-3xl">
+          <h1
+            v-if="supabaseLoaded"
+            class="font-semibold text-3xl"
+          >
             {{ item.name }}
           </h1>
           <div
@@ -292,7 +301,10 @@ onMounted(async () => {
           ></div>
         </div>
         <div v-if="item.category || supabaseLoaded">
-          <h1 v-if="supabaseLoaded" class="text-muted-foreground">
+          <h1
+            v-if="supabaseLoaded"
+            class="text-muted-foreground"
+          >
             {{
               item.category
                 ? categories.find((c) => c.id === item.category)?.name ||
@@ -376,7 +388,10 @@ onMounted(async () => {
       </div>
 
       <div>
-        <Card class="@container/card" v-if="item.deployed === null">
+        <Card
+          class="@container/card"
+          v-if="item.deployed === null"
+        >
           <CardHeader>
             <CardDescription>{{
               $t("pages.items.viewer.deployment_status")
@@ -395,8 +410,14 @@ onMounted(async () => {
           </CardHeader>
         </Card>
 
-        <div v-else class="flex flex-col lg:gap-3 gap-2">
-          <Card class="@container/card" v-if="item.deployed !== null">
+        <div
+          v-else
+          class="flex flex-col lg:gap-3 gap-2"
+        >
+          <Card
+            class="@container/card"
+            v-if="item.deployed !== null"
+          >
             <CardHeader class="flex flex-row justify-between">
               <CardDescription class="my-auto">{{
                 $t("pages.items.viewer.deployed_on")
@@ -411,7 +432,7 @@ onMounted(async () => {
                       year: "numeric",
                       month: "numeric",
                       day: "numeric",
-                    },
+                    }
                   )
                 }}</span>
                 <div
@@ -421,7 +442,10 @@ onMounted(async () => {
               </CardTitle>
             </CardHeader>
           </Card>
-          <Card class="@container/card" v-if="item.deployed_at !== null">
+          <Card
+            class="@container/card"
+            v-if="item.deployed_at !== null"
+          >
             <CardHeader class="flex flex-row justify-between">
               <CardDescription class="my-auto">{{
                 $t("pages.items.viewer.deployed_at")
@@ -437,7 +461,10 @@ onMounted(async () => {
               </CardTitle>
             </CardHeader>
           </Card>
-          <Card class="@container/card" v-if="item.person_responsible !== null">
+          <Card
+            class="@container/card"
+            v-if="item.person_responsible !== null"
+          >
             <CardHeader class="flex flex-row justify-between">
               <CardDescription class="my-auto">{{
                 $t("pages.items.viewer.person_responsible")
@@ -536,7 +563,10 @@ onMounted(async () => {
         </Popover>
       </div>
 
-      <div class="flex flex-col gap-2" v-if="supabaseLoaded">
+      <div
+        class="flex flex-col gap-2"
+        v-if="supabaseLoaded"
+      >
         <div
           v-for="customField in item.custom"
           :key="customField.key"
@@ -557,7 +587,7 @@ onMounted(async () => {
                     year: "numeric",
                     month: "numeric",
                     day: "numeric",
-                  },
+                  }
                 )
               : ""
           }}</span>

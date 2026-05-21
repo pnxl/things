@@ -1,13 +1,33 @@
 <script setup lang="ts">
+import type { DateValue } from "@internationalized/date";
+import { getLocalTimeZone, parseDate, today } from "@internationalized/date";
 import {
   IconChevronDown,
   IconDeviceFloppy,
   IconLoader2,
   IconX,
 } from "@tabler/icons-vue";
+import { useCookies } from "@vueuse/integrations/useCookies";
+import { computed, onMounted, ref } from "vue";
+import type { Ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRoute, useRouter } from "vue-router";
+
+import { supabase } from "@/lib/supabase";
+
+import ErrorBanner from "@/components/ErrorBanner.vue";
+import SiteHeader from "@/components/SiteHeader.vue";
 import Button from "@/components/ui/button/Button.vue";
+import { Calendar } from "@/components/ui/calendar";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -15,29 +35,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-
-import SiteHeader from "@/components/SiteHeader.vue";
-import ErrorBanner from "@/components/ErrorBanner.vue";
-
-import { supabase } from "@/lib/supabase";
-import { computed, ref, onMounted } from "vue";
-import type { Ref } from "vue";
-import { useCookies } from "@vueuse/integrations/useCookies";
-import { useRoute, useRouter } from "vue-router";
-import { useI18n } from "vue-i18n";
-
-import type { DateValue } from "@internationalized/date";
-import { getLocalTimeZone, today, parseDate } from "@internationalized/date";
+import { Textarea } from "@/components/ui/textarea";
 
 const route = useRoute();
 const router = useRouter();
@@ -153,7 +152,7 @@ async function addBlankCustomField() {
 
 async function trimBlankCustomFields() {
   item.value.custom = item.value.custom.filter(
-    (field) => field.key.trim() !== "" && field.value.trim() !== "",
+    (field) => field.key.trim() !== "" && field.value.trim() !== ""
   );
 }
 
@@ -164,7 +163,7 @@ async function saveChanges() {
 
   if (itemIsDeployed.value === true) {
     item.value.deployed = new Date(
-      datePickerPicked.value.toString(),
+      datePickerPicked.value.toString()
     ).toISOString();
   } else if (itemIsDeployed.value === false) {
     item.value.deployed = null;
@@ -226,7 +225,7 @@ onMounted(async () => {
           year: "numeric",
           month: "numeric",
           day: "numeric",
-        }),
+        })
       );
     }
 
@@ -347,7 +346,10 @@ onMounted(async () => {
           >
         </div>
 
-        <Separator orientation="horizontal" class="my-4 block md:hidden" />
+        <Separator
+          orientation="horizontal"
+          class="my-4 block md:hidden"
+        />
       </div>
 
       <FieldGroup class="flex flex-col gap-4">
@@ -421,7 +423,10 @@ onMounted(async () => {
         </div>
       </FieldGroup>
 
-      <Separator orientation="horizontal" class="my-2" />
+      <Separator
+        orientation="horizontal"
+        class="my-2"
+      />
 
       <FieldGroup class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
         <Field>
@@ -470,13 +475,19 @@ onMounted(async () => {
 
       <FieldGroup class="my-4">
         <div class="flex items-center gap-3">
-          <Checkbox id="item_is_deployed" v-model="itemIsDeployed" />
+          <Checkbox
+            id="item_is_deployed"
+            v-model="itemIsDeployed"
+          />
           <Label for="item_is_deployed">{{
             $t("pages.items.editor.is_deployed")
           }}</Label>
         </div>
 
-        <div class="flex flex-col gap-3" v-if="itemIsDeployed">
+        <div
+          class="flex flex-col gap-3"
+          v-if="itemIsDeployed"
+        >
           <Label for="date-picker">
             {{ $t("pages.items.editor.deployed_date") }}
           </Label>
@@ -502,7 +513,10 @@ onMounted(async () => {
                   <IconChevronDown />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent class="w-auto overflow-hidden p-0" align="start">
+              <PopoverContent
+                class="w-auto overflow-hidden p-0"
+                align="start"
+              >
                 <Calendar
                   :model-value="datePickerPicked"
                   @update:model-value="
@@ -565,8 +579,14 @@ onMounted(async () => {
       </Field>
 
       <div class="flex md:hidden flex-col gap-2 lg:gap-4">
-        <Separator orientation="horizontal" class="my-2" />
-        <div class="flex flex-col gap-4" v-if="supabaseLoaded">
+        <Separator
+          orientation="horizontal"
+          class="my-2"
+        />
+        <div
+          class="flex flex-col gap-4"
+          v-if="supabaseLoaded"
+        >
           <FieldLabel>
             {{ $t("pages.items.editor.custom_fields") }}
           </FieldLabel>
@@ -593,7 +613,10 @@ onMounted(async () => {
         </div>
       </div>
 
-      <div class="flex md:hidden flex-col gap-2" v-if="supabaseLoaded">
+      <div
+        class="flex md:hidden flex-col gap-2"
+        v-if="supabaseLoaded"
+      >
         <div class="w-full border-b flex flex-row justify-between text-sm">
           <span class="opacity-75">{{
             $t("pages.items.editor.created_at")
@@ -606,7 +629,7 @@ onMounted(async () => {
                     year: "numeric",
                     month: "numeric",
                     day: "numeric",
-                  },
+                  }
                 )
               : ""
           }}</span>
@@ -665,8 +688,14 @@ onMounted(async () => {
       </div>
 
       <div class="flex flex-col gap-2 lg:gap-4">
-        <Separator orientation="horizontal" class="mt-1 mb-3" />
-        <div class="flex flex-col gap-2" v-if="supabaseLoaded">
+        <Separator
+          orientation="horizontal"
+          class="mt-1 mb-3"
+        />
+        <div
+          class="flex flex-col gap-2"
+          v-if="supabaseLoaded"
+        >
           <FieldLabel>
             {{ $t("pages.items.editor.custom_fields") }}
           </FieldLabel>
@@ -695,7 +724,10 @@ onMounted(async () => {
         </div>
       </div>
 
-      <div class="flex flex-col gap-2" v-if="supabaseLoaded">
+      <div
+        class="flex flex-col gap-2"
+        v-if="supabaseLoaded"
+      >
         <div class="w-full border-b flex flex-row justify-between text-sm">
           <span class="opacity-75">{{
             $t("pages.items.editor.created_at")
@@ -708,7 +740,7 @@ onMounted(async () => {
                     year: "numeric",
                     month: "numeric",
                     day: "numeric",
-                  },
+                  }
                 )
               : ""
           }}</span>

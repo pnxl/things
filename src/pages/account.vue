@@ -1,4 +1,13 @@
 <script setup lang="ts">
+import { useCookies } from "@vueuse/integrations/useCookies";
+import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
+
+import { supabase } from "@/lib/supabase";
+
+import ErrorBanner from "@/components/ErrorBanner.vue";
+import SiteHeader from "@/components/SiteHeader.vue";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -10,15 +19,6 @@ import {
   FieldSet,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-
-import SiteHeader from "@/components/SiteHeader.vue";
-import ErrorBanner from "@/components/ErrorBanner.vue";
-
-import { useCookies } from "@vueuse/integrations/useCookies";
-import { useRouter } from "vue-router";
-import { supabase } from "@/lib/supabase";
-import { ref, onMounted } from "vue";
 
 if (!useCookies(["sb-access-token"]).get("sb-access-token")) {
   useRouter().replace({ path: "/login" });
@@ -108,7 +108,7 @@ async function saveChanges() {
           ...userdata.user_metadata,
           display_name: updates.data.display_name,
         },
-      }),
+      })
     );
   }
 }
@@ -147,8 +147,14 @@ onMounted(async () => {
                   {{ $t("pages.account.profile_picture_description") }}
                 </FieldDescription>
 
-                <Field orientation="horizontal" class="mt-2">
-                  <Button type="submit" @click.prevent="uploadProfilePicture()">
+                <Field
+                  orientation="horizontal"
+                  class="mt-2"
+                >
+                  <Button
+                    type="submit"
+                    @click.prevent="uploadProfilePicture()"
+                  >
                     {{ $t("pages.account.upload_button") }}
                   </Button>
                   <Button
@@ -200,7 +206,10 @@ onMounted(async () => {
           </FieldGroup>
 
           <Field orientation="horizontal">
-            <Button type="submit" @click="saveChanges()">
+            <Button
+              type="submit"
+              @click="saveChanges()"
+            >
               {{ $t("pages.account.save_button") }}
             </Button>
             <Button

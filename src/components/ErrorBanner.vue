@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { IconAlertCircle } from "@tabler/icons-vue";
+
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 defineProps({ errors: Array });
 </script>

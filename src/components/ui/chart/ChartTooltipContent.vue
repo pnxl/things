@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue";
-import type { ChartConfig } from ".";
 import { computed } from "vue";
+
 import { cn } from "@/lib/utils";
+
+import type { ChartConfig } from ".";
 
 const props = withDefaults(
   defineProps<{
@@ -22,7 +24,7 @@ const props = withDefaults(
     payload: () => ({}),
     config: () => ({}),
     indicator: "dot",
-  },
+  }
 );
 
 // TODO: currently we use `createElement` and `render` to render the
@@ -41,7 +43,7 @@ const payload = computed(() => {
 });
 
 const nestLabel = computed(
-  () => Object.keys(props.payload).length === 1 && props.indicator !== "dot",
+  () => Object.keys(props.payload).length === 1 && props.indicator !== "dot"
 );
 const tooltipLabel = computed(() => {
   if (props.hideLabel) return null;
@@ -59,12 +61,15 @@ const tooltipLabel = computed(() => {
     :class="
       cn(
         'border-border/50 bg-background grid min-w-[8rem] items-start gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs shadow-xl',
-        props.class,
+        props.class
       )
     "
   >
     <slot>
-      <div v-if="!nestLabel && tooltipLabel" class="font-medium">
+      <div
+        v-if="!nestLabel && tooltipLabel"
+        class="font-medium"
+      >
         {{ tooltipLabel }}
       </div>
       <div class="grid gap-1.5">
@@ -74,11 +79,14 @@ const tooltipLabel = computed(() => {
           :class="
             cn(
               '[&>svg]:text-muted-foreground flex w-full flex-wrap items-stretch gap-2 [&>svg]:h-2.5 [&>svg]:w-2.5',
-              indicator === 'dot' && 'items-center',
+              indicator === 'dot' && 'items-center'
             )
           "
         >
-          <component :is="itemConfig.icon" v-if="itemConfig?.icon" />
+          <component
+            :is="itemConfig.icon"
+            v-if="itemConfig?.icon"
+          />
           <template v-else-if="!hideIndicator">
             <div
               :class="
@@ -90,7 +98,7 @@ const tooltipLabel = computed(() => {
                     'w-0 border-[1.5px] border-dashed bg-transparent':
                       indicator === 'dashed',
                     'my-0.5': nestLabel && indicator === 'dashed',
-                  },
+                  }
                 )
               "
               :style="{
@@ -104,12 +112,15 @@ const tooltipLabel = computed(() => {
             :class="
               cn(
                 'flex flex-1 justify-between leading-none',
-                nestLabel ? 'items-end' : 'items-center',
+                nestLabel ? 'items-end' : 'items-center'
               )
             "
           >
             <div class="grid gap-1.5">
-              <div v-if="nestLabel" class="font-medium">
+              <div
+                v-if="nestLabel"
+                class="font-medium"
+              >
                 {{ tooltipLabel }}
               </div>
               <span class="text-muted-foreground">

@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import AppSidebar from "@/components/AppSidebar.vue";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-
+import { useCookies } from "@vueuse/integrations/useCookies";
 import { onMounted } from "vue";
 
 import { supabase } from "@/lib/supabase";
-import { useCookies } from "@vueuse/integrations/useCookies";
+
+import AppSidebar from "@/components/AppSidebar.vue";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 // restore user settings on page load
 onMounted(async () => {
@@ -23,7 +23,7 @@ onMounted(async () => {
   } else {
     // Follow system setting
     const prefersDark = window.matchMedia(
-      "(prefers-color-scheme: dark)",
+      "(prefers-color-scheme: dark)"
     ).matches;
     if (prefersDark) {
       document.documentElement.classList.add("dark");
@@ -88,7 +88,7 @@ onMounted(async () => {
           location.reload();
         }
       },
-      (data.session?.expires_in ?? 0) * 1000 - 60000,
+      (data.session?.expires_in ?? 0) * 1000 - 60000
     );
   }
 

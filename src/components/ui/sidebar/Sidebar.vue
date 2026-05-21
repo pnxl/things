@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import type { SidebarProps } from ".";
 import { cn } from "@/lib/utils";
+
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import SheetDescription from "@/components/ui/sheet/SheetDescription.vue";
 import SheetHeader from "@/components/ui/sheet/SheetHeader.vue";
 import SheetTitle from "@/components/ui/sheet/SheetTitle.vue";
+
+import type { SidebarProps } from ".";
 import { SIDEBAR_WIDTH_MOBILE, useSidebar } from "./utils";
 
 defineOptions({
@@ -27,7 +29,7 @@ const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
     :class="
       cn(
         'bg-sidebar text-sidebar-foreground flex h-full w-(--sidebar-width) flex-col',
-        props.class,
+        props.class
       )
     "
     v-bind="$attrs"
@@ -79,7 +81,7 @@ const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
           'group-data-[side=right]:rotate-180',
           variant === 'floating' || variant === 'inset'
             ? 'group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4)))]'
-            : 'group-data-[collapsible=icon]:w-(--sidebar-width-icon)',
+            : 'group-data-[collapsible=icon]:w-(--sidebar-width-icon)'
         )
       "
     />
@@ -94,7 +96,7 @@ const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
           variant === 'floating' || variant === 'inset'
             ? 'p-2 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4))+2px)]'
             : 'group-data-[collapsible=icon]:w-(--sidebar-width-icon) group-data-[side=left]:border-r group-data-[side=right]:border-l',
-          props.class,
+          props.class
         )
       "
       v-bind="$attrs"
