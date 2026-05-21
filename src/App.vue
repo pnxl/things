@@ -4,8 +4,11 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 import { onMounted } from "vue";
 
+import { supabase } from "@/lib/supabase";
+import { useCookies } from "@vueuse/integrations/useCookies";
+
 // restore user settings on page load
-onMounted(() => {
+onMounted(async () => {
   if (!localStorage.getItem("sb-user-data")) return;
 
   const theme = localStorage.getItem("sb-user-data")
@@ -41,63 +44,58 @@ onMounted(() => {
         }
       });
   }
+
+  // refresh session on page load
+  const { data, error } = await supabase.auth.getSession();
+
+  const cookies = useCookies([
+    "sb-access-token",
+    "sb-refresh-token",
+    "sb-expires-at",
+  ]);
+
+  // if there's an active session, set cookies, user data, and start refresh timer
+  if (data.session !== null) {
+    cookies.set("sb-access-token", data.session.access_token);
+    cookies.set("sb-refresh-token", data.session.refresh_token);
+    cookies.set("sb-expires-at", data.session.expires_at);
+
+    const userData = (await supabase.auth.getUser()).data.user;
+
+    localStorage.setItem("sb-user-data", JSON.stringify(userData));
+
+    setInterval(
+      // refresh session 1 minute before it expires
+      async () => {
+        const { data, error } = await supabase.auth.refreshSession();
+
+        if (data.session !== null) {
+          cookies.set("sb-access-token", data.session.access_token);
+          cookies.set("sb-refresh-token", data.session.refresh_token);
+          cookies.set("sb-expires-at", data.session.expires_at);
+
+          console.log("Session refreshed.");
+        }
+
+        if (error) {
+          console.error("Error refreshing session!", error);
+
+          await supabase.auth.signOut();
+          cookies.remove("sb-access-token");
+          cookies.remove("sb-refresh-token");
+          cookies.remove("sb-expires-at");
+          localStorage.removeItem("sb-user-data");
+          location.reload();
+        }
+      },
+      (data.session?.expires_in ?? 0) * 1000 - 60000,
+    );
+  }
+
+  if (error) {
+    console.error("Error getting session!", error);
+  }
 });
-</script>
-
-<script lang="ts">
-import { supabase } from "@/lib/supabase";
-import { useCookies } from "@vueuse/integrations/useCookies";
-
-// refresh session on page load
-const { data, error } = await supabase.auth.getSession();
-
-const cookies = useCookies([
-  "sb-access-token",
-  "sb-refresh-token",
-  "sb-expires-at",
-]);
-
-// if there's an active session, set cookies, user data, and start refresh timer
-if (data.session !== null) {
-  cookies.set("sb-access-token", data.session.access_token);
-  cookies.set("sb-refresh-token", data.session.refresh_token);
-  cookies.set("sb-expires-at", data.session.expires_at);
-
-  const userData = (await supabase.auth.getUser()).data.user;
-
-  localStorage.setItem("sb-user-data", JSON.stringify(userData));
-
-  setInterval(
-    // refresh session 1 minute before it expires
-    async () => {
-      const { data, error } = await supabase.auth.refreshSession();
-
-      if (data.session !== null) {
-        cookies.set("sb-access-token", data.session.access_token);
-        cookies.set("sb-refresh-token", data.session.refresh_token);
-        cookies.set("sb-expires-at", data.session.expires_at);
-
-        console.log("Session refreshed.");
-      }
-
-      if (error) {
-        console.error("Error refreshing session!", error);
-
-        await supabase.auth.signOut();
-        cookies.remove("sb-access-token");
-        cookies.remove("sb-refresh-token");
-        cookies.remove("sb-expires-at");
-        localStorage.removeItem("sb-user-data");
-        location.reload();
-      }
-    },
-    (data.session?.expires_in ?? 0) * 1000 - 60000,
-  );
-}
-
-if (error) {
-  console.error("Error getting session!", error);
-}
 </script>
 
 <template>
