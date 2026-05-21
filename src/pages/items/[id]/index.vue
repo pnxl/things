@@ -47,7 +47,7 @@ const route = useRoute();
 const router = useRouter();
 
 const remarksField = ref("");
-const remarksInterval = ref<number | null>(null);
+const remarksInterval = ref<ReturnType<typeof setInterval> | null>(null);
 
 function startRemarksSync() {
   if (remarksInterval.value) clearInterval(remarksInterval.value);
