@@ -713,6 +713,7 @@ onMounted(async () => {
       </div>
       <div
         v-else
+        class="overflow-y-auto"
         :class="
           viewMode === 'grid'
             ? 'grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4'
@@ -780,7 +781,7 @@ onMounted(async () => {
                   :src="item.image_url"
                   :alt="$t('pages.dashboard.item_image_alt')"
                   :class="
-                    (viewMode === 'grid' ? 'aspect-3/2' : 'aspect-square') +
+                    (viewMode === 'grid' ? 'aspect-3/2' : 'aspect-square h-32') +
                     ' rounded-lg border shadow-sm object-cover object-center'
                   "
                 />
