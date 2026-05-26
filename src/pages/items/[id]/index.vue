@@ -213,230 +213,200 @@ onMounted(async () => {
     </Button>
   </div>
   <div
-    class="flex flex-row justify-between text-sm m-4 mb-0 lg:mb-0 lg:m-6 gap-1 text-primary"
+    class="m-4 mr-2 pr-2 mb-0! pb-4 lg:pb-6 lg:m-6 lg:mr-3 lg:pr-3 flex flex-col gap-4 lg:gap-6 overflow-x-clip overflow-y-scroll scrollbar-thin scrollbar-bg-transparent scrollbar-thumb-secondary/50 scrollbar-thumb-rounded-full hover:scrollbar-thumb-secondary/80 transition-colors duration-200"
   >
-    <Button
-      @click="$router.push('/items')"
-      variant="ghost"
-      class="flex flex-row gap-1 cursor-pointer -ml-3 hover:bg-transparent! hover:text-primary/80 hover:underline duration-200 transition-colors"
-    >
-      <IconArrowLeft class="size-4 my-auto" />
-      {{ t("pages.items.viewer.go_back") }}
-    </Button>
-    <div class="flex flex-row gap-1">
+    <div class="flex flex-row justify-between text-sm gap-1 text-primary">
       <Button
-        @click="$router.push(`/items/${item.id}/edit`)"
+        @click="$router.push('/items')"
         variant="ghost"
-        class="flex flex-row gap-1 cursor-pointer -mr-3 hover:bg-transparent! hover:text-primary/80 hover:underline duration-200 transition-colors"
+        class="flex flex-row gap-1 cursor-pointer -ml-3 hover:bg-transparent! hover:text-primary/80 hover:underline duration-200 transition-colors"
       >
-        <IconPencil class="size-4 my-auto" />
-        {{ t("pages.items.viewer.edit_item") }}
+        <IconArrowLeft class="size-4 my-auto" />
+        {{ t("pages.items.viewer.go_back") }}
       </Button>
+      <div class="flex flex-row gap-1">
+        <Button
+          @click="$router.push(`/items/${item.id}/edit`)"
+          variant="ghost"
+          class="flex flex-row gap-1 cursor-pointer -mr-3 hover:bg-transparent! hover:text-primary/80 hover:underline duration-200 transition-colors"
+        >
+          <IconPencil class="size-4 my-auto" />
+          {{ t("pages.items.viewer.edit_item") }}
+        </Button>
 
-      <Dialog>
-        <DialogTrigger as-child>
-          <Button
-            variant="ghost"
-            class="flex text-destructive flex-row gap-1 cursor-pointer -mr-3 hover:bg-transparent! hover:text-destructive/80 hover:underline duration-200 transition-colors"
-          >
-            <IconTrash class="size-4 my-auto" />
-            {{ t("pages.items.viewer.delete_item") }}
-          </Button>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{{
-              t("pages.items.viewer.delete_confirmation")
-            }}</DialogTitle>
-            <DialogDescription>
-              {{ t("pages.items.viewer.delete_warning") }}
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter class="sm:justify-end flex sm:flex-row flex-col gap-2">
-            <DialogClose as-child>
-              <Button
-                type="button"
-                variant="secondary"
-                class="cursor-pointer"
-              >
-                {{ t("pages.items.viewer.delete_cancel") }}
-              </Button>
-            </DialogClose>
-            <DialogClose as-child>
-              <Button
-                type="button"
-                variant="destructive"
-                class="cursor-pointer"
-                @click="deleteItem()"
-              >
-                {{ t("pages.items.viewer.delete_confirm") }}
-              </Button>
-            </DialogClose>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        <Dialog>
+          <DialogTrigger as-child>
+            <Button
+              variant="ghost"
+              class="flex text-destructive flex-row gap-1 cursor-pointer -mr-3 hover:bg-transparent! hover:text-destructive/80 hover:underline duration-200 transition-colors"
+            >
+              <IconTrash class="size-4 my-auto" />
+              {{ t("pages.items.viewer.delete_item") }}
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>{{
+                t("pages.items.viewer.delete_confirmation")
+              }}</DialogTitle>
+              <DialogDescription>
+                {{ t("pages.items.viewer.delete_warning") }}
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter
+              class="sm:justify-end flex sm:flex-row flex-col gap-2"
+            >
+              <DialogClose as-child>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  class="cursor-pointer"
+                >
+                  {{ t("pages.items.viewer.delete_cancel") }}
+                </Button>
+              </DialogClose>
+              <DialogClose as-child>
+                <Button
+                  type="button"
+                  variant="destructive"
+                  class="cursor-pointer"
+                  @click="deleteItem()"
+                >
+                  {{ t("pages.items.viewer.delete_confirm") }}
+                </Button>
+              </DialogClose>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
-  </div>
 
-  <div class="p-4 lg:p-6 grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
-    <section class="flex flex-col gap-4 lg:gap-6">
-      <img
-        v-if="supabaseLoaded && itemImageExists"
-        :src="itemImage"
-        alt="Item Image"
-        class="w-full object-cover object-center aspect-3/2 rounded-md shadow-sm md:hidden"
-      />
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
+      <section class="flex flex-col gap-4 lg:gap-6">
+        <img
+          v-if="supabaseLoaded && itemImageExists"
+          :src="itemImage"
+          alt="Item Image"
+          class="w-full object-cover object-center aspect-3/2 rounded-md shadow-sm md:hidden"
+        />
 
-      <div class="flex flex-col gap-2">
-        <div>
-          <h1
-            v-if="supabaseLoaded"
-            class="font-semibold text-3xl"
-          >
-            {{ item.name }}
-          </h1>
-          <div
-            v-else
-            class="bg-primary/25 animate-pulse h-10 w-64 rounded-md"
-          ></div>
+        <div class="flex flex-col gap-2">
+          <div>
+            <h1
+              v-if="supabaseLoaded"
+              class="font-semibold text-3xl"
+            >
+              {{ item.name }}
+            </h1>
+            <div
+              v-else
+              class="bg-primary/25 animate-pulse h-10 w-64 rounded-md"
+            ></div>
+          </div>
+          <div v-if="item.category || supabaseLoaded">
+            <h1
+              v-if="supabaseLoaded"
+              class="text-muted-foreground"
+            >
+              {{
+                item.category
+                  ? categories.find((c) => c.id === item.category)?.name ||
+                    $t("pages.items.viewer.unknown_category")
+                  : $t("pages.items.viewer.unknown_category")
+              }}
+            </h1>
+            <div
+              v-else
+              class="bg-primary/25 animate-pulse h-5 w-32 rounded-md"
+            ></div>
+          </div>
         </div>
-        <div v-if="item.category || supabaseLoaded">
-          <h1
-            v-if="supabaseLoaded"
-            class="text-muted-foreground"
+
+        <div
+          v-if="item.tags !== null && supabaseLoaded"
+          class="flex flex-wrap gap-2 text-muted-foreground text-sm"
+        >
+          <div
+            v-for="tag in item.tags"
+            :key="tag"
+            class="border border-muted-foreground/50 rounded-md px-2 py-1"
           >
+            <IconTag class="size-4 inline-block mr-1" />
             {{
-              item.category
-                ? categories.find((c) => c.id === item.category)?.name ||
-                  $t("pages.items.viewer.unknown_category")
-                : $t("pages.items.viewer.unknown_category")
+              tags.find((t) => t.id === tag)?.name ||
+              $t("pages.items.viewer.unknown_tag")
             }}
-          </h1>
-          <div
-            v-else
-            class="bg-primary/25 animate-pulse h-5 w-32 rounded-md"
-          ></div>
+          </div>
         </div>
-      </div>
 
-      <div
-        v-if="item.tags !== null && supabaseLoaded"
-        class="flex flex-wrap gap-2 text-muted-foreground text-sm"
-      >
-        <div
-          v-for="tag in item.tags"
-          :key="tag"
-          class="border border-muted-foreground/50 rounded-md px-2 py-1"
-        >
-          <IconTag class="size-4 inline-block mr-1" />
-          {{
-            tags.find((t) => t.id === tag)?.name ||
-            $t("pages.items.viewer.unknown_tag")
-          }}
-        </div>
-      </div>
-
-      <div class="grid grid-cols-2 gap-4 lg:gap-6">
-        <Card class="@container/card">
-          <CardHeader>
-            <CardDescription>{{
-              $t("pages.items.viewer.mass")
-            }}</CardDescription>
-            <CardTitle
-              class="text-xl font-semibold tabular-nums @[250px]/card:text-2xl"
-            >
-              <span v-if="supabaseLoaded"
-                >{{
-                  item.weight.toLocaleString($t("language.locale"), {
-                    minimumFractionDigits: 1,
-                    maximumFractionDigits: 1,
-                  })
-                }}
-                {{ $t("language.units.mass") }}</span
+        <div class="grid grid-cols-2 gap-4 lg:gap-6">
+          <Card class="@container/card">
+            <CardHeader>
+              <CardDescription>{{
+                $t("pages.items.viewer.mass")
+              }}</CardDescription>
+              <CardTitle
+                class="text-xl font-semibold tabular-nums @[250px]/card:text-2xl"
               >
-              <div
-                v-else
-                class="bg-primary/25 animate-pulse h-8 w-16 rounded-md"
-              ></div>
-            </CardTitle>
-          </CardHeader>
-        </Card>
+                <span v-if="supabaseLoaded"
+                  >{{
+                    item.weight.toLocaleString($t("language.locale"), {
+                      minimumFractionDigits: 1,
+                      maximumFractionDigits: 1,
+                    })
+                  }}
+                  {{ $t("language.units.mass") }}</span
+                >
+                <div
+                  v-else
+                  class="bg-primary/25 animate-pulse h-8 w-16 rounded-md"
+                ></div>
+              </CardTitle>
+            </CardHeader>
+          </Card>
 
-        <Card
-          class="@container/card"
-          v-if="item.price !== 0"
-        >
-          <CardHeader>
-            <CardDescription>{{
-              $t("pages.items.viewer.price")
-            }}</CardDescription>
-            <CardTitle
-              class="text-xl font-semibold tabular-nums @[250px]/card:text-xl"
-            >
-              <span v-if="supabaseLoaded"
-                >{{ $t("language.units.currency") }}
-                {{
-                  item.price.toLocaleString($t("language.locale"), {
-                    maximumFractionDigits: 2,
-                  })
-                }}</span
-              >
-              <div
-                v-else
-                class="bg-primary/25 animate-pulse h-8 w-32 rounded-md"
-              ></div>
-            </CardTitle>
-          </CardHeader>
-        </Card>
-      </div>
-
-      <div>
-        <Card
-          class="@container/card"
-          v-if="item.deployed === null"
-        >
-          <CardHeader>
-            <CardDescription>{{
-              $t("pages.items.viewer.deployment_status")
-            }}</CardDescription>
-            <CardTitle
-              class="text-lg font-semibold tabular-nums @[250px]/card:text-xl"
-            >
-              <span v-if="supabaseLoaded">{{
-                $t("pages.items.viewer.not_deployed")
-              }}</span>
-              <div
-                v-else
-                class="bg-primary/25 animate-pulse h-8 w-64 rounded-md"
-              ></div>
-            </CardTitle>
-          </CardHeader>
-        </Card>
-
-        <div
-          v-else
-          class="flex flex-col lg:gap-3 gap-2"
-        >
           <Card
             class="@container/card"
-            v-if="item.deployed !== null"
+            v-if="item.price !== 0"
           >
-            <CardHeader class="flex flex-row justify-between">
-              <CardDescription class="my-auto">{{
-                $t("pages.items.viewer.deployed_on")
+            <CardHeader>
+              <CardDescription>{{
+                $t("pages.items.viewer.price")
+              }}</CardDescription>
+              <CardTitle
+                class="text-xl font-semibold tabular-nums @[250px]/card:text-xl"
+              >
+                <span v-if="supabaseLoaded"
+                  >{{ $t("language.units.currency") }}
+                  {{
+                    item.price.toLocaleString($t("language.locale"), {
+                      maximumFractionDigits: 2,
+                    })
+                  }}</span
+                >
+                <div
+                  v-else
+                  class="bg-primary/25 animate-pulse h-8 w-32 rounded-md"
+                ></div>
+              </CardTitle>
+            </CardHeader>
+          </Card>
+        </div>
+
+        <div>
+          <Card
+            class="@container/card"
+            v-if="item.deployed === null"
+          >
+            <CardHeader>
+              <CardDescription>{{
+                $t("pages.items.viewer.deployment_status")
               }}</CardDescription>
               <CardTitle
                 class="text-lg font-semibold tabular-nums @[250px]/card:text-xl"
               >
                 <span v-if="supabaseLoaded">{{
-                  new Date(item.deployed).toLocaleDateString(
-                    $t("language.locale"),
-                    {
-                      year: "numeric",
-                      month: "numeric",
-                      day: "numeric",
-                    }
-                  )
+                  $t("pages.items.viewer.not_deployed")
                 }}</span>
                 <div
                   v-else
@@ -445,163 +415,199 @@ onMounted(async () => {
               </CardTitle>
             </CardHeader>
           </Card>
-          <Card
-            class="@container/card"
-            v-if="item.deployed_at !== null"
-          >
-            <CardHeader class="flex flex-row justify-between">
-              <CardDescription class="my-auto">{{
-                $t("pages.items.viewer.deployed_at")
-              }}</CardDescription>
-              <CardTitle
-                class="text-lg font-semibold tabular-nums @[250px]/card:text-xl"
-              >
-                <span v-if="supabaseLoaded">{{ item.deployed_at }}</span>
-                <div
-                  v-else
-                  class="bg-primary/25 animate-pulse h-8 w-64 rounded-md"
-                ></div>
-              </CardTitle>
-            </CardHeader>
-          </Card>
-          <Card
-            class="@container/card"
-            v-if="item.person_responsible !== null"
-          >
-            <CardHeader class="flex flex-row justify-between">
-              <CardDescription class="my-auto">{{
-                $t("pages.items.viewer.person_responsible")
-              }}</CardDescription>
-              <CardTitle
-                class="text-lg font-semibold tabular-nums @[250px]/card:text-xl"
-              >
-                <span v-if="supabaseLoaded">{{ item.person_responsible }}</span>
-                <div
-                  v-else
-                  class="bg-primary/25 animate-pulse h-8 w-64 rounded-md"
-                ></div>
-              </CardTitle>
-            </CardHeader>
-          </Card>
-        </div>
-      </div>
 
-      <Field>
-        <FieldLabel for="remarks">{{
-          $t("pages.items.viewer.remarks")
-        }}</FieldLabel>
-        <Textarea
-          id="remarks"
-          :placeholder="$t('pages.items.editor.remarks_placeholder')"
-          :default-value="remarksField"
-          v-model="remarksField"
-          @focus="startRemarksSync()"
-          @blur="stopRemarksSync()"
+          <div
+            v-else
+            class="flex flex-col lg:gap-3 gap-2"
+          >
+            <Card
+              class="@container/card"
+              v-if="item.deployed !== null"
+            >
+              <CardHeader class="flex flex-row justify-between">
+                <CardDescription class="my-auto">{{
+                  $t("pages.items.viewer.deployed_on")
+                }}</CardDescription>
+                <CardTitle
+                  class="text-lg font-semibold tabular-nums @[250px]/card:text-xl"
+                >
+                  <span v-if="supabaseLoaded">{{
+                    new Date(item.deployed).toLocaleDateString(
+                      $t("language.locale"),
+                      {
+                        year: "numeric",
+                        month: "numeric",
+                        day: "numeric",
+                      }
+                    )
+                  }}</span>
+                  <div
+                    v-else
+                    class="bg-primary/25 animate-pulse h-8 w-64 rounded-md"
+                  ></div>
+                </CardTitle>
+              </CardHeader>
+            </Card>
+            <Card
+              class="@container/card"
+              v-if="item.deployed_at !== null"
+            >
+              <CardHeader class="flex flex-row justify-between">
+                <CardDescription class="my-auto">{{
+                  $t("pages.items.viewer.deployed_at")
+                }}</CardDescription>
+                <CardTitle
+                  class="text-lg font-semibold tabular-nums @[250px]/card:text-xl"
+                >
+                  <span v-if="supabaseLoaded">{{ item.deployed_at }}</span>
+                  <div
+                    v-else
+                    class="bg-primary/25 animate-pulse h-8 w-64 rounded-md"
+                  ></div>
+                </CardTitle>
+              </CardHeader>
+            </Card>
+            <Card
+              class="@container/card"
+              v-if="item.person_responsible !== null"
+            >
+              <CardHeader class="flex flex-row justify-between">
+                <CardDescription class="my-auto">{{
+                  $t("pages.items.viewer.person_responsible")
+                }}</CardDescription>
+                <CardTitle
+                  class="text-lg font-semibold tabular-nums @[250px]/card:text-xl"
+                >
+                  <span v-if="supabaseLoaded">{{
+                    item.person_responsible
+                  }}</span>
+                  <div
+                    v-else
+                    class="bg-primary/25 animate-pulse h-8 w-64 rounded-md"
+                  ></div>
+                </CardTitle>
+              </CardHeader>
+            </Card>
+          </div>
+        </div>
+
+        <Field>
+          <FieldLabel for="remarks">{{
+            $t("pages.items.viewer.remarks")
+          }}</FieldLabel>
+          <Textarea
+            id="remarks"
+            :placeholder="$t('pages.items.editor.remarks_placeholder')"
+            :default-value="remarksField"
+            v-model="remarksField"
+            @focus="startRemarksSync()"
+            @blur="stopRemarksSync()"
+          />
+        </Field>
+      </section>
+      <section class="flex-col gap-4 lg:gap-6 flex">
+        <img
+          v-if="supabaseLoaded && itemImageExists"
+          :src="itemImage"
+          alt="Item Image"
+          class="w-full object-cover object-center aspect-3/2 rounded-md hidden md:block shadow-sm"
         />
-      </Field>
-    </section>
-    <section class="flex-col gap-4 lg:gap-6 flex">
-      <img
-        v-if="supabaseLoaded && itemImageExists"
-        :src="itemImage"
-        alt="Item Image"
-        class="w-full object-cover object-center aspect-3/2 rounded-md hidden md:block shadow-sm"
-      />
 
-      <div class="grid grid-cols-2 gap-2">
-        <Popover v-model:open="qrCodePopoverOpen">
-          <PopoverTrigger class="w-full">
-            <Button
-              variant="secondary"
-              class="w-full"
-              :disabled="!supabaseLoaded"
-              ><span>
-                {{ $t("pages.items.editor.view_qr_code") }}
-              </span></Button
-            >
-          </PopoverTrigger>
-          <PopoverContent class="w-80 my-2 flex flex-col gap-y-2">
-            <h1 class="font-semibold">
-              {{ $t("pages.items.editor.view_qr_code_popover_title") }}
-            </h1>
-            <p class="text-sm text-muted-foreground">
-              {{ $t("pages.items.editor.view_qr_code_popover_description") }}
-            </p>
-            <img
-              class="w-full aspect-square object-cover dark:invert mt-4"
-              :src="qrCodeSrc"
-            />
-            <span class="text-xs text-muted-foreground text-center">
-              {{ origin }}/items/{{ item.id }}
-            </span>
-          </PopoverContent>
-        </Popover>
+        <div class="grid grid-cols-2 gap-2">
+          <Popover v-model:open="qrCodePopoverOpen">
+            <PopoverTrigger class="w-full">
+              <Button
+                variant="secondary"
+                class="w-full"
+                :disabled="!supabaseLoaded"
+                ><span>
+                  {{ $t("pages.items.editor.view_qr_code") }}
+                </span></Button
+              >
+            </PopoverTrigger>
+            <PopoverContent class="w-80 my-2 flex flex-col gap-y-2">
+              <h1 class="font-semibold">
+                {{ $t("pages.items.editor.view_qr_code_popover_title") }}
+              </h1>
+              <p class="text-sm text-muted-foreground">
+                {{ $t("pages.items.editor.view_qr_code_popover_description") }}
+              </p>
+              <img
+                class="w-full aspect-square object-cover dark:invert mt-4"
+                :src="qrCodeSrc"
+              />
+              <span class="text-xs text-muted-foreground text-center">
+                {{ origin }}/items/{{ item.id }}
+              </span>
+            </PopoverContent>
+          </Popover>
 
-        <Popover v-model:open="barcodePopoverOpen">
-          <PopoverTrigger class="w-full">
-            <Button
-              variant="secondary"
-              class="w-full"
-              :disabled="!supabaseLoaded"
-              ><span>
-                {{ $t("pages.items.editor.view_barcode") }}
-              </span></Button
-            >
-          </PopoverTrigger>
-          <PopoverContent class="w-80 my-2 flex flex-col gap-y-2">
-            <h1 class="font-semibold">
-              {{ $t("pages.items.editor.view_barcode_popover_title") }}
-            </h1>
-            <p class="text-sm text-muted-foreground">
-              {{ $t("pages.items.editor.view_barcode_popover_description") }}
-            </p>
-            <img
-              class="w-full object-cover dark:invert mt-4"
-              :src="barcodeSrc"
-            />
-            <span class="text-xs text-muted-foreground text-center">
-              {{ item.id }}
-            </span>
-          </PopoverContent>
-        </Popover>
-      </div>
+          <Popover v-model:open="barcodePopoverOpen">
+            <PopoverTrigger class="w-full">
+              <Button
+                variant="secondary"
+                class="w-full"
+                :disabled="!supabaseLoaded"
+                ><span>
+                  {{ $t("pages.items.editor.view_barcode") }}
+                </span></Button
+              >
+            </PopoverTrigger>
+            <PopoverContent class="w-80 my-2 flex flex-col gap-y-2">
+              <h1 class="font-semibold">
+                {{ $t("pages.items.editor.view_barcode_popover_title") }}
+              </h1>
+              <p class="text-sm text-muted-foreground">
+                {{ $t("pages.items.editor.view_barcode_popover_description") }}
+              </p>
+              <img
+                class="w-full object-cover dark:invert mt-4"
+                :src="barcodeSrc"
+              />
+              <span class="text-xs text-muted-foreground text-center">
+                {{ item.id }}
+              </span>
+            </PopoverContent>
+          </Popover>
+        </div>
 
-      <div
-        class="flex flex-col gap-2"
-        v-if="supabaseLoaded"
-      >
         <div
-          v-for="customField in item.custom"
-          :key="customField.key"
-          class="w-full border-b flex flex-row justify-between text-sm"
+          class="flex flex-col gap-2"
+          v-if="supabaseLoaded"
         >
-          <span class="opacity-75">{{ customField.key }}</span>
-          <span class="font-medium text-right">{{ customField.value }}</span>
+          <div
+            v-for="customField in item.custom"
+            :key="customField.key"
+            class="w-full border-b flex flex-row justify-between text-sm"
+          >
+            <span class="opacity-75">{{ customField.key }}</span>
+            <span class="font-medium text-right">{{ customField.value }}</span>
+          </div>
+          <div class="w-full border-b flex flex-row justify-between text-sm">
+            <span class="opacity-75">{{
+              $t("pages.items.viewer.created_at")
+            }}</span>
+            <span class="font-medium text-right">{{
+              item.created_at
+                ? new Date(item.created_at).toLocaleDateString(
+                    $t("language.locale"),
+                    {
+                      year: "numeric",
+                      month: "numeric",
+                      day: "numeric",
+                    }
+                  )
+                : ""
+            }}</span>
+          </div>
+          <div class="w-full border-b flex flex-row justify-between text-sm">
+            <span class="opacity-75">{{
+              $t("pages.items.viewer.unique_id")
+            }}</span>
+            <span class="font-medium text-right">{{ item.id }}</span>
+          </div>
         </div>
-        <div class="w-full border-b flex flex-row justify-between text-sm">
-          <span class="opacity-75">{{
-            $t("pages.items.viewer.created_at")
-          }}</span>
-          <span class="font-medium text-right">{{
-            item.created_at
-              ? new Date(item.created_at).toLocaleDateString(
-                  $t("language.locale"),
-                  {
-                    year: "numeric",
-                    month: "numeric",
-                    day: "numeric",
-                  }
-                )
-              : ""
-          }}</span>
-        </div>
-        <div class="w-full border-b flex flex-row justify-between text-sm">
-          <span class="opacity-75">{{
-            $t("pages.items.viewer.unique_id")
-          }}</span>
-          <span class="font-medium text-right">{{ item.id }}</span>
-        </div>
-      </div>
-    </section>
+      </section>
+    </div>
   </div>
 </template>

@@ -108,7 +108,7 @@ onMounted(async () => {
   >
     <AppSidebar variant="inset" />
     <SidebarInset>
-      <div class="h-full overflow-y-clip">
+      <div class="flex h-full min-h-0 flex-col overflow-y-clip">
         <router-view />
       </div>
     </SidebarInset>

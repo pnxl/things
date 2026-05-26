@@ -559,7 +559,7 @@ onMounted(async () => {
     </form>
   </Dialog>
 
-  <div class="flex flex-col md:flex-row h-full">
+  <div class="flex flex-1 min-h-0 flex-col md:flex-row">
     <section
       class="w-full md:w-1/3 2xl:w-1/4 md:h-full p-4 gap-4 md:gap-6 lg:p-6 md:flex flex-col"
     >
@@ -568,7 +568,7 @@ onMounted(async () => {
       </h1>
       <div class="flex flex-col justify-between md:h-full gap-4 md:gap-6">
         <div
-          class="flex flex-col gap-1 md:overflow-y-scroll overflow-x-clip md:-mr-3.5 md:pr-0.5 lg:-mr-4.5 lg:pr-1.5 md:h-[76.2vh] lg:h-[73.8vh] scrollbar-thin scrollbar-bg-transparent scrollbar-thumb-secondary/50 scrollbar-thumb-rounded-full hover:scrollbar-thumb-secondary/80"
+          class="flex flex-col gap-1 h-fit md:overflow-y-scroll overflow-x-clip md:-mr-3.5 md:pr-0.5 lg:-mr-4.5 lg:pr-1.5 scrollbar-thin scrollbar-bg-transparent scrollbar-thumb-secondary/50 scrollbar-thumb-rounded-full hover:scrollbar-thumb-secondary/80"
         >
           <router-link
             to="/items"
@@ -685,9 +685,9 @@ onMounted(async () => {
           (viewMode === 'grid'
             ? 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-4'
             : 'flex flex-col gap-4') +
-          ' opacity-50 animate-pulse overflow-y-clip md:h-[75svh] h-[50svh] relative'
+          ' opacity-50 animate-pulse overflow-y-clip relative'
         "
-        class="md:overflow-y-scroll overflow-x-clip md:h-[87.8vh] lg:h-[86.6vh] p-4 md:m-2 md:p-2 pt-0! md:mt-4 lg:m-3 lg:p-3 lg:mt-6 mb-0! scrollbar-thin scrollbar-bg-transparent scrollbar-thumb-secondary/50 scrollbar-thumb-rounded-full hover:scrollbar-thumb-secondary/80 transition-colors duration-200"
+        class="md:overflow-y-scroll overflow-x-clip p-4 md:m-2 md:p-2 pt-0! md:mt-4 lg:m-3 lg:p-3 lg:mt-6 mb-0! scrollbar-thin scrollbar-bg-transparent scrollbar-thumb-secondary/50 scrollbar-thumb-rounded-full hover:scrollbar-thumb-secondary/80 transition-colors duration-200"
       >
         <div
           class="absolute w-full bg-linear-to-t from-background to-transparent h-24 bottom-0"
@@ -719,7 +719,7 @@ onMounted(async () => {
       </div>
       <div
         v-else
-        class="md:overflow-y-scroll overflow-x-clip md:h-[87.8vh] lg:h-[86.6vh] p-4 md:m-2 md:p-2 pt-0! md:mt-4 lg:m-3 lg:p-3 lg:mt-6 mb-0! scrollbar-thin scrollbar-bg-transparent scrollbar-thumb-secondary/50 scrollbar-thumb-rounded-full hover:scrollbar-thumb-secondary/80 transition-colors duration-200"
+        class="md:overflow-y-scroll overflow-x-clip p-4 md:m-2 md:p-2 pt-0! md:mt-4 lg:m-3 lg:p-3 lg:mt-6 mb-0! scrollbar-thin scrollbar-bg-transparent scrollbar-thumb-secondary/50 scrollbar-thumb-rounded-full hover:scrollbar-thumb-secondary/80 transition-colors duration-200"
         :class="
           viewMode === 'grid'
             ? 'grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4'

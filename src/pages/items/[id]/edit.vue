@@ -279,478 +279,481 @@ onMounted(async () => {
     "
   />
   <ErrorBanner :errors="errorMessages" />
+
   <div
-    class="flex flex-row justify-between text-sm m-4 mb-0 lg:mb-0 lg:m-6 gap-1 text-primary"
+    class="m-4 mr-2 pr-2 mb-0! pb-4 lg:pb-6 lg:m-6 lg:mr-3 lg:pr-3 flex flex-col gap-4 lg:gap-6 overflow-x-clip overflow-y-scroll scrollbar-thin scrollbar-bg-transparent scrollbar-thumb-secondary/50 scrollbar-thumb-rounded-full hover:scrollbar-thumb-secondary/80 transition-colors duration-200"
   >
-    <Button
-      @click="$router.push(`/items/${item.id}`)"
-      variant="ghost"
-      class="flex flex-row gap-1 cursor-pointer -ml-3 hover:bg-transparent! hover:text-primary/80 hover:underline duration-200 transition-colors"
-    >
-      <IconX class="size-4 my-auto" />
-      {{ t("pages.items.editor.discard_changes") }}
-    </Button>
-    <Button
-      @click="saveChanges()"
-      variant="ghost"
-      class="flex flex-row gap-1 cursor-pointer -mr-3 hover:bg-transparent! hover:text-primary/80 hover:underline duration-200 transition-colors"
-    >
-      <IconDeviceFloppy class="size-4 my-auto" />
-      {{ t("pages.items.editor.save_item") }}
-    </Button>
-  </div>
+    <div class="flex flex-row justify-between text-sm gap-1 text-primary">
+      <Button
+        @click="$router.push(`/items/${item.id}`)"
+        variant="ghost"
+        class="flex flex-row gap-1 cursor-pointer -ml-3 hover:bg-transparent! hover:text-primary/80 hover:underline duration-200 transition-colors"
+      >
+        <IconX class="size-4 my-auto" />
+        {{ t("pages.items.editor.discard_changes") }}
+      </Button>
+      <Button
+        @click="saveChanges()"
+        variant="ghost"
+        class="flex flex-row gap-1 cursor-pointer -mr-3 hover:bg-transparent! hover:text-primary/80 hover:underline duration-200 transition-colors"
+      >
+        <IconDeviceFloppy class="size-4 my-auto" />
+        {{ t("pages.items.editor.save_item") }}
+      </Button>
+    </div>
 
-  <div class="p-4 lg:p-6 grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
-    <section class="flex flex-col gap-4 lg:gap-6">
-      <div class="flex flex-col gap-2 md:hidden">
-        <img
-          v-if="supabaseLoaded && itemImageExists"
-          :src="itemImage"
-          alt="Item Image"
-          class="w-full object-cover object-center aspect-3/2 rounded-md shadow-sm"
-        />
-        <div
-          v-if="supabaseLoaded"
-          :class="
-            (itemImageExists ? 'grid-cols-2' : 'grid-cols-1 mt-8') +
-            ' grid gap-2 lg:gap-4'
-          "
-        >
-          <Button
-            variant="secondary"
-            @click.prevent="upsertItemImage()"
-            class="w-full"
-            ><IconLoader2
-              v-if="itemImageIsUploading === true"
-              class="size-5 animate-spin"
-            /><span v-else>
-              {{
-                itemImageExists
-                  ? $t("pages.items.editor.replace_image")
-                  : $t("pages.items.editor.add_image")
-              }}
-            </span></Button
-          >
-          <Button
-            variant="secondary"
-            class="w-full"
-            v-if="itemImageExists"
-            @click.prevent="deleteItemImage()"
-            ><IconLoader2
-              v-if="itemImageIsDeleting === true"
-              class="size-5 animate-spin"
-            /><span v-else>
-              {{ $t("pages.items.editor.remove_image") }}
-            </span></Button
-          >
-        </div>
-
-        <Separator
-          orientation="horizontal"
-          class="my-4 block md:hidden"
-        />
-      </div>
-
-      <FieldGroup class="flex flex-col gap-4">
-        <Field>
-          <FieldLabel for="item_name">
-            {{ $t("pages.items.editor.name") }}
-          </FieldLabel>
-          <Input
-            id="item_name"
-            :placeholder="$t('pages.items.editor.name_placeholder')"
-            required
-            :disabled="supabaseLoaded ? false : true"
-            :class="supabaseLoaded ? '' : 'animate-pulse!'"
-            v-model="item.name"
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
+      <section class="flex flex-col gap-4 lg:gap-6">
+        <div class="flex flex-col gap-2 md:hidden">
+          <img
+            v-if="supabaseLoaded && itemImageExists"
+            :src="itemImage"
+            alt="Item Image"
+            class="w-full object-cover object-center aspect-3/2 rounded-md shadow-sm"
           />
-        </Field>
-        <div class="flex lg:flex-row flex-col gap-4">
-          <Field class="lg:w-2/3">
-            <FieldLabel for="category">
-              {{ $t("pages.items.editor.category") }}
-            </FieldLabel>
-            <Select
-              v-model="item.category"
-              :disabled="supabaseLoaded ? false : true"
-              :class="supabaseLoaded ? '' : 'animate-pulse!'"
-            >
-              <SelectTrigger id="category">
-                <SelectValue
-                  :placeholder="$t('pages.items.editor.unknown_category')"
-                />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem
-                  :value="category.id"
-                  v-for="category in categories"
-                  :key="category.id"
-                  class="focus:bg-input focus:text-accent-foreground"
-                >
-                  {{ category.name }}
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </Field>
-          <Field class="lg:w-1/3">
-            <FieldLabel for="tags">
-              {{ $t("pages.items.editor.tags") }}
-            </FieldLabel>
-            <Select
-              multiple
-              v-model="item.tags"
-              :disabled="supabaseLoaded ? false : true"
-              :class="supabaseLoaded ? '' : 'animate-pulse!'"
-            >
-              <SelectTrigger id="tags">
-                <SelectValue
-                  :placeholder="$t('pages.items.editor.tags_placeholder')"
-                />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem
-                  :value="tag.id"
-                  v-for="tag in tags"
-                  :key="tag.id"
-                  class="focus:bg-input focus:text-accent-foreground"
-                >
-                  {{ tag.name }}
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </Field>
-        </div>
-      </FieldGroup>
-
-      <Separator
-        orientation="horizontal"
-        class="my-2"
-      />
-
-      <FieldGroup class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
-        <Field>
-          <FieldLabel for="mass">
-            {{ $t("pages.items.editor.mass") }}
-          </FieldLabel>
-          <div class="relative">
-            <div
-              class="absolute right-3 z-10 h-full text-sm flex-col flex justify-center"
-            >
-              <span class="opacity-75">{{ $t("language.units.mass") }}</span>
-            </div>
-            <Input
-              id="mass"
-              placeholder=""
-              :disabled="supabaseLoaded ? false : true"
-              :class="supabaseLoaded ? '' : 'animate-pulse!'"
-              required
-              v-model="item.weight"
-            />
-          </div>
-        </Field>
-        <Field>
-          <FieldLabel for="price">
-            {{ $t("pages.items.editor.price") }}
-          </FieldLabel>
-          <div class="relative">
-            <div
-              class="absolute right-3 z-10 h-full text-sm flex-col flex justify-center"
-            >
-              <span class="opacity-75">{{
-                $t("language.units.currency")
-              }}</span>
-            </div>
-            <Input
-              id="price"
-              placeholder=""
-              :disabled="supabaseLoaded ? false : true"
-              :class="supabaseLoaded ? '' : 'animate-pulse!'"
-              required
-              v-model="item.price"
-            />
-          </div>
-        </Field>
-      </FieldGroup>
-
-      <FieldGroup class="my-4">
-        <div class="flex items-center gap-3">
-          <Checkbox
-            id="item_is_deployed"
-            v-model="itemIsDeployed"
-          />
-          <Label for="item_is_deployed">{{
-            $t("pages.items.editor.is_deployed")
-          }}</Label>
-        </div>
-
-        <div
-          class="flex flex-col gap-3"
-          v-if="itemIsDeployed"
-        >
-          <Label for="date-picker">
-            {{ $t("pages.items.editor.deployed_date") }}
-          </Label>
-          <div class="flex gap-2">
-            <Popover v-model:open="datePickerOpen">
-              <PopoverTrigger as-child>
-                <Button
-                  id="date-picker"
-                  variant="outline"
-                  class="justify-between font-normal"
-                >
-                  {{
-                    datePickerPicked
-                      ? datePickerPicked
-                          .toDate(getLocalTimeZone())
-                          .toLocaleDateString($t("language.locale"), {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          })
-                      : "Select date"
-                  }}
-                  <IconChevronDown />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent
-                class="w-auto overflow-hidden p-0"
-                align="start"
-              >
-                <Calendar
-                  :model-value="datePickerPicked"
-                  @update:model-value="
-                    (value) => {
-                      if (value) {
-                        datePickerPicked = value;
-                        datePickerOpen = false;
-                      }
-                    }
-                  "
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
-        </div>
-
-        <Field v-if="itemIsDeployed">
-          <FieldLabel for="deployed_at">
-            {{ $t("pages.items.editor.deployed_at") }}
-          </FieldLabel>
-          <Input
-            id="deployed_at"
-            :placeholder="$t('pages.items.editor.deployed_at_placeholder')"
-            :disabled="supabaseLoaded ? false : true"
-            :class="supabaseLoaded ? '' : 'animate-pulse!'"
-            required
-            v-model="deployedAtField"
-          />
-        </Field>
-
-        <Field v-if="itemIsDeployed">
-          <FieldLabel for="person_responsible">
-            {{ $t("pages.items.editor.person_responsible") }}
-          </FieldLabel>
-          <Input
-            id="person_responsible"
-            :placeholder="
-              $t('pages.items.editor.person_responsible_placeholder')
+          <div
+            v-if="supabaseLoaded"
+            :class="
+              (itemImageExists ? 'grid-cols-2' : 'grid-cols-1 mt-8') +
+              ' grid gap-2 lg:gap-4'
             "
-            :disabled="supabaseLoaded ? false : true"
-            :class="supabaseLoaded ? '' : 'animate-pulse!'"
-            required
-            v-model="personResponsibleField"
+          >
+            <Button
+              variant="secondary"
+              @click.prevent="upsertItemImage()"
+              class="w-full"
+              ><IconLoader2
+                v-if="itemImageIsUploading === true"
+                class="size-5 animate-spin"
+              /><span v-else>
+                {{
+                  itemImageExists
+                    ? $t("pages.items.editor.replace_image")
+                    : $t("pages.items.editor.add_image")
+                }}
+              </span></Button
+            >
+            <Button
+              variant="secondary"
+              class="w-full"
+              v-if="itemImageExists"
+              @click.prevent="deleteItemImage()"
+              ><IconLoader2
+                v-if="itemImageIsDeleting === true"
+                class="size-5 animate-spin"
+              /><span v-else>
+                {{ $t("pages.items.editor.remove_image") }}
+              </span></Button
+            >
+          </div>
+
+          <Separator
+            orientation="horizontal"
+            class="my-4 block md:hidden"
           />
-        </Field>
-      </FieldGroup>
+        </div>
 
-      <Field>
-        <FieldLabel for="remarks">{{
-          $t("pages.items.editor.remarks")
-        }}</FieldLabel>
-        <Textarea
-          id="remarks"
-          :disabled="supabaseLoaded ? false : true"
-          :class="supabaseLoaded ? '' : 'animate-pulse!'"
-          :placeholder="$t('pages.items.editor.remarks_placeholder')"
-          :default-value="remarksField"
-          v-model="remarksField"
-        />
-      </Field>
+        <FieldGroup class="flex flex-col gap-4">
+          <Field>
+            <FieldLabel for="item_name">
+              {{ $t("pages.items.editor.name") }}
+            </FieldLabel>
+            <Input
+              id="item_name"
+              :placeholder="$t('pages.items.editor.name_placeholder')"
+              required
+              :disabled="supabaseLoaded ? false : true"
+              :class="supabaseLoaded ? '' : 'animate-pulse!'"
+              v-model="item.name"
+            />
+          </Field>
+          <div class="flex lg:flex-row flex-col gap-4">
+            <Field class="lg:w-2/3">
+              <FieldLabel for="category">
+                {{ $t("pages.items.editor.category") }}
+              </FieldLabel>
+              <Select
+                v-model="item.category"
+                :disabled="supabaseLoaded ? false : true"
+                :class="supabaseLoaded ? '' : 'animate-pulse!'"
+              >
+                <SelectTrigger id="category">
+                  <SelectValue
+                    :placeholder="$t('pages.items.editor.unknown_category')"
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem
+                    :value="category.id"
+                    v-for="category in categories"
+                    :key="category.id"
+                    class="focus:bg-input focus:text-accent-foreground"
+                  >
+                    {{ category.name }}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field class="lg:w-1/3">
+              <FieldLabel for="tags">
+                {{ $t("pages.items.editor.tags") }}
+              </FieldLabel>
+              <Select
+                multiple
+                v-model="item.tags"
+                :disabled="supabaseLoaded ? false : true"
+                :class="supabaseLoaded ? '' : 'animate-pulse!'"
+              >
+                <SelectTrigger id="tags">
+                  <SelectValue
+                    :placeholder="$t('pages.items.editor.tags_placeholder')"
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem
+                    :value="tag.id"
+                    v-for="tag in tags"
+                    :key="tag.id"
+                    class="focus:bg-input focus:text-accent-foreground"
+                  >
+                    {{ tag.name }}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+          </div>
+        </FieldGroup>
 
-      <div class="flex md:hidden flex-col gap-2 lg:gap-4">
         <Separator
           orientation="horizontal"
           class="my-2"
         />
-        <div
-          class="flex flex-col gap-4"
-          v-if="supabaseLoaded"
-        >
-          <FieldLabel>
-            {{ $t("pages.items.editor.custom_fields") }}
-          </FieldLabel>
+
+        <FieldGroup class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
+          <Field>
+            <FieldLabel for="mass">
+              {{ $t("pages.items.editor.mass") }}
+            </FieldLabel>
+            <div class="relative">
+              <div
+                class="absolute right-3 z-10 h-full text-sm flex-col flex justify-center"
+              >
+                <span class="opacity-75">{{ $t("language.units.mass") }}</span>
+              </div>
+              <Input
+                id="mass"
+                placeholder=""
+                :disabled="supabaseLoaded ? false : true"
+                :class="supabaseLoaded ? '' : 'animate-pulse!'"
+                required
+                v-model="item.weight"
+              />
+            </div>
+          </Field>
+          <Field>
+            <FieldLabel for="price">
+              {{ $t("pages.items.editor.price") }}
+            </FieldLabel>
+            <div class="relative">
+              <div
+                class="absolute right-3 z-10 h-full text-sm flex-col flex justify-center"
+              >
+                <span class="opacity-75">{{
+                  $t("language.units.currency")
+                }}</span>
+              </div>
+              <Input
+                id="price"
+                placeholder=""
+                :disabled="supabaseLoaded ? false : true"
+                :class="supabaseLoaded ? '' : 'animate-pulse!'"
+                required
+                v-model="item.price"
+              />
+            </div>
+          </Field>
+        </FieldGroup>
+
+        <FieldGroup class="my-4">
+          <div class="flex items-center gap-3">
+            <Checkbox
+              id="item_is_deployed"
+              v-model="itemIsDeployed"
+            />
+            <Label for="item_is_deployed">{{
+              $t("pages.items.editor.is_deployed")
+            }}</Label>
+          </div>
+
           <div
-            v-for="(field, i) in item.custom"
-            :key="i"
-            class="flex flex-col sm:flex-row gap-2"
+            class="flex flex-col gap-3"
+            v-if="itemIsDeployed"
           >
+            <Label for="date-picker">
+              {{ $t("pages.items.editor.deployed_date") }}
+            </Label>
+            <div class="flex gap-2">
+              <Popover v-model:open="datePickerOpen">
+                <PopoverTrigger as-child>
+                  <Button
+                    id="date-picker"
+                    variant="outline"
+                    class="justify-between font-normal"
+                  >
+                    {{
+                      datePickerPicked
+                        ? datePickerPicked
+                            .toDate(getLocalTimeZone())
+                            .toLocaleDateString($t("language.locale"), {
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                            })
+                        : "Select date"
+                    }}
+                    <IconChevronDown />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent
+                  class="w-auto overflow-hidden p-0"
+                  align="start"
+                >
+                  <Calendar
+                    :model-value="datePickerPicked"
+                    @update:model-value="
+                      (value) => {
+                        if (value) {
+                          datePickerPicked = value;
+                          datePickerOpen = false;
+                        }
+                      }
+                    "
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+          </div>
+
+          <Field v-if="itemIsDeployed">
+            <FieldLabel for="deployed_at">
+              {{ $t("pages.items.editor.deployed_at") }}
+            </FieldLabel>
             <Input
-              :id="`key-${field.key}`"
-              :placeholder="$t('pages.items.editor.custom_field_key')"
-              class="sm:w-1/3!"
-              v-model="field.key"
-              @focus="addBlankCustomField()"
+              id="deployed_at"
+              :placeholder="$t('pages.items.editor.deployed_at_placeholder')"
+              :disabled="supabaseLoaded ? false : true"
+              :class="supabaseLoaded ? '' : 'animate-pulse!'"
+              required
+              v-model="deployedAtField"
             />
+          </Field>
+
+          <Field v-if="itemIsDeployed">
+            <FieldLabel for="person_responsible">
+              {{ $t("pages.items.editor.person_responsible") }}
+            </FieldLabel>
             <Input
-              :id="`value-${field.value}`"
-              class="sm:w-2/3!"
-              :placeholder="$t('pages.items.editor.custom_field_value')"
-              v-model="field.value"
-              @focus="addBlankCustomField()"
+              id="person_responsible"
+              :placeholder="
+                $t('pages.items.editor.person_responsible_placeholder')
+              "
+              :disabled="supabaseLoaded ? false : true"
+              :class="supabaseLoaded ? '' : 'animate-pulse!'"
+              required
+              v-model="personResponsibleField"
             />
+          </Field>
+        </FieldGroup>
+
+        <Field>
+          <FieldLabel for="remarks">{{
+            $t("pages.items.editor.remarks")
+          }}</FieldLabel>
+          <Textarea
+            id="remarks"
+            :disabled="supabaseLoaded ? false : true"
+            :class="supabaseLoaded ? '' : 'animate-pulse!'"
+            :placeholder="$t('pages.items.editor.remarks_placeholder')"
+            :default-value="remarksField"
+            v-model="remarksField"
+          />
+        </Field>
+
+        <div class="flex md:hidden flex-col gap-2 lg:gap-4">
+          <Separator
+            orientation="horizontal"
+            class="my-2"
+          />
+          <div
+            class="flex flex-col gap-4"
+            v-if="supabaseLoaded"
+          >
+            <FieldLabel>
+              {{ $t("pages.items.editor.custom_fields") }}
+            </FieldLabel>
+            <div
+              v-for="(field, i) in item.custom"
+              :key="i"
+              class="flex flex-col sm:flex-row gap-2"
+            >
+              <Input
+                :id="`key-${field.key}`"
+                :placeholder="$t('pages.items.editor.custom_field_key')"
+                class="sm:w-1/3!"
+                v-model="field.key"
+                @focus="addBlankCustomField()"
+              />
+              <Input
+                :id="`value-${field.value}`"
+                class="sm:w-2/3!"
+                :placeholder="$t('pages.items.editor.custom_field_value')"
+                v-model="field.value"
+                @focus="addBlankCustomField()"
+              />
+            </div>
           </div>
         </div>
-      </div>
 
-      <div
-        class="flex md:hidden flex-col gap-2"
-        v-if="supabaseLoaded"
-      >
-        <div class="w-full border-b flex flex-row justify-between text-sm">
-          <span class="opacity-75">{{
-            $t("pages.items.editor.created_at")
-          }}</span>
-          <span class="font-medium text-right">{{
-            item.created_at
-              ? new Date(item.created_at).toLocaleDateString(
-                  $t("language.locale"),
-                  {
-                    year: "numeric",
-                    month: "numeric",
-                    day: "numeric",
-                  }
-                )
-              : ""
-          }}</span>
-        </div>
-        <div class="w-full border-b flex flex-row justify-between text-sm">
-          <span class="opacity-75">{{
-            $t("pages.items.editor.unique_id")
-          }}</span>
-          <span class="font-medium text-right">{{ item.id }}</span>
-        </div>
-      </div>
-    </section>
-    <section class="flex-col gap-4 lg:gap-6 hidden md:flex">
-      <div class="flex flex-col gap-2 lg:gap-4">
-        <img
-          v-if="supabaseLoaded && itemImageExists"
-          :src="itemImage"
-          alt="Item Image"
-          class="w-full object-cover object-center aspect-3/2 rounded-md shadow-sm"
-        />
         <div
+          class="flex md:hidden flex-col gap-2"
           v-if="supabaseLoaded"
-          :class="
-            (itemImageExists ? 'grid-cols-2' : 'grid-cols-1 mt-8') +
-            ' grid gap-2 lg:gap-4'
-          "
         >
-          <Button
-            variant="secondary"
-            @click.prevent="upsertItemImage()"
-            class="w-full"
-            ><IconLoader2
-              v-if="itemImageIsUploading === true"
-              class="size-5 animate-spin"
-            /><span v-else>
-              {{
-                itemImageExists
-                  ? $t("pages.items.editor.replace_image")
-                  : $t("pages.items.editor.add_image")
-              }}
-            </span></Button
-          >
-          <Button
-            variant="secondary"
-            class="w-full"
-            v-if="itemImageExists"
-            @click.prevent="deleteItemImage()"
-            ><IconLoader2
-              v-if="itemImageIsDeleting === true"
-              class="size-5 animate-spin"
-            /><span v-else>
-              {{ $t("pages.items.editor.remove_image") }}
-            </span></Button
-          >
+          <div class="w-full border-b flex flex-row justify-between text-sm">
+            <span class="opacity-75">{{
+              $t("pages.items.editor.created_at")
+            }}</span>
+            <span class="font-medium text-right">{{
+              item.created_at
+                ? new Date(item.created_at).toLocaleDateString(
+                    $t("language.locale"),
+                    {
+                      year: "numeric",
+                      month: "numeric",
+                      day: "numeric",
+                    }
+                  )
+                : ""
+            }}</span>
+          </div>
+          <div class="w-full border-b flex flex-row justify-between text-sm">
+            <span class="opacity-75">{{
+              $t("pages.items.editor.unique_id")
+            }}</span>
+            <span class="font-medium text-right">{{ item.id }}</span>
+          </div>
         </div>
-      </div>
+      </section>
+      <section class="flex-col gap-4 lg:gap-6 hidden md:flex">
+        <div class="flex flex-col gap-2 lg:gap-4">
+          <img
+            v-if="supabaseLoaded && itemImageExists"
+            :src="itemImage"
+            alt="Item Image"
+            class="w-full object-cover object-center aspect-3/2 rounded-md shadow-sm"
+          />
+          <div
+            v-if="supabaseLoaded"
+            :class="
+              (itemImageExists ? 'grid-cols-2' : 'grid-cols-1 mt-8') +
+              ' grid gap-2 lg:gap-4'
+            "
+          >
+            <Button
+              variant="secondary"
+              @click.prevent="upsertItemImage()"
+              class="w-full"
+              ><IconLoader2
+                v-if="itemImageIsUploading === true"
+                class="size-5 animate-spin"
+              /><span v-else>
+                {{
+                  itemImageExists
+                    ? $t("pages.items.editor.replace_image")
+                    : $t("pages.items.editor.add_image")
+                }}
+              </span></Button
+            >
+            <Button
+              variant="secondary"
+              class="w-full"
+              v-if="itemImageExists"
+              @click.prevent="deleteItemImage()"
+              ><IconLoader2
+                v-if="itemImageIsDeleting === true"
+                class="size-5 animate-spin"
+              /><span v-else>
+                {{ $t("pages.items.editor.remove_image") }}
+              </span></Button
+            >
+          </div>
+        </div>
 
-      <div class="flex flex-col gap-2 lg:gap-4">
-        <Separator
-          orientation="horizontal"
-          class="mt-1 mb-3"
-        />
+        <div class="flex flex-col gap-2 lg:gap-4">
+          <Separator
+            orientation="horizontal"
+            class="mt-1 mb-3"
+          />
+          <div
+            class="flex flex-col gap-2"
+            v-if="supabaseLoaded"
+          >
+            <FieldLabel>
+              {{ $t("pages.items.editor.custom_fields") }}
+            </FieldLabel>
+            <div
+              v-for="(field, i) in item.custom"
+              :key="i"
+              class="flex flex-row gap-2"
+            >
+              <Input
+                :id="`key-${field.key}`"
+                :placeholder="$t('pages.items.editor.custom_field_key')"
+                class="w-1/3!"
+                required
+                v-model="field.key"
+                @focus="addBlankCustomField()"
+              />
+              <Input
+                :id="`value-${field.value}`"
+                :placeholder="$t('pages.items.editor.custom_field_value')"
+                class="w-2/3!"
+                required
+                v-model="field.value"
+                @focus="addBlankCustomField()"
+              />
+            </div>
+          </div>
+        </div>
+
         <div
           class="flex flex-col gap-2"
           v-if="supabaseLoaded"
         >
-          <FieldLabel>
-            {{ $t("pages.items.editor.custom_fields") }}
-          </FieldLabel>
-          <div
-            v-for="(field, i) in item.custom"
-            :key="i"
-            class="flex flex-row gap-2"
-          >
-            <Input
-              :id="`key-${field.key}`"
-              :placeholder="$t('pages.items.editor.custom_field_key')"
-              class="w-1/3!"
-              required
-              v-model="field.key"
-              @focus="addBlankCustomField()"
-            />
-            <Input
-              :id="`value-${field.value}`"
-              :placeholder="$t('pages.items.editor.custom_field_value')"
-              class="w-2/3!"
-              required
-              v-model="field.value"
-              @focus="addBlankCustomField()"
-            />
+          <div class="w-full border-b flex flex-row justify-between text-sm">
+            <span class="opacity-75">{{
+              $t("pages.items.editor.created_at")
+            }}</span>
+            <span class="font-medium text-right">{{
+              item.created_at
+                ? new Date(item.created_at).toLocaleDateString(
+                    $t("language.locale"),
+                    {
+                      year: "numeric",
+                      month: "numeric",
+                      day: "numeric",
+                    }
+                  )
+                : ""
+            }}</span>
+          </div>
+          <div class="w-full border-b flex flex-row justify-between text-sm">
+            <span class="opacity-75">{{
+              $t("pages.items.editor.unique_id")
+            }}</span>
+            <span class="font-medium text-right">{{ item.id }}</span>
           </div>
         </div>
-      </div>
-
-      <div
-        class="flex flex-col gap-2"
-        v-if="supabaseLoaded"
-      >
-        <div class="w-full border-b flex flex-row justify-between text-sm">
-          <span class="opacity-75">{{
-            $t("pages.items.editor.created_at")
-          }}</span>
-          <span class="font-medium text-right">{{
-            item.created_at
-              ? new Date(item.created_at).toLocaleDateString(
-                  $t("language.locale"),
-                  {
-                    year: "numeric",
-                    month: "numeric",
-                    day: "numeric",
-                  }
-                )
-              : ""
-          }}</span>
-        </div>
-        <div class="w-full border-b flex flex-row justify-between text-sm">
-          <span class="opacity-75">{{
-            $t("pages.items.editor.unique_id")
-          }}</span>
-          <span class="font-medium text-right">{{ item.id }}</span>
-        </div>
-      </div>
-    </section>
+      </section>
+    </div>
   </div>
 </template>
