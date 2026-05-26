@@ -568,7 +568,7 @@ onMounted(async () => {
       </h1>
       <div class="flex flex-col justify-between md:h-full gap-4 md:gap-6">
         <div
-          class="flex flex-col gap-1 overflow-y-scroll overflow-x-clip md:-mr-3.5 md:pr-0.5 lg:-mr-4.5 lg:pr-1.5 md:h-[76.2vh] lg:h-[73.8vh] scrollbar-thin scrollbar-bg-transparent scrollbar-thumb-secondary/50 scrollbar-thumb-rounded-full hover:scrollbar-thumb-secondary/80"
+          class="flex flex-col gap-1 md:overflow-y-scroll overflow-x-clip md:-mr-3.5 md:pr-0.5 lg:-mr-4.5 lg:pr-1.5 md:h-[76.2vh] lg:h-[73.8vh] scrollbar-thin scrollbar-bg-transparent scrollbar-thumb-secondary/50 scrollbar-thumb-rounded-full hover:scrollbar-thumb-secondary/80"
         >
           <router-link
             to="/items"
@@ -576,7 +576,7 @@ onMounted(async () => {
               (!$route.query.f
                 ? 'bg-secondary/70 cursor-default'
                 : ' hover:bg-secondary/70') +
-              ' flex flex-row gap-2 duration-200 transition-colors px-3 p-1.5 rounded-md'
+              ' flex flex-row gap-2 duration-200 transition-colors px-3 p-1.5 rounded-md *:cursor-pointer cursor-pointer'
             "
           >
             <IconPackages class="size-4 my-auto" />
@@ -594,7 +594,7 @@ onMounted(async () => {
                   ($route.query.f === category.id
                     ? 'bg-secondary/70 cursor-default'
                     : ' hover:bg-secondary/70') +
-                  ' flex flex-row gap-2 duration-200 transition-colors px-3 p-1.5 rounded-md'
+                  ' flex flex-row gap-2 duration-200 transition-colors px-3 p-1.5 rounded-md *:cursor-pointer cursor-pointer'
                 "
               >
                 <IconFolder class="size-4 my-auto" />
@@ -635,7 +635,10 @@ onMounted(async () => {
         </div>
         <Popover v-model:open="newCategoryPopupOpen">
           <PopoverTrigger>
-            <Button class="w-full">
+            <Button
+              class="w-full *:cursor-pointer cursor-pointer"
+              variant="secondary"
+            >
               <IconFolderPlus class="size-4 my-auto" />
               <span class="text-sm">{{ $t("pages.items.new_category") }}</span>
             </Button>
@@ -684,6 +687,7 @@ onMounted(async () => {
             : 'flex flex-col gap-4') +
           ' opacity-50 animate-pulse overflow-y-clip md:h-[75svh] h-[50svh] relative'
         "
+        class="md:overflow-y-scroll overflow-x-clip md:h-[87.8vh] lg:h-[86.6vh] p-4 md:m-2 md:p-2 pt-0! md:mt-4 lg:m-3 lg:p-3 lg:mt-6 mb-0! scrollbar-thin scrollbar-bg-transparent scrollbar-thumb-secondary/50 scrollbar-thumb-rounded-full hover:scrollbar-thumb-secondary/80 transition-colors duration-200"
       >
         <div
           class="absolute w-full bg-linear-to-t from-background to-transparent h-24 bottom-0"
@@ -715,7 +719,7 @@ onMounted(async () => {
       </div>
       <div
         v-else
-        class="overflow-y-scroll overflow-x-clip md:h-[87.8vh] lg:h-[86.6vh] p-4 md:m-2 md:p-2 pt-0! md:mt-4 lg:m-3 lg:p-3 lg:mt-6 mb-0! scrollbar-thin scrollbar-bg-transparent scrollbar-thumb-secondary/50 scrollbar-thumb-rounded-full hover:scrollbar-thumb-secondary/80 transition-colors duration-200"
+        class="md:overflow-y-scroll overflow-x-clip md:h-[87.8vh] lg:h-[86.6vh] p-4 md:m-2 md:p-2 pt-0! md:mt-4 lg:m-3 lg:p-3 lg:mt-6 mb-0! scrollbar-thin scrollbar-bg-transparent scrollbar-thumb-secondary/50 scrollbar-thumb-rounded-full hover:scrollbar-thumb-secondary/80 transition-colors duration-200"
         :class="
           viewMode === 'grid'
             ? 'grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4'
@@ -733,21 +737,21 @@ onMounted(async () => {
               @click="$router.push(`/items/${item.id}`)"
               :class="
                 (viewMode === 'grid' ? '' : 'flex flex-row') +
-                ' @container/card hover:bg-secondary transition-colors duration-200 cursor-pointer justify-between'
+                ' @container/card hover:bg-secondary transition-colors duration-200  *:cursor-pointer cursor-pointer justify-between'
               "
             >
               <CardHeader
                 :class="
-                  (viewMode === 'grid' ? 'gap-1' : 'gap-1 justify-between') +
-                  ' w-full flex flex-col'
+                  (viewMode === 'grid' ? 'gap-1' : 'gap-1 justify-start') +
+                  ' w-full flex flex-col cursor-pointer!'
                 "
               >
                 <CardTitle
-                  class="text-xl font-medium tabular-nums @[250px]/card:text-xl line-clamp-1"
+                  class="text-xl font-medium tabular-nums @[250px]/card:text-xl line-clamp-1 cursor-pointer!"
                 >
                   {{ item.name }}
                 </CardTitle>
-                <CardDescription
+                <CardDescription class="cursor-pointer!"
                   >{{
                     item.weight.toLocaleString($t("language.locale"), {
                       minimumFractionDigits: 1,
@@ -772,12 +776,40 @@ onMounted(async () => {
                     }}
                   </div>
                 </div>
+
+                <CardDescription
+                  v-if="item.deployed !== null"
+                  :class="viewMode === 'grid' ? 'hidden' : 'mt-auto'"
+                  >{{
+                    item.deployed_at
+                      ? $t("pages.dashboard.deployed_on_with_at", {
+                          date: new Date(item.deployed).toLocaleDateString(
+                            $t("language.locale"),
+                            {
+                              year: "numeric",
+                              month: "numeric",
+                              day: "numeric",
+                            }
+                          ),
+                          location: item.deployed_at,
+                        })
+                      : $t("pages.dashboard.deployed_on", {
+                          date: new Date(item.deployed).toLocaleDateString(
+                            $t("language.locale"),
+                            {
+                              year: "numeric",
+                              month: "numeric",
+                              day: "numeric",
+                            }
+                          ),
+                        })
+                  }}</CardDescription
+                >
               </CardHeader>
               <CardContent
                 v-if="item.image_url"
-                :class="
-                  (viewMode === 'grid' ? '' : 'w-fit') + ' sm:block hidden'
-                "
+                :class="viewMode === 'grid' ? '' : 'w-fit'"
+                class="cursor-pointer!"
               >
                 <img
                   :src="item.image_url"
@@ -785,12 +817,17 @@ onMounted(async () => {
                   :class="
                     (viewMode === 'grid'
                       ? 'aspect-3/2'
-                      : 'aspect-square h-32') +
+                      : 'size-24! aspect-square!') +
                     ' rounded-lg border shadow-sm object-cover object-center'
                   "
+                  class="cursor-pointer!"
                 />
               </CardContent>
-              <CardFooter v-if="item.deployed !== null">
+              <CardFooter
+                v-if="item.deployed !== null"
+                :class="viewMode === 'grid' ? '' : 'hidden'"
+                class="cursor-pointer!"
+              >
                 <CardDescription>{{
                   item.deployed_at
                     ? $t("pages.dashboard.deployed_on_with_at", {

@@ -596,9 +596,9 @@ onMounted(async () => {
         <ContextMenuTrigger>
           <Card
             @click="$router.push(`/items/${item.id}`)"
-            class="@container/card hover:bg-secondary transition-colors duration-200 cursor-pointer"
+            class="@container/card hover:bg-secondary transition-colors duration-200 *:cursor-pointer! cursor-pointer!"
           >
-            <CardHeader>
+            <CardHeader class="*:cursor-pointer! cursor-pointer!">
               <CardTitle
                 class="text-xl font-medium tabular-nums @[250px]/card:text-xl line-clamp-1"
               >
@@ -619,18 +619,16 @@ onMounted(async () => {
               >
             </CardHeader>
             <CardContent
-              class="sm:block hidden"
+              class="*:cursor-pointer! cursor-pointer!"
               v-if="item.image_url"
             >
               <img
                 :src="item.image_url"
-                :alt="$t('pages.dashboard.item_image_alt')"                
-                class="
-                  aspect-3/2 rounded-lg border shadow-sm object-cover object-center
-                "
+                :alt="$t('pages.dashboard.item_image_alt')"
+                class="aspect-3/2 rounded-lg border shadow-sm object-cover object-center"
               />
             </CardContent>
-            <CardFooter>
+            <CardFooter class="*:cursor-pointer! cursor-pointer!">
               <CardDescription>{{
                 item.deployed_at
                   ? $t("pages.dashboard.deployed_on_with_at", {
