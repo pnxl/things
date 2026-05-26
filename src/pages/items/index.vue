@@ -567,7 +567,9 @@ onMounted(async () => {
         {{ $t("pages.items.categories") }}
       </h1>
       <div class="flex flex-col justify-between md:h-full gap-4 md:gap-6">
-        <div class="flex flex-col gap-1">
+        <div
+          class="flex flex-col gap-1 overflow-y-scroll overflow-x-clip md:-mr-3.5 md:pr-0.5 lg:-mr-4.5 lg:pr-1.5 md:h-[76.2vh] lg:h-[73.8vh] scrollbar-thin scrollbar-bg-transparent scrollbar-thumb-secondary/50 scrollbar-thumb-rounded-full hover:scrollbar-thumb-secondary/80"
+        >
           <router-link
             to="/items"
             :class="
@@ -673,7 +675,7 @@ onMounted(async () => {
       orientation="vertical"
       class="data-[orientation=vertical]:h-full md:block hidden"
     />
-    <section class="flex flex-col gap-4 p-4 lg:gap-6 lg:p-6 w-full">
+    <section class="flex flex-col gap-4 lg:gap-6 w-full">
       <div
         v-if="!supabaseLoaded"
         :class="
@@ -713,7 +715,7 @@ onMounted(async () => {
       </div>
       <div
         v-else
-        class="overflow-y-auto"
+        class="overflow-y-scroll overflow-x-clip md:h-[87.8vh] lg:h-[86.6vh] p-4 md:m-2 md:p-2 pt-0! md:mt-4 lg:m-3 lg:p-3 lg:mt-6 mb-0! scrollbar-thin scrollbar-bg-transparent scrollbar-thumb-secondary/50 scrollbar-thumb-rounded-full hover:scrollbar-thumb-secondary/80 transition-colors duration-200"
         :class="
           viewMode === 'grid'
             ? 'grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4'
@@ -781,7 +783,9 @@ onMounted(async () => {
                   :src="item.image_url"
                   :alt="$t('pages.dashboard.item_image_alt')"
                   :class="
-                    (viewMode === 'grid' ? 'aspect-3/2' : 'aspect-square h-32') +
+                    (viewMode === 'grid'
+                      ? 'aspect-3/2'
+                      : 'aspect-square h-32') +
                     ' rounded-lg border shadow-sm object-cover object-center'
                   "
                 />
