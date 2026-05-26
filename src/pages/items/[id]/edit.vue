@@ -106,7 +106,6 @@ async function upsertItemImage() {
     const { error } = await supabase.storage
       .from("items")
       .upload(String(item.value.id), file, {
-        cacheControl: "3600",
         upsert: true,
       });
 
