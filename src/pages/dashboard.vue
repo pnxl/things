@@ -624,8 +624,10 @@ onMounted(async () => {
             >
               <img
                 :src="item.image_url"
-                :alt="$t('pages.dashboard.item_image_alt')"
-                class="rounded-lg"
+                :alt="$t('pages.dashboard.item_image_alt')"                
+                class="
+                  aspect-3/2 rounded-lg border shadow-sm object-cover object-center
+                "
               />
             </CardContent>
             <CardFooter>
