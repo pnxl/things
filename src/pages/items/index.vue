@@ -4,6 +4,7 @@ import {
   IconFolder,
   IconFolderOpen,
   IconFolderPlus,
+  IconFoldersOff,
   IconForklift,
   IconLayoutGrid,
   IconLayoutList,
@@ -13,6 +14,7 @@ import {
 } from "@tabler/icons-vue";
 import { useCookies } from "@vueuse/integrations/useCookies";
 import { onMounted, ref } from "vue";
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 
@@ -73,6 +75,19 @@ const viewMode = ref(
 const items = ref<any[]>([]);
 const categories = ref<any[]>([]);
 const tags = ref<any[]>([]);
+
+const filteredItems = computed(() => {
+  const f = route.query.f;
+  if (!f) return items.value;
+  const fstr = String(f);
+  if (fstr === "uncategorised") {
+    return items.value.filter((item) => !item.category && item.category !== 0);
+  }
+  return items.value.filter((item) => String(item.category) === fstr);
+});
+
+// referenced from template
+void filteredItems;
 
 const newCategoryPopupOpen = ref(false);
 const newCategoryName = ref("");
@@ -582,6 +597,18 @@ onMounted(async () => {
             <IconPackages class="size-4 my-auto" />
             <span class="text-sm">{{ $t("pages.items.all_items") }}</span>
           </router-link>
+          <router-link
+            to="/items?f=uncategorised"
+            :class="
+              ($route.query.f === 'uncategorised'
+                ? 'bg-secondary/70 cursor-default'
+                : ' hover:bg-secondary/70') +
+              ' flex flex-row gap-2 duration-200 transition-colors px-3 p-1.5 rounded-md *:cursor-pointer cursor-pointer'
+            "
+          >
+            <IconFoldersOff class="size-4 my-auto" />
+            <span class="text-sm">{{ $t("pages.items.uncategorised") }}</span>
+          </router-link>
 
           <ContextMenu
             v-for="category in categories"
@@ -726,10 +753,9 @@ onMounted(async () => {
             : 'flex flex-col gap-4'
         "
       >
+        <!-- if f is uncategorised, show uncategorised items -->
         <ContextMenu
-          v-for="item in items.filter(
-            (item) => !$route.query.f || item.category === $route.query.f,
-          )"
+          v-for="item in filteredItems"
           :key="item.id"
         >
           <ContextMenuTrigger>

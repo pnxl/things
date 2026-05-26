@@ -192,8 +192,14 @@ onMounted(async () => {
   }
 
   const itemData = await supabase.from("items").select().eq("id", id);
-  const categoriesData = await supabase.from("categories").select();
-  const tagsData = await supabase.from("tags").select();
+  const categoriesData = await supabase
+    .from("categories")
+    .select()
+    .order("name", { ascending: true });
+  const tagsData = await supabase
+    .from("tags")
+    .select()
+    .order("name", { ascending: true });
 
   if (itemData.data) {
     if (itemData.data.length === 0) {

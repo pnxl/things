@@ -83,7 +83,10 @@ onMounted(async () => {
     .from("categories")
     .select()
     .order("name", { ascending: true });
-  const tagsData = await supabase.from("tags").select();
+  const tagsData = await supabase
+    .from("tags")
+    .select()
+    .order("name", { ascending: true });
 
   if (!categoriesData.error) {
     categories.value = categoriesData.data;

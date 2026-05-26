@@ -129,6 +129,7 @@ const i18n = createI18n({
             "Buat kategori baru untuk mengorganisir barang Anda.",
           create_category: "Buat Kategori",
           new_category_name: "Nama",
+          uncategorised: "Tidak Dikategorikan",
           viewer: {
             go_back: "Kembali ke Barang",
             name_placeholder: "Barang Tanpa Nama",
@@ -352,6 +353,7 @@ const i18n = createI18n({
           new_category_description: "Create a new category to organize items.",
           new_category_name: "Name",
           create_category: "Create Category",
+          uncategorised: "Uncategorised",
           viewer: {
             go_back: "Go Back to Items",
             name_placeholder: "Unnamed Item",
