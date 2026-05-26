@@ -758,10 +758,11 @@ onMounted(async () => {
                       maximumFractionDigits: 1,
                     })
                   }}
-                  {{ $t("language.units.mass") }} &bull;
-                  {{ $t("language.units.currency") }}
-                  {{
-                    item.price.toLocaleString($t("language.locale"))
+                  {{ $t("language.units.mass")
+                  }}{{
+                    item.price !== 0
+                      ? ` &bull; ${$t("language.units.currency")} ${item.price.toLocaleString($t("language.locale"))}`
+                      : ""
                   }}</CardDescription
                 >
                 <div class="opacity-50">

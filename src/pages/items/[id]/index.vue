@@ -362,7 +362,10 @@ onMounted(async () => {
           </CardHeader>
         </Card>
 
-        <Card class="@container/card">
+        <Card
+          class="@container/card"
+          v-if="item.price !== 0"
+        >
           <CardHeader>
             <CardDescription>{{
               $t("pages.items.viewer.price")
