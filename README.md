@@ -2,6 +2,8 @@
 
 A simple web app to track and manage your inventory of things. Built with Vue 3, Vite, and TypeScript.
 
+<img width="1458" height="835" alt="CleanShot 2026-06-07 at 16 04 38" src="https://github.com/user-attachments/assets/d54ececb-1be9-4114-aae8-40105988780b" />
+
 ### A little backstory...
 
 I initially built this for myself to keep track of my belongings, as I own lots of audio equipment and other bits and bobs that people usually borrow.
