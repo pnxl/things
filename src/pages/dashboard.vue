@@ -390,319 +390,323 @@ onMounted(async () => {
     </form>
   </Dialog>
 
-  <section class="flex flex-col gap-4 p-4 lg:gap-6 lg:p-6">
-    <h1 class="font-semibold text-3xl">
-      {{ $t("pages.dashboard.inventory_summary") }}
-    </h1>
-
-    <div
-      class="*:data-[slot=card]:from-accent/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 *:data-[slot=card]:bg-linear-to-t *:data-[slot=card]:shadow-xs"
-    >
-      <Card class="@container/card">
-        <CardHeader class="relative flex flex-col gap-2">
-          <CardDescription>{{
-            $t("pages.dashboard.total_categories")
-          }}</CardDescription>
-          <CardTitle
-            class="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl"
-          >
-            <span v-if="supabaseLoaded">{{
-              dashboardData.categoriesCount
-            }}</span>
-            <div
-              v-else
-              class="bg-primary/25 animate-pulse h-8 w-32 rounded-md"
-            ></div>
-          </CardTitle>
-          <CardAction
-            v-if="dashboardData.categoriesAdded !== 0 && supabaseLoaded"
-            class="absolute right-4"
-          >
-            <Badge variant="outline">
-              <IconArrowUp v-if="dashboardData.categoriesAdded > 0" />
-              <IconArrowDown v-if="dashboardData.categoriesAdded < 0" />
-              {{ shortenNumber(dashboardData.categoriesAdded) }}
-            </Badge>
-          </CardAction>
-        </CardHeader>
-        <CardFooter class="flex-col items-start gap-1.5 text-sm">
-          <div class="line-clamp-1 flex gap-2 font-medium">
-            <span v-if="supabaseLoaded">
-              {{
-                dashboardData.categoriesAdded > 0
-                  ? $t("pages.dashboard.new_categories")
-                  : $t("pages.dashboard.no_categories")
-              }}</span
-            >
-            <div
-              v-else
-              class="bg-primary/25 animate-pulse h-5 mt-1 w-40 rounded-md"
-            ></div>
-          </div>
-          <div class="text-muted-foreground">
-            {{ $t("pages.dashboard.data_from_30d") }}
-          </div>
-        </CardFooter>
-      </Card>
-      <Card class="@container/card">
-        <CardHeader class="relative flex flex-col gap-2">
-          <CardDescription>{{
-            $t("pages.dashboard.total_items")
-          }}</CardDescription>
-          <CardTitle
-            class="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl"
-          >
-            <span v-if="supabaseLoaded">{{ dashboardData.itemsCount }}</span>
-            <div
-              v-else
-              class="bg-primary/25 animate-pulse h-8 w-32 rounded-md"
-            ></div>
-          </CardTitle>
-          <CardAction
-            v-if="dashboardData.itemsAdded !== 0 && supabaseLoaded"
-            class="absolute right-4"
-          >
-            <Badge variant="outline">
-              <IconArrowUp v-if="dashboardData.itemsAdded > 0" />
-              <IconArrowDown v-if="dashboardData.itemsAdded < 0" />
-              {{ shortenNumber(dashboardData.itemsAdded) }}
-            </Badge>
-          </CardAction>
-        </CardHeader>
-        <CardFooter class="flex-col items-start gap-1.5 text-sm">
-          <div class="line-clamp-1 flex gap-2 font-medium">
-            <span v-if="supabaseLoaded">
-              {{
-                dashboardData.itemsAdded > 0
-                  ? $t("pages.dashboard.new_items")
-                  : $t("pages.dashboard.no_new_items")
-              }}</span
-            >
-            <div
-              v-else
-              class="bg-primary/25 animate-pulse h-5 mt-1 w-40 rounded-md"
-            ></div>
-          </div>
-          <div class="text-muted-foreground">
-            {{ $t("pages.dashboard.data_from_30d") }}
-          </div>
-        </CardFooter>
-      </Card>
-      <Card class="@container/card">
-        <CardHeader class="relative flex flex-col gap-2">
-          <CardDescription>{{
-            $t("pages.dashboard.items_deployed")
-          }}</CardDescription>
-          <CardTitle
-            class="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl"
-          >
-            <span v-if="supabaseLoaded">{{
-              dashboardData.deployedItemsCount
-            }}</span>
-            <div
-              v-else
-              class="bg-primary/25 animate-pulse h-8 w-32 rounded-md"
-            ></div>
-          </CardTitle>
-          <CardAction
-            v-if="dashboardData.deployedItemsAdded > 0 && supabaseLoaded"
-            class="absolute right-4"
-          >
-            <Badge variant="outline">
-              <IconArrowUp />
-              {{ shortenNumber(dashboardData.deployedItemsAdded) }}
-            </Badge>
-          </CardAction>
-        </CardHeader>
-        <CardFooter class="flex-col items-start gap-1.5 text-sm">
-          <div class="line-clamp-1 flex gap-2 font-medium">
-            <span v-if="supabaseLoaded">
-              {{
-                dashboardData.deployedItemsCount > 0
-                  ? $t("pages.dashboard.new_deployments")
-                  : $t("pages.dashboard.no_deployments")
-              }}</span
-            >
-            <div
-              v-else
-              class="bg-primary/25 animate-pulse h-5 mt-1 w-40 rounded-md"
-            ></div>
-          </div>
-          <div class="text-muted-foreground">
-            {{ $t("pages.dashboard.data_compared_yesterday") }}
-          </div>
-        </CardFooter>
-      </Card>
-      <Card class="@container/card">
-        <CardHeader class="relative flex flex-col gap-2">
-          <CardDescription>{{
-            $t("pages.dashboard.total_value")
-          }}</CardDescription>
-          <CardTitle
-            class="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl line-clamp-1"
-          >
-            <span v-if="supabaseLoaded"
-              >{{ $t("language.units.currency") }}
-              {{
-                dashboardData.totalValue.toLocaleString($t("language.locale"))
-              }}</span
-            >
-            <div
-              v-else
-              class="bg-primary/25 animate-pulse h-8 w-40 rounded-md"
-            ></div>
-          </CardTitle>
-          <CardAction
-            v-if="dashboardData.totalValueAdded > 0 && supabaseLoaded"
-            class="absolute right-4"
-          >
-            <Badge variant="outline">
-              <IconArrowUp />
-              {{ shortenNumber(dashboardData.totalValueAdded) }}
-            </Badge>
-          </CardAction>
-        </CardHeader>
-        <CardFooter class="flex-col items-start gap-1.5 text-sm">
-          <div class="line-clamp-1 flex gap-2 font-medium">
-            <span v-if="supabaseLoaded">{{
-              dashboardData.totalValueAdded > 0
-                ? $t("pages.dashboard.new_value_increase")
-                : $t("pages.dashboard.no_value_increase")
-            }}</span>
-            <div
-              v-else
-              class="bg-primary/25 animate-pulse h-5 mt-1 w-40 rounded-md"
-            ></div>
-          </div>
-          <div class="text-muted-foreground">
-            {{ $t("pages.dashboard.data_from_30d") }}
-          </div>
-        </CardFooter>
-      </Card>
-    </div>
-  </section>
-  <section
-    class="flex flex-col gap-4 p-4 lg:gap-6 lg:p-6"
-    v-if="supabaseLoaded && deployedItems.length > 0"
+  <div
+    class="m-4 mr-2 pr-2 mb-0! pb-4 lg:pb-6 lg:m-6 lg:mr-3 lg:pr-3 flex flex-col gap-4 lg:gap-6 overflow-x-clip overflow-y-scroll scrollbar-thin scrollbar-bg-transparent scrollbar-thumb-secondary/50 scrollbar-thumb-rounded-full hover:scrollbar-thumb-secondary/80 transition-colors duration-200"
   >
-    <h1 class="font-semibold text-3xl">
-      {{ $t("pages.dashboard.deployed_items") }}
-    </h1>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <ContextMenu
-        v-for="item in deployedItems"
-        :key="item.id"
+    <section class="flex flex-col gap-4 lg:gap-6">
+      <h1 class="font-semibold text-3xl">
+        {{ $t("pages.dashboard.inventory_summary") }}
+      </h1>
+
+      <div
+        class="*:data-[slot=card]:from-accent/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 *:data-[slot=card]:bg-linear-to-t *:data-[slot=card]:shadow-xs"
       >
-        <ContextMenuTrigger>
-          <Card
-            @click="$router.push(`/items/${item.id}`)"
-            class="@container/card hover:bg-secondary transition-colors duration-200 *:cursor-pointer! cursor-pointer!"
-          >
-            <CardHeader class="*:cursor-pointer! cursor-pointer!">
-              <CardTitle
-                class="text-xl font-medium tabular-nums @[250px]/card:text-xl line-clamp-1"
-              >
-                {{ item.name }}
-              </CardTitle>
-              <CardDescription
-                >{{
-                  item.weight.toLocaleString($t("language.locale"), {
-                    minimumFractionDigits: 1,
-                    maximumFractionDigits: 1,
-                  })
-                }}
-                {{ $t("language.units.mass")
-                }}{{
-                  item.price !== 0
-                    ? ` &bull; ${$t("language.units.currency")} ${item.price.toLocaleString($t("language.locale"))}`
-                    : ""
-                }}</CardDescription
-              >
-            </CardHeader>
-            <CardContent
-              class="*:cursor-pointer! cursor-pointer!"
-              v-if="item.image_url"
+        <Card class="@container/card">
+          <CardHeader class="relative flex flex-col gap-2">
+            <CardDescription>{{
+              $t("pages.dashboard.total_categories")
+            }}</CardDescription>
+            <CardTitle
+              class="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl"
             >
-              <img
-                :src="item.image_url"
-                :alt="$t('pages.dashboard.item_image_alt')"
-                class="aspect-3/2 rounded-lg border shadow-sm object-cover object-center"
-              />
-            </CardContent>
-            <CardFooter class="*:cursor-pointer! cursor-pointer!">
-              <CardDescription>{{
-                item.deployed_at
-                  ? $t("pages.dashboard.deployed_on_with_at", {
-                      date: new Date(item.deployed).toLocaleDateString(
-                        $t("language.locale"),
-                        {
-                          year: "numeric",
-                          month: "numeric",
-                          day: "numeric",
-                        }
-                      ),
-                      location: item.deployed_at,
+              <span v-if="supabaseLoaded">{{
+                dashboardData.categoriesCount
+              }}</span>
+              <div
+                v-else
+                class="bg-primary/25 animate-pulse h-8 w-32 rounded-md"
+              ></div>
+            </CardTitle>
+            <CardAction
+              v-if="dashboardData.categoriesAdded !== 0 && supabaseLoaded"
+              class="absolute right-4"
+            >
+              <Badge variant="outline">
+                <IconArrowUp v-if="dashboardData.categoriesAdded > 0" />
+                <IconArrowDown v-if="dashboardData.categoriesAdded < 0" />
+                {{ shortenNumber(dashboardData.categoriesAdded) }}
+              </Badge>
+            </CardAction>
+          </CardHeader>
+          <CardFooter class="flex-col items-start gap-1.5 text-sm">
+            <div class="line-clamp-1 flex gap-2 font-medium">
+              <span v-if="supabaseLoaded">
+                {{
+                  dashboardData.categoriesAdded > 0
+                    ? $t("pages.dashboard.new_categories")
+                    : $t("pages.dashboard.no_categories")
+                }}</span
+              >
+              <div
+                v-else
+                class="bg-primary/25 animate-pulse h-5 mt-1 w-40 rounded-md"
+              ></div>
+            </div>
+            <div class="text-muted-foreground">
+              {{ $t("pages.dashboard.data_from_30d") }}
+            </div>
+          </CardFooter>
+        </Card>
+        <Card class="@container/card">
+          <CardHeader class="relative flex flex-col gap-2">
+            <CardDescription>{{
+              $t("pages.dashboard.total_items")
+            }}</CardDescription>
+            <CardTitle
+              class="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl"
+            >
+              <span v-if="supabaseLoaded">{{ dashboardData.itemsCount }}</span>
+              <div
+                v-else
+                class="bg-primary/25 animate-pulse h-8 w-32 rounded-md"
+              ></div>
+            </CardTitle>
+            <CardAction
+              v-if="dashboardData.itemsAdded !== 0 && supabaseLoaded"
+              class="absolute right-4"
+            >
+              <Badge variant="outline">
+                <IconArrowUp v-if="dashboardData.itemsAdded > 0" />
+                <IconArrowDown v-if="dashboardData.itemsAdded < 0" />
+                {{ shortenNumber(dashboardData.itemsAdded) }}
+              </Badge>
+            </CardAction>
+          </CardHeader>
+          <CardFooter class="flex-col items-start gap-1.5 text-sm">
+            <div class="line-clamp-1 flex gap-2 font-medium">
+              <span v-if="supabaseLoaded">
+                {{
+                  dashboardData.itemsAdded > 0
+                    ? $t("pages.dashboard.new_items")
+                    : $t("pages.dashboard.no_new_items")
+                }}</span
+              >
+              <div
+                v-else
+                class="bg-primary/25 animate-pulse h-5 mt-1 w-40 rounded-md"
+              ></div>
+            </div>
+            <div class="text-muted-foreground">
+              {{ $t("pages.dashboard.data_from_30d") }}
+            </div>
+          </CardFooter>
+        </Card>
+        <Card class="@container/card">
+          <CardHeader class="relative flex flex-col gap-2">
+            <CardDescription>{{
+              $t("pages.dashboard.items_deployed")
+            }}</CardDescription>
+            <CardTitle
+              class="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl"
+            >
+              <span v-if="supabaseLoaded">{{
+                dashboardData.deployedItemsCount
+              }}</span>
+              <div
+                v-else
+                class="bg-primary/25 animate-pulse h-8 w-32 rounded-md"
+              ></div>
+            </CardTitle>
+            <CardAction
+              v-if="dashboardData.deployedItemsAdded > 0 && supabaseLoaded"
+              class="absolute right-4"
+            >
+              <Badge variant="outline">
+                <IconArrowUp />
+                {{ shortenNumber(dashboardData.deployedItemsAdded) }}
+              </Badge>
+            </CardAction>
+          </CardHeader>
+          <CardFooter class="flex-col items-start gap-1.5 text-sm">
+            <div class="line-clamp-1 flex gap-2 font-medium">
+              <span v-if="supabaseLoaded">
+                {{
+                  dashboardData.deployedItemsCount > 0
+                    ? $t("pages.dashboard.new_deployments")
+                    : $t("pages.dashboard.no_deployments")
+                }}</span
+              >
+              <div
+                v-else
+                class="bg-primary/25 animate-pulse h-5 mt-1 w-40 rounded-md"
+              ></div>
+            </div>
+            <div class="text-muted-foreground">
+              {{ $t("pages.dashboard.data_compared_yesterday") }}
+            </div>
+          </CardFooter>
+        </Card>
+        <Card class="@container/card">
+          <CardHeader class="relative flex flex-col gap-2">
+            <CardDescription>{{
+              $t("pages.dashboard.total_value")
+            }}</CardDescription>
+            <CardTitle
+              class="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl line-clamp-1"
+            >
+              <span v-if="supabaseLoaded"
+                >{{ $t("language.units.currency") }}
+                {{
+                  dashboardData.totalValue.toLocaleString($t("language.locale"))
+                }}</span
+              >
+              <div
+                v-else
+                class="bg-primary/25 animate-pulse h-8 w-40 rounded-md"
+              ></div>
+            </CardTitle>
+            <CardAction
+              v-if="dashboardData.totalValueAdded > 0 && supabaseLoaded"
+              class="absolute right-4"
+            >
+              <Badge variant="outline">
+                <IconArrowUp />
+                {{ shortenNumber(dashboardData.totalValueAdded) }}
+              </Badge>
+            </CardAction>
+          </CardHeader>
+          <CardFooter class="flex-col items-start gap-1.5 text-sm">
+            <div class="line-clamp-1 flex gap-2 font-medium">
+              <span v-if="supabaseLoaded">{{
+                dashboardData.totalValueAdded > 0
+                  ? $t("pages.dashboard.new_value_increase")
+                  : $t("pages.dashboard.no_value_increase")
+              }}</span>
+              <div
+                v-else
+                class="bg-primary/25 animate-pulse h-5 mt-1 w-40 rounded-md"
+              ></div>
+            </div>
+            <div class="text-muted-foreground">
+              {{ $t("pages.dashboard.data_from_30d") }}
+            </div>
+          </CardFooter>
+        </Card>
+      </div>
+    </section>
+    <section
+      class="flex flex-col gap-4 lg:gap-6"
+      v-if="supabaseLoaded && deployedItems.length > 0"
+    >
+      <h1 class="font-semibold text-3xl">
+        {{ $t("pages.dashboard.deployed_items") }}
+      </h1>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <ContextMenu
+          v-for="item in deployedItems"
+          :key="item.id"
+        >
+          <ContextMenuTrigger>
+            <Card
+              @click="$router.push(`/items/${item.id}`)"
+              class="@container/card hover:bg-secondary transition-colors duration-200 *:cursor-pointer! cursor-pointer!"
+            >
+              <CardHeader class="*:cursor-pointer! cursor-pointer!">
+                <CardTitle
+                  class="text-xl font-medium tabular-nums @[250px]/card:text-xl line-clamp-1"
+                >
+                  {{ item.name }}
+                </CardTitle>
+                <CardDescription
+                  >{{
+                    item.weight.toLocaleString($t("language.locale"), {
+                      minimumFractionDigits: 1,
+                      maximumFractionDigits: 1,
                     })
-                  : $t("pages.dashboard.deployed_on", {
-                      date: new Date(item.deployed).toLocaleDateString(
-                        $t("language.locale"),
-                        {
-                          year: "numeric",
-                          month: "numeric",
-                          day: "numeric",
-                        }
-                      ),
-                    })
-              }}</CardDescription>
-            </CardFooter>
-          </Card>
-        </ContextMenuTrigger>
-        <ContextMenuContent class="md:w-56 w-48">
-          <ContextMenuItem @click="$router.push(`/items/${item.id}`)"
-            ><IconBlocks /> {{ $t("components.context_menu.item.view_item") }}
-          </ContextMenuItem>
-          <ContextMenuItem @click="undeployItem(item.id)"
-            ><IconForklift />
-            {{ $t("components.context_menu.item.undeploy_item") }}
-          </ContextMenuItem>
-          <ContextMenuItem @click="$router.push(`/items/${item.id}/edit`)"
-            ><IconPencil />
-            {{ $t("components.context_menu.item.open_in_editor") }}
-          </ContextMenuItem>
-          <ContextMenuSeparator />
-          <ContextMenuItem
-            @click="
-              renameModalIsOpen = true;
-              currentItemId = item.id;
-              currentDialogEntry = item.name;
-            "
-            inset
-          >
-            {{ $t("components.context_menu.item.rename") }}
-          </ContextMenuItem>
-          <ContextMenuItem
-            @click="
-              moveToLocationModalIsOpen = true;
-              currentItemId = item.id;
-              currentDialogEntry = item.deployed_at || '';
-            "
-            inset
-          >
-            {{ $t("components.context_menu.item.move_to_location") }}
-          </ContextMenuItem>
-          <ContextMenuSeparator />
-          <ContextMenuItem
-            @click="
-              deleteConfirmationModalIsOpen = true;
-              currentItemId = item.id;
-            "
-            variant="destructive"
-            class="text-destructive"
-          >
-            <IconTrashX /> {{ $t("components.context_menu.item.delete") }}
-          </ContextMenuItem>
-        </ContextMenuContent>
-      </ContextMenu>
-    </div>
-  </section>
+                  }}
+                  {{ $t("language.units.mass")
+                  }}{{
+                    item.price !== 0
+                      ? ` &bull; ${$t("language.units.currency")} ${item.price.toLocaleString($t("language.locale"))}`
+                      : ""
+                  }}</CardDescription
+                >
+              </CardHeader>
+              <CardContent
+                class="*:cursor-pointer! cursor-pointer!"
+                v-if="item.image_url"
+              >
+                <img
+                  :src="item.image_url"
+                  :alt="$t('pages.dashboard.item_image_alt')"
+                  class="aspect-3/2 rounded-lg border shadow-sm object-cover object-center"
+                />
+              </CardContent>
+              <CardFooter class="*:cursor-pointer! cursor-pointer!">
+                <CardDescription>{{
+                  item.deployed_at
+                    ? $t("pages.dashboard.deployed_on_with_at", {
+                        date: new Date(item.deployed).toLocaleDateString(
+                          $t("language.locale"),
+                          {
+                            year: "numeric",
+                            month: "numeric",
+                            day: "numeric",
+                          }
+                        ),
+                        location: item.deployed_at,
+                      })
+                    : $t("pages.dashboard.deployed_on", {
+                        date: new Date(item.deployed).toLocaleDateString(
+                          $t("language.locale"),
+                          {
+                            year: "numeric",
+                            month: "numeric",
+                            day: "numeric",
+                          }
+                        ),
+                      })
+                }}</CardDescription>
+              </CardFooter>
+            </Card>
+          </ContextMenuTrigger>
+          <ContextMenuContent class="md:w-56 w-48">
+            <ContextMenuItem @click="$router.push(`/items/${item.id}`)"
+              ><IconBlocks /> {{ $t("components.context_menu.item.view_item") }}
+            </ContextMenuItem>
+            <ContextMenuItem @click="undeployItem(item.id)"
+              ><IconForklift />
+              {{ $t("components.context_menu.item.undeploy_item") }}
+            </ContextMenuItem>
+            <ContextMenuItem @click="$router.push(`/items/${item.id}/edit`)"
+              ><IconPencil />
+              {{ $t("components.context_menu.item.open_in_editor") }}
+            </ContextMenuItem>
+            <ContextMenuSeparator />
+            <ContextMenuItem
+              @click="
+                renameModalIsOpen = true;
+                currentItemId = item.id;
+                currentDialogEntry = item.name;
+              "
+              inset
+            >
+              {{ $t("components.context_menu.item.rename") }}
+            </ContextMenuItem>
+            <ContextMenuItem
+              @click="
+                moveToLocationModalIsOpen = true;
+                currentItemId = item.id;
+                currentDialogEntry = item.deployed_at || '';
+              "
+              inset
+            >
+              {{ $t("components.context_menu.item.move_to_location") }}
+            </ContextMenuItem>
+            <ContextMenuSeparator />
+            <ContextMenuItem
+              @click="
+                deleteConfirmationModalIsOpen = true;
+                currentItemId = item.id;
+              "
+              variant="destructive"
+              class="text-destructive"
+            >
+              <IconTrashX /> {{ $t("components.context_menu.item.delete") }}
+            </ContextMenuItem>
+          </ContextMenuContent>
+        </ContextMenu>
+      </div>
+    </section>
+  </div>
 </template>
